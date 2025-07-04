@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:model="clr-namespace:SquoundApp_v1.Models"
+             xmlns:viewmodel="clr-namespace:SquoundApp_v1.ViewModels"
+             x:DataType="viewmodel:ProductSearchViewModel"
+             x:Class="SquoundApp_v1.ViewsCustom.ProductView">
+
+    <CarouselView>
+        <CarouselView.ItemsSource>
+            <x:Array Type="{x:Type model:Product}"/>
+        </CarouselView.ItemsSource>
+        <CarouselView.ItemTemplate>
+            <DataTemplate x:DataType="model:Product">
+                <VerticalStackLayout>
+                    <Image Source="{Binding Image}"
+                           WidthRequest="500"
+                           HeightRequest="500"
+                           Aspect="AspectFill"/>
+                    <Label Text="{Binding Name}" FontSize="24"/>
+                    <Label Text="{Binding Manufacturer}" FontSize="16"/>
+                    <Label Text="{Binding Details}" FontSize="16"/>
+                    <Label Text="{Binding Price}" FontSize="24"/>
+                </VerticalStackLayout>
+            </DataTemplate>
+        </CarouselView.ItemTemplate>
+    </CarouselView>
+</ContentView>

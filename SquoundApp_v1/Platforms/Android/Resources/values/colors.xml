@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <!-- Unknown -->
+    <color name="colorPrimary">#512BD4</color>
+
+  <!-- Statusbar colour -->
+    <color name="colorPrimaryDark">#000000</color>
+
+  <!-- Unknown -->
+    <color name="colorAccent">#2B0B98</color>
+
+</resources>

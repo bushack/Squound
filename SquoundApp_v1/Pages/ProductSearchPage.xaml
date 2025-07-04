@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:model="clr-namespace:SquoundApp_v1.Models"
+             xmlns:viewmodel="clr-namespace:SquoundApp_v1.ViewModels"
+             xmlns:ViewsCustom="clr-namespace:SquoundApp_v1.ViewsCustom"
+             x:Class="SquoundApp_v1.Pages.ProductSearchPage"
+             x:DataType="viewmodel:ProductSearchViewModel"
+             Title="{Binding Title}">
+
+    <Grid ColumnDefinitions="*, *"
+          ColumnSpacing="10"
+          RowDefinitions="Auto, Auto, Auto, *, Auto"
+          RowSpacing="0">
+
+        <ViewsCustom:SpacerView Grid.Row="0"
+                        Grid.ColumnSpan="2"/>
+
+        <ViewsCustom:HeaderView Grid.Row="1"
+                        Grid.ColumnSpan="2"/>
+
+        <ViewsCustom:SpacerView Grid.Row="2"
+                        Grid.ColumnSpan="2"/>
+
+        <CollectionView BackgroundColor="Transparent"
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2"
+                        ItemsSource="{Binding Products}"
+                        SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Product">
+                    <Grid Padding="10">
+                        <Border BackgroundColor="Pink">
+                            <!-- The border defines a tappable area that allows the user to access a specific product -->
+                            <Border.GestureRecognizers>
+                                <!-- TapGestureRecognizer is used to handle tap events on each item in the CollectionView -->
+                                <!-- The CommandParameter is set to the current Product item (.), allowing the command to access it -->
+                                <!-- The Command is bound to a command in the ProductSearchViewModel that retrieves the product details -->
+                                <!-- In this case, the program will walk up the stack of the binding chain, starting with the -->
+                                <!-- Product, until it finds a ProductSearchViewModel, inside which is the command (GetProduct) -->
+                                <!-- that it should execute -->
+                                <TapGestureRecognizer CommandParameter="{Binding .}"
+                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ProductSearchViewModel}}, x:DataType=viewmodel:ProductSearchViewModel, Path=GoToDetailsCommand}"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid Padding="0"
+                                      RowDefinitions="Auto, Auto, Auto, Auto"
+                                      ColumnDefinitions="225, *">
+
+                                <Border Grid.RowSpan="4">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+                                <Image Source="{Binding Image}"/>
+                            </Border>
+                            
+                            <Label Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding Name}" FontSize="24"/>
+                            <Label Grid.Row="1" Grid.Column="1"
+                                    Text="{Binding Manufacturer}" FontSize="16"/>
+                            <Label Grid.Row="2" Grid.Column="1"
+                                    Text="{Binding Details}" FontSize="16"/>
+                            <Label Grid.Row="3" Grid.Column="1"
+                                    Text="{Binding Price}" FontSize="24"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            
+        </CollectionView>
+
+        <ActivityIndicator Grid.RowSpan="2"
+                           Grid.ColumnSpan="2"
+                           IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+
+        <Button Grid.Row="4"
+                Grid.Column="0"
+                Margin="5"
+                Text="Get Products"
+                Command="{Binding GetProductsCommand}"/>
+        
+        <Button Grid.Row="4"
+                Grid.Column="1"
+                Margin="5"
+                Text="Clear"
+                Command="{Binding ClearProductsCommand}"/>
+
+    </Grid>
+
+    <!--<CarouselView>
+        <CarouselView.ItemsSource>
+            <x:Array Type="{x:Type model:Product}"/>
+        </CarouselView.ItemsSource>
+        <CarouselView.ItemTemplate>
+            <DataTemplate x:DataType="model:Product">
+                <VerticalStackLayout>
+                    <Image Source="{Binding Image}"
+                       WidthRequest="500"
+                       HeightRequest="500"
+                       Aspect="AspectFill"/>
+                    <Label Text="{Binding Name}" FontSize="24"/>
+                    <Label Text="{Binding Manufacturer}" FontSize="16"/>
+                    <Label Text="{Binding Details}" FontSize="16"/>
+                    <Label Text="{Binding Price}" FontSize="24"/>
+                </VerticalStackLayout>
+            </DataTemplate>
+        </CarouselView.ItemTemplate>
+    </CarouselView>-->
+</ContentPage>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SquoundApp_v1.ViewsCustom.FooterView">
+
+<!-- https://learn.microsoft.com/en-us/shows/building-apps-with-xaml-and-dotnet-maui/create-reusable-ui-building-apps-with-xaml-and-dotnet-maui -->
+
+    <StackLayout Background="{StaticResource SquoundGradientBrush}">
+
+        <BoxView HeightRequest="10"
+                 BackgroundColor="Transparent"/>
+        
+        <Button Text="About us"
+                HorizontalOptions="Start"
+                Style="{StaticResource TextButton}"/>
+
+        <Button Text="Sell to us"
+                HorizontalOptions="Start"
+                Style="{StaticResource TextButton}"/>
+
+        <Button Text="Something else"
+                HorizontalOptions="Start"
+                Style="{StaticResource TextButton}"/>
+
+        <BoxView HeightRequest="10"
+                 BackgroundColor="Transparent"/>
+        
+        <!--<Label Text="Follow us or get in touch"
+               Style="{StaticResource FooterText}"
+               SemanticProperties.Description="Follow us on social media or get in touch"
+               HorizontalOptions="Fill"/>
+
+        <BoxView HeightRequest="15"
+                 BackgroundColor="Transparent"/>-->
+
+        <FlexLayout HeightRequest="30"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center"
+                    JustifyContent="SpaceEvenly">
+
+            <ImageButton Source="facebook.png" Style="{StaticResource FooterButton}"/>
+            <ImageButton Source="instagram.png" Style="{StaticResource FooterButton}"/>
+            <ImageButton Source="call.png" Style="{StaticResource FooterButton}"/>
+            <ImageButton Source="email.png" Style="{StaticResource FooterButton}"/>
+            <ImageButton Source="googlemaps.png" Style="{StaticResource FooterButton}"/>
+
+        </FlexLayout>
+
+        <BoxView HeightRequest="25"
+                 BackgroundColor="Transparent"/>
+
+        <Image Source="squound.png"
+               HorizontalOptions="Center"
+               WidthRequest="80"
+               HeightRequest="80"/>
+
+        <BoxView HeightRequest="10"
+                 BackgroundColor="Transparent"/>
+
+        <Label Text="&#169; 2025 Squound LLC. All Rights Reserved."
+               Style="{StaticResource FooterText}"
+               SemanticProperties.Description="Follow us on social media or get in touch"
+               HorizontalOptions="Fill"
+               Padding="10"/>
+
+    </StackLayout>
+
+</ContentView>
