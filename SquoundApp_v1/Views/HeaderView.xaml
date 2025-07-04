@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:ViewsCustom="clr-namespace:SquoundApp_v1.ViewsCustom"
-             x:Class="SquoundApp_v1.ViewsCustom.HeaderView">
+             xmlns:views="clr-namespace:SquoundApp_v1.Views"
+             x:Class="SquoundApp_v1.Views.HeaderView">
     
         <!-- Squound Logo Header and Buttons -->
     <VerticalStackLayout Background="{StaticResource SquoundGradientBrush}">
 
-        <ViewsCustom:SpacerView/>
+        <views:SpacerView/>
         
         <Image Source="squound.png"
                Margin="15"
@@ -15,11 +15,11 @@
                WidthRequest="150"
                HeightRequest="150"/>
 
-        <ViewsCustom:SpacerView/>
+        <views:SpacerView/>
 
-        <ViewsCustom:CategoriesView/>
+        <views:CategoriesView/>
 
-        <ViewsCustom:SpacerView/>
+        <views:SpacerView/>
 
     </VerticalStackLayout>
 

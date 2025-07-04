@@ -103,22 +103,22 @@
 	  <MauiXaml Update="Pages\ProductSearchPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="ViewsCustom\CategoriesView.xaml">
+	  <MauiXaml Update="Views\CategoriesView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="ViewsCustom\FooterView.xaml">
+	  <MauiXaml Update="Views\FooterView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="ViewsCustom\HeaderView.xaml">
+	  <MauiXaml Update="Views\HeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="ViewsCustom\ProductView.xaml">
+	  <MauiXaml Update="Views\ProductView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="ViewsCustom\SearchView.xaml">
+	  <MauiXaml Update="Views\SearchView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="ViewsCustom\SpacerView.xaml">
+	  <MauiXaml Update="Views\SpacerView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

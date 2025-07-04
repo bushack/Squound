@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="SquoundApp_v1.MainPage"
-             xmlns:ViewsCustom="clr-namespace:SquoundApp_v1.ViewsCustom">
+             xmlns:views="clr-namespace:SquoundApp_v1.Views">
 
     <ContentPage.Behaviors>
         <toolkit:StatusBarBehavior StatusBarColor="{StaticResource SquoundRorange}"/>
@@ -14,12 +14,12 @@
     <Grid RowDefinitions="Auto, *"
           ColumnDefinitions="10*, Auto, 10*">
         
-        <ViewsCustom:HeaderView Grid.Row="0"
+        <views:HeaderView Grid.Row="0"
                                 Grid.ColumnSpan="3"/>
 
         <!-- Product Search Entry Box -->
         <!--requires new row of height 50
-        <ViewsCustom:SearchView Grid.Row="5"
+        <views:SearchView Grid.Row="5"
                                 Grid.ColumnSpan="3"/>-->
 
         <!-- Vertical Scrollable Page Begins -->
@@ -109,7 +109,7 @@
                     SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
 
                 <!-- Footer -->
-                <ViewsCustom:FooterView/>
+                <views:FooterView/>
 
             </VerticalStackLayout>
 

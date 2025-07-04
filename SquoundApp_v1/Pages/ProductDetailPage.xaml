@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodel="clr-namespace:SquoundApp_v1.ViewModels"
-             xmlns:ViewsCustom="clr-namespace:SquoundApp_v1.ViewsCustom"
+             xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
+             xmlns:views="clr-namespace:SquoundApp_v1.Views"
              x:Class="SquoundApp_v1.Pages.ProductDetailPage"
-             x:DataType="viewmodel:ProductDetailViewModel"
+             x:DataType="viewmodels:ProductDetailViewModel"
              Title="ProductDetailPage">
 
     <Grid RowDefinitions="Auto, *">
-        <ViewsCustom:HeaderView Grid.Row="0"/>
+        <views:HeaderView Grid.Row="0"/>
 
-    <ScrollView Grid.Row="1">
-        <VerticalStackLayout Padding="20" Spacing="15">
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="15">
 
-            <!-- Product Image -->
+                <!-- Product Image -->
             <Border StrokeThickness="0"
                     BackgroundColor="Transparent"
                     StrokeShape="RoundRectangle 15"
@@ -56,7 +56,10 @@
                    FontSize="16"
                    TextColor="Black"
                    LineBreakMode="WordWrap" />
-        </VerticalStackLayout>
-    </ScrollView>
+
+            <!-- Footer -->
+            <views:FooterView/>
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>

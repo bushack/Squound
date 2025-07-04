@@ -1,4 +1,4 @@
-namespace SquoundApp_v1.ViewsCustom;
+namespace SquoundApp_v1.Views;
 
 public partial class CategoriesView : ContentView
 {
