@@ -10,20 +10,14 @@
 
     <Grid ColumnDefinitions="*, *"
           ColumnSpacing="10"
-          RowDefinitions="Auto, Auto, Auto, *, Auto"
+          RowDefinitions="Auto, *, Auto"
           RowSpacing="0">
 
-        <ViewsCustom:SpacerView Grid.Row="0"
-                        Grid.ColumnSpan="2"/>
-
-        <ViewsCustom:HeaderView Grid.Row="1"
-                        Grid.ColumnSpan="2"/>
-
-        <ViewsCustom:SpacerView Grid.Row="2"
-                        Grid.ColumnSpan="2"/>
+        <ViewsCustom:HeaderView Grid.Row="0"
+                                Grid.ColumnSpan="2"/>
 
         <CollectionView BackgroundColor="Transparent"
-                        Grid.Row="3"
+                        Grid.Row="1"
                         Grid.ColumnSpan="2"
                         ItemsSource="{Binding ProductList}"
                         SelectionMode="None">
@@ -78,13 +72,13 @@
                            HorizontalOptions="Center"
                            VerticalOptions="Center"/>
 
-        <Button Grid.Row="4"
+        <Button Grid.Row="2"
                 Grid.Column="0"
                 Margin="5"
                 Text="Get Products"
                 Command="{Binding GetProductsCommand}"/>
         
-        <Button Grid.Row="4"
+        <Button Grid.Row="2"
                 Grid.Column="1"
                 Margin="5"
                 Text="Clear"

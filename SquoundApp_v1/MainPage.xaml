@@ -11,23 +11,10 @@
 
     <!-- Auto allows the content to fill the available space -->
     <!-- Star ..?-->
-    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, *"
+    <Grid RowDefinitions="Auto, *"
           ColumnDefinitions="10*, Auto, 10*">
-
-        <ViewsCustom:SpacerView Grid.Row="0"
-                                Grid.ColumnSpan="3"/>
-
-        <ViewsCustom:HeaderView Grid.Row="1"
-                                Grid.ColumnSpan="3"/>
         
-        <ViewsCustom:SpacerView Grid.Row="2"
-                                Grid.ColumnSpan="3"/>
-
-        <!-- Horizontal Product Categories ScrollView -->
-        <ViewsCustom:CategoriesView Grid.Row="3"
-                                    Grid.ColumnSpan="3"/>
-
-        <ViewsCustom:SpacerView Grid.Row="4"
+        <ViewsCustom:HeaderView Grid.Row="0"
                                 Grid.ColumnSpan="3"/>
 
         <!-- Product Search Entry Box -->
@@ -36,7 +23,7 @@
                                 Grid.ColumnSpan="3"/>-->
 
         <!-- Vertical Scrollable Page Begins -->
-        <ScrollView Grid.Row="5"
+        <ScrollView Grid.Row="1"
                     Grid.ColumnSpan="3">
 
             <VerticalStackLayout>
