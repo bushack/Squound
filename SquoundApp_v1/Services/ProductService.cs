@@ -13,7 +13,7 @@ namespace SquoundApp_v1.Services
     {
         HttpClient httpClient;
 
-        List<Product> productList = new();
+        List<ProductModel> productList = new();
 
         public ProductService()
         {
@@ -27,7 +27,7 @@ namespace SquoundApp_v1.Services
             //httpClient.BaseAddress = new Uri("https://api.example.com/");
         }
 
-        public async Task<List<Product>> Clear()
+        public async Task<List<ProductModel>> Clear()
         {
             // Check if the product list is already populated
             if (productList?.Count > 0)
@@ -36,7 +36,7 @@ namespace SquoundApp_v1.Services
             return productList;
         }
 
-        public async Task<List<Product>> GetProductsHTTP()
+        public async Task<List<ProductModel>> GetProductsHTTP()
         {
             if (productList?.Count > 0)
                 return productList;
@@ -46,13 +46,13 @@ namespace SquoundApp_v1.Services
 
             if (response.IsSuccessStatusCode)
             {
-                productList = await response.Content.ReadFromJsonAsync<List<Product>>();
+                productList = await response.Content.ReadFromJsonAsync<List<ProductModel>>();
             }
 
             return productList;
         }
 
-        public async Task<List<Product>> GetProductsEmbedded()
+        public async Task<List<ProductModel>> GetProductsEmbedded()
         {
             if (productList?.Count > 0)
                 return productList;
@@ -62,7 +62,7 @@ namespace SquoundApp_v1.Services
             using var stream = await FileSystem.OpenAppPackageFileAsync("Resources/Raw/products.json");
             using var reader = new StreamReader(stream);
             var contents = await reader.ReadToEndAsync();
-            productList = JsonSerializer.Deserialize<List<Product>>(contents);
+            productList = JsonSerializer.Deserialize<List<ProductModel>>(contents);
 
             return productList;
         }

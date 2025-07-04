@@ -1,12 +1,57 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:SquoundApp_v1.ViewModels"
              x:Class="SquoundApp_v1.Pages.ProductDetailPage"
+             x:DataType="viewmodel:ProductDetailViewModel"
              Title="ProductDetailPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="ProductDetailPage"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Product Image -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="Transparent"
+                    StrokeShape="RoundRectangle 15"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center">
+                <Image Source="{Binding Product.Image}"
+                       Aspect="AspectFill"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Fill" />
+            </Border>
+
+            <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
+            <Grid ColumnDefinitions="*, Auto"
+                  RowDefinitions="Auto"
+                  Padding="0,10,0,0">
+
+                <!-- Stack Name + Manufacturer (Left Column) -->
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="{Binding Product.Name}"
+                           FontSize="30"
+                           FontAttributes="Bold"
+                           TextColor="Black" />
+                    <Label Text="{Binding Product.Manufacturer}"
+                           FontSize="20"
+                           TextColor="Gray" />
+                </VerticalStackLayout>
+
+                <!-- Price Label (Right Column) -->
+                <Label Text="{Binding Product.Price}"
+                       Grid.Column="1"
+                       VerticalOptions="Center"
+                       FontSize="50"
+                       FontAttributes="Bold"
+                       TextColor="Black"
+                       Margin="15,0,0,0" />
+            </Grid>
+
+            <!-- Description Below -->
+            <Label Text="{Binding Product.Description}"
+                   FontSize="16"
+                   TextColor="Black"
+                   LineBreakMode="WordWrap" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

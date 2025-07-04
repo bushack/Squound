@@ -10,4 +10,17 @@ public partial class ProductSearchPage : ContentPage
 
 		BindingContext = viewModel;
     }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        // This method is called when the page is navigated to.
+        // You can use it to perform any actions that need to be done when the page is displayed.
+        // For example, you can update the title of the page based on the product name.
+        base.OnNavigatedTo(args);
+
+        if (BindingContext is ProductSearchViewModel viewModel && viewModel.ProductList != null)
+        {
+            viewModel.GetProductsCommand.Execute(null);
+        }
+    }
 }

@@ -25,11 +25,11 @@
         <CollectionView BackgroundColor="Transparent"
                         Grid.Row="3"
                         Grid.ColumnSpan="2"
-                        ItemsSource="{Binding Products}"
+                        ItemsSource="{Binding ProductList}"
                         SelectionMode="None">
 
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:Product">
+                <DataTemplate x:DataType="model:ProductModel">
                     <Grid Padding="10">
                         <Border BackgroundColor="Pink">
                             <!-- The border defines a tappable area that allows the user to access a specific product -->
@@ -60,7 +60,7 @@
                             <Label Grid.Row="1" Grid.Column="1"
                                     Text="{Binding Manufacturer}" FontSize="16"/>
                             <Label Grid.Row="2" Grid.Column="1"
-                                    Text="{Binding Details}" FontSize="16"/>
+                                    Text="{Binding Description}" FontSize="16"/>
                             <Label Grid.Row="3" Grid.Column="1"
                                     Text="{Binding Price}" FontSize="24"/>
                             </Grid>

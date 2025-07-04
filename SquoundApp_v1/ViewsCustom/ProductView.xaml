@@ -8,10 +8,10 @@
 
     <CarouselView>
         <CarouselView.ItemsSource>
-            <x:Array Type="{x:Type model:Product}"/>
+            <x:Array Type="{x:Type model:ProductModel}"/>
         </CarouselView.ItemsSource>
         <CarouselView.ItemTemplate>
-            <DataTemplate x:DataType="model:Product">
+            <DataTemplate x:DataType="model:ProductModel">
                 <VerticalStackLayout>
                     <Image Source="{Binding Image}"
                            WidthRequest="500"

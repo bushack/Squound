@@ -10,9 +10,24 @@
         <BoxView HeightRequest="10"
                  BackgroundColor="Transparent"/>
         
-        <Button Text="About us"
+        <!--<Button Text="About us"
                 HorizontalOptions="Start"
-                Style="{StaticResource TextButton}"/>
+                Style="{StaticResource TextButton}"/>-->
+
+        <Border BackgroundColor="Transparent">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10"/>
+            </Border.StrokeShape>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.GoToAboutUsCommand}"
+                                    CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext}">
+                </TapGestureRecognizer>
+            </Border.GestureRecognizers>
+            <Label Text="Learn more about us"
+                   Style="{StaticResource FooterText}"
+                   SemanticProperties.Description="Learn more about us"
+                   HorizontalOptions="Fill"/>
+        </Border>
 
         <Button Text="Sell to us"
                 HorizontalOptions="Start"

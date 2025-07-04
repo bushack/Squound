@@ -13,7 +13,7 @@ namespace SquoundApp_v1.ViewModels
 {
     public partial class ProductSearchViewModel : BaseViewModel
     {
-        public ObservableCollection<Product> Products { get; } = new();
+        public ObservableCollection<ProductModel> ProductList { get; } = new();
 
         ProductService productService;
 
@@ -25,7 +25,7 @@ namespace SquoundApp_v1.ViewModels
         }
 
         [RelayCommand]
-        async Task GoToDetailsAsync(Product product)
+        async Task GoToDetailsAsync(ProductModel product)
         {
             if (product is null)
                 return;
@@ -62,7 +62,7 @@ namespace SquoundApp_v1.ViewModels
                 // If the product service has a method to fetch products via HTTP, we call that.
                 // If you want to fetch products from an embedded JSON file instead, you can call:
                 // var products = await productService.GetProductsEmbedded();
-                var products = await productService.GetProductsHTTP();
+                var productList = await productService.GetProductsHTTP();
 
                 // Clear the existing products in the ObservableCollection.
                 // This ensures that the collection is updated with the new products fetched.
@@ -75,8 +75,8 @@ namespace SquoundApp_v1.ViewModels
                 // will automatically notify the UI to update, making it easy to display dynamic data.
                 // This is particularly useful in MVVM (Model-View-ViewModel) patterns where the ViewModel
                 // holds the data and the View binds to it.
-                Products.Clear();
-                foreach (var product in products)
+                ProductList.Clear();
+                foreach (var product in productList)
                 {
                     // Add each product to the ObservableCollection.
                     // This will trigger the UI to update and display the new products.
@@ -84,7 +84,7 @@ namespace SquoundApp_v1.ViewModels
                     // so when we add items to it, the UI will automatically reflect those changes.
                     // ObservableRangeCollection would more efficient if you want to add multiple items at once,
                     // and delay the UI update until all items are added.
-                    Products.Add(product);
+                    ProductList.Add(product);
                 }
             }
             catch (Exception ex)
@@ -111,7 +111,7 @@ namespace SquoundApp_v1.ViewModels
             // or when the application needs to refresh the data.
             // The ObservableCollection will notify the UI that it has been cleared,
             // so any bound UI elements will update accordingly.
-            Products.Clear();
+            ProductList.Clear();
         }
     }
 }
