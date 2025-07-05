@@ -14,8 +14,9 @@ namespace SquoundApp_v1
             // For example, you can navigate to ProductDetailPage using the route name "ProductDetailPage".
             // The route name should match the name of the page class.
             // nameof(ProductDetailPage) == "ProductDetailPage"
-            Routing.RegisterRoute(nameof(ProductSearchPage), typeof(ProductSearchPage));
+            Routing.RegisterRoute(nameof(AboutUsPage), typeof(AboutUsPage));
             Routing.RegisterRoute(nameof(ProductDetailPage), typeof(ProductDetailPage));
+            Routing.RegisterRoute(nameof(ProductSearchPage), typeof(ProductSearchPage));
         }
     }
 }

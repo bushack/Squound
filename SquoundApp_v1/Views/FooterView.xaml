@@ -10,7 +10,8 @@
         
         <Button Text="About us"
                 HorizontalOptions="Start"
-                Style="{StaticResource TextButton}"/>
+                Style="{StaticResource TextButton}"
+                Command="{Binding GoToAboutUsCommand}"/>
 
         <!--<Border BackgroundColor="Transparent">
             <Border.StrokeShape>
@@ -71,7 +72,7 @@
                  BackgroundColor="Transparent"/>
 
         <Label Text="&#169; 2025 Squound LLC. All Rights Reserved."
-               Style="{StaticResource FooterText}"
+               Style="{StaticResource Footer}"
                SemanticProperties.Description="Follow us on social media or get in touch"
                HorizontalOptions="Fill"
                Padding="10"/>

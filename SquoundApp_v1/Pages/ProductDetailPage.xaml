@@ -19,9 +19,9 @@
                     StrokeShape="RoundRectangle 15"
                     HorizontalOptions="Fill"
                     VerticalOptions="Center"
-                    Margin="20, 20, 20, 40">
+                    Margin="20, 20, 20, 20">
                 <Image Source="{Binding Product.Image}"
-                       Aspect="AspectFill"
+                       Aspect="AspectFit"
                        HorizontalOptions="Fill"
                        VerticalOptions="Fill"/>
             </Border>
@@ -29,34 +29,25 @@
             <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
             <Grid ColumnDefinitions="*, Auto"
                   RowDefinitions="Auto"
-                  Padding="20,0,20,20">
+                  Padding="20,0,20,40">
 
                 <!-- Stack Name + Manufacturer (Left Column) -->
                 <VerticalStackLayout Grid.Column="0">
-                    <Label Text="{Binding Product.Name}"
-                           FontSize="50"
-                           TextColor="Black"
-                           FontFamily="SuperChips"/>
-                    <Label Text="{Binding Product.Manufacturer}"
-                           FontSize="20"
-                           TextColor="Gray" />
+                    <Label Style="{StaticResource Headline}"
+                           Text="{Binding Product.Name}"/>
+                    <Label Style="{StaticResource SubHeadline}"
+                           Text="{Binding Product.Manufacturer}"/>
                 </VerticalStackLayout>
 
                 <!-- Price Label (Right Column) -->
-                <Label Text="{Binding Product.Price}"
-                       Grid.Column="1"
-                       VerticalOptions="Start"
-                       FontSize="50"
-                       FontFamily="SuperChips"
-                       TextColor="Black"
-                       Margin="0,0,0,0" />
+                <Label Style="{StaticResource PriceStyle}"
+                       Text="{Binding Product.Price}"
+                       Grid.Column="1"/>
             </Grid>
 
             <!-- Description Below -->
-            <Label Text="{Binding Product.Description}"
-                   FontSize="16"
-                   TextColor="Black"
-                   LineBreakMode="WordWrap"
+            <Label Style="{StaticResource BodyStyle}"
+                   Text="{Binding Product.Description}"
                    Padding="20, 0, 20, 100"/>
 
             <!-- Footer -->

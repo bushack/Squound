@@ -19,7 +19,7 @@
                            Aspect="AspectFill"/>
                     <Label Text="{Binding Name}" FontSize="24"/>
                     <Label Text="{Binding Manufacturer}" FontSize="16"/>
-                    <Label Text="{Binding Details}" FontSize="16"/>
+                    <Label Text="{Binding Description}" FontSize="16"/>
                     <Label Text="{Binding Price}" FontSize="24"/>
                 </VerticalStackLayout>
             </DataTemplate>
