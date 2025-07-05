@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
              xmlns:views="clr-namespace:SquoundApp_v1.Views"
+             xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
              x:Class="SquoundApp_v1.Pages.ProductDetailPage"
              x:DataType="viewmodels:ProductDetailViewModel"
              Title="ProductDetailPage">
@@ -11,31 +11,32 @@
         <views:HeaderView Grid.Row="0"/>
 
         <ScrollView Grid.Row="1">
-            <VerticalStackLayout Padding="20" Spacing="15">
+            <VerticalStackLayout>
 
-                <!-- Product Image -->
+             <!-- Product Image -->
             <Border StrokeThickness="0"
                     BackgroundColor="Transparent"
                     StrokeShape="RoundRectangle 15"
                     HorizontalOptions="Fill"
-                    VerticalOptions="Center">
+                    VerticalOptions="Center"
+                    Margin="20, 20, 20, 40">
                 <Image Source="{Binding Product.Image}"
                        Aspect="AspectFill"
                        HorizontalOptions="Fill"
-                       VerticalOptions="Fill" />
+                       VerticalOptions="Fill"/>
             </Border>
 
             <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
             <Grid ColumnDefinitions="*, Auto"
                   RowDefinitions="Auto"
-                  Padding="0,10,0,0">
+                  Padding="20,0,20,20">
 
                 <!-- Stack Name + Manufacturer (Left Column) -->
                 <VerticalStackLayout Grid.Column="0">
                     <Label Text="{Binding Product.Name}"
-                           FontSize="30"
-                           FontAttributes="Bold"
-                           TextColor="Black" />
+                           FontSize="50"
+                           TextColor="Black"
+                           FontFamily="SuperChips"/>
                     <Label Text="{Binding Product.Manufacturer}"
                            FontSize="20"
                            TextColor="Gray" />
@@ -44,21 +45,23 @@
                 <!-- Price Label (Right Column) -->
                 <Label Text="{Binding Product.Price}"
                        Grid.Column="1"
-                       VerticalOptions="Center"
+                       VerticalOptions="Start"
                        FontSize="50"
-                       FontAttributes="Bold"
+                       FontFamily="SuperChips"
                        TextColor="Black"
-                       Margin="15,0,0,0" />
+                       Margin="0,0,0,0" />
             </Grid>
 
             <!-- Description Below -->
             <Label Text="{Binding Product.Description}"
                    FontSize="16"
                    TextColor="Black"
-                   LineBreakMode="WordWrap" />
+                   LineBreakMode="WordWrap"
+                   Padding="20, 0, 20, 100"/>
 
             <!-- Footer -->
             <views:FooterView/>
+                
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

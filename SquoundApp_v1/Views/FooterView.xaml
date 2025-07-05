@@ -3,31 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SquoundApp_v1.Views.FooterView">
 
-<!-- https://learn.microsoft.com/en-us/shows/building-apps-with-xaml-and-dotnet-maui/create-reusable-ui-building-apps-with-xaml-and-dotnet-maui -->
-
     <StackLayout Background="{StaticResource SquoundGradientBrush}">
 
         <BoxView HeightRequest="10"
                  BackgroundColor="Transparent"/>
         
-        <!--<Button Text="About us"
+        <Button Text="About us"
                 HorizontalOptions="Start"
-                Style="{StaticResource TextButton}"/>-->
+                Style="{StaticResource TextButton}"/>
 
-        <Border BackgroundColor="Transparent">
+        <!--<Border BackgroundColor="Transparent">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10"/>
             </Border.StrokeShape>
             <Border.GestureRecognizers>
-                <!--<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.GoToAboutUsCommand}"
+                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.GoToAboutUsCommand}"
                                     CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext}">
-                </TapGestureRecognizer>-->
+                </TapGestureRecognizer>
             </Border.GestureRecognizers>
             <Label Text="Learn more about us"
                    Style="{StaticResource FooterText}"
                    SemanticProperties.Description="Learn more about us"
                    HorizontalOptions="Fill"/>
-        </Border>
+        </Border>-->
 
         <Button Text="Sell to us"
                 HorizontalOptions="Start"

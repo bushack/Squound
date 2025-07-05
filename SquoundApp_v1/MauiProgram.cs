@@ -17,6 +17,7 @@ namespace SquoundApp_v1
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("micross.ttf", "MicrosoftSansSerif");
+                    fonts.AddFont("SuperChips.ttf", "SuperChips");
                 });
 
             // Register services and view models
