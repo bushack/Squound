@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SquoundApp_v1.Models
+﻿namespace SquoundApp_v1.Models
 {
     public class AboutUsModel
     {
@@ -12,5 +6,14 @@ namespace SquoundApp_v1.Models
         public string Headline { get; set; }
         public string SubHeadline { get; set; }
         public string Text { get; set; }
+
+        public AboutUsModel()
+        {
+            // Default values.
+            Image = "squound_logo.png";
+            Headline = "Oops!";
+            SubHeadline = "";
+            Text = "Don't you just hate it when you can't find what you're looking for?";
+        }
     }
 }

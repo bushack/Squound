@@ -9,29 +9,28 @@
 
         <BoxView HeightRequest="10"
                  BackgroundColor="Transparent"/>
-        
-        <!--<Button Text="About us"
-                HorizontalOptions="Start"
-                Style="{StaticResource TextButton}"
-                Command="{Binding GoToPageCommand}"/>-->
 
+        <!-- About Us Button -->
         <Border BackgroundColor="Transparent"
                 StrokeThickness="0">
             <Border.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToAboutUsPageCommand}"/>
+                <TapGestureRecognizer Command="{Binding GoToAboutPageCommand}"/>
             </Border.GestureRecognizers>
             <Label Text="About us"
                    Style="{StaticResource FooterTextButton}"
                    SemanticProperties.Description="Learn more about us"/>
         </Border>
 
-        <Button Text="Sell to us"
-                HorizontalOptions="Start"
-                Style="{StaticResource TextButton}"/>
-
-        <Button Text="Something else"
-                HorizontalOptions="Start"
-                Style="{StaticResource TextButton}"/>
+        <!-- Sell to us Button -->
+        <Border BackgroundColor="Transparent"
+                StrokeThickness="0">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GoToAboutPageCommand}"/>
+            </Border.GestureRecognizers>
+            <Label Text="Sell to us"
+                   Style="{StaticResource FooterTextButton}"
+                   SemanticProperties.Description="Sell your items to us"/>
+        </Border>
 
         <BoxView HeightRequest="10"
                  BackgroundColor="Transparent"/>
@@ -49,11 +48,11 @@
                     VerticalOptions="Center"
                     JustifyContent="SpaceEvenly">
 
-            <ImageButton Source="facebook.png" Style="{StaticResource FooterImageButton}"/>
-            <ImageButton Source="instagram.png" Style="{StaticResource FooterImageButton}"/>
-            <ImageButton Source="call.png" Style="{StaticResource FooterImageButton}"/>
-            <ImageButton Source="email.png" Style="{StaticResource FooterImageButton}"/>
-            <ImageButton Source="googlemaps.png" Style="{StaticResource FooterImageButton}"/>
+            <ImageButton Source="facebook.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Facebook"/>
+            <ImageButton Source="instagram.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Instagram"/>
+            <ImageButton Source="call.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Call"/>
+            <ImageButton Source="email.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="eMail"/>
+            <ImageButton Source="googlemaps.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Google Maps"/>
 
         </FlexLayout>
 

@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui;
 using SquoundApp_v1.Pages;
 using SquoundApp_v1.Services;
+using SquoundApp_v1.Utilities;
 using SquoundApp_v1.ViewModels;
 using SquoundApp_v1.Views;
 
@@ -17,10 +18,10 @@ namespace SquoundApp_v1
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("Aliquam.ttf", "HeadlineFont");
-                    fonts.AddFont("Aliquam.ttf", "BodyFont");
-                    fonts.AddFont("micross.ttf", "FooterFont");
-                    fonts.AddFont("Aliquam.ttf", "PriceFont");
+                    fonts.AddFont("BarlowSemiCondensed-Regular.ttf", "HeadlineFont");
+                    fonts.AddFont("PublicSans-VariableFont_wght.ttf", "BodyFont");
+                    fonts.AddFont("PublicSans-VariableFont_wght.ttf", "FooterFont");
+                    fonts.AddFont("BarlowSemiCondensed-Regular.ttf", "PriceFont");
                 });
 
             // Register services and view models
@@ -32,12 +33,14 @@ namespace SquoundApp_v1
             // which means there will be only one instance of ProductSearchViewModel throughout the app.
             // ProductDetailViewModel is registered as a transient view model,
             // which means a new instance will be created each time it is requested.
+            builder.Services.AddSingleton<HttpService>();
+
             builder.Services.AddSingleton<AboutUsService>();
             builder.Services.AddTransient<AboutUsViewModel>();
             builder.Services.AddTransient<AboutUsPage>();
 
-            builder.Services.AddSingleton<FooterView>();
             builder.Services.AddSingleton<FooterViewModel>();
+            builder.Services.AddSingleton<FooterView>();
 
             builder.Services.AddSingleton<ProductService>();
 

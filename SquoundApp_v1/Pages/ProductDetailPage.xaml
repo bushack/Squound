@@ -28,8 +28,7 @@
 
             <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
             <Grid ColumnDefinitions="*, Auto"
-                  RowDefinitions="Auto"
-                  Padding="20,0,20,40">
+                  RowDefinitions="Auto">
 
                 <!-- Stack Name + Manufacturer (Left Column) -->
                 <VerticalStackLayout Grid.Column="0">
