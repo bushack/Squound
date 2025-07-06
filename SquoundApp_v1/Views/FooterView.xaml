@@ -1,32 +1,29 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SquoundApp_v1.Views.FooterView">
+             xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
+             x:Class="SquoundApp_v1.Views.FooterView"
+             x:DataType="viewmodels:FooterViewModel">
 
     <StackLayout Background="{StaticResource SquoundGradientBrush}">
 
         <BoxView HeightRequest="10"
                  BackgroundColor="Transparent"/>
         
-        <Button Text="About us"
+        <!--<Button Text="About us"
                 HorizontalOptions="Start"
                 Style="{StaticResource TextButton}"
-                Command="{Binding GoToAboutUsCommand}"/>
+                Command="{Binding GoToPageCommand}"/>-->
 
-        <!--<Border BackgroundColor="Transparent">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10"/>
-            </Border.StrokeShape>
+        <Border BackgroundColor="Transparent"
+                StrokeThickness="0">
             <Border.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.GoToAboutUsCommand}"
-                                    CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext}">
-                </TapGestureRecognizer>
+                <TapGestureRecognizer Command="{Binding GoToAboutUsPageCommand}"/>
             </Border.GestureRecognizers>
-            <Label Text="Learn more about us"
-                   Style="{StaticResource FooterText}"
-                   SemanticProperties.Description="Learn more about us"
-                   HorizontalOptions="Fill"/>
-        </Border>-->
+            <Label Text="About us"
+                   Style="{StaticResource FooterTextButton}"
+                   SemanticProperties.Description="Learn more about us"/>
+        </Border>
 
         <Button Text="Sell to us"
                 HorizontalOptions="Start"
@@ -52,11 +49,11 @@
                     VerticalOptions="Center"
                     JustifyContent="SpaceEvenly">
 
-            <ImageButton Source="facebook.png" Style="{StaticResource FooterButton}"/>
-            <ImageButton Source="instagram.png" Style="{StaticResource FooterButton}"/>
-            <ImageButton Source="call.png" Style="{StaticResource FooterButton}"/>
-            <ImageButton Source="email.png" Style="{StaticResource FooterButton}"/>
-            <ImageButton Source="googlemaps.png" Style="{StaticResource FooterButton}"/>
+            <ImageButton Source="facebook.png" Style="{StaticResource FooterImageButton}"/>
+            <ImageButton Source="instagram.png" Style="{StaticResource FooterImageButton}"/>
+            <ImageButton Source="call.png" Style="{StaticResource FooterImageButton}"/>
+            <ImageButton Source="email.png" Style="{StaticResource FooterImageButton}"/>
+            <ImageButton Source="googlemaps.png" Style="{StaticResource FooterImageButton}"/>
 
         </FlexLayout>
 

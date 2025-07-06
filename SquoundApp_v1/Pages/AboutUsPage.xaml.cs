@@ -9,5 +9,7 @@ public partial class AboutUsPage : ContentPage
 		InitializeComponent();
 
 		BindingContext = viewModel;
+
+		_ = viewModel.InitializeAsync();
     }
 }

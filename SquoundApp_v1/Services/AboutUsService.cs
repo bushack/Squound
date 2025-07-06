@@ -29,7 +29,7 @@ namespace SquoundApp_v1.Services
 
         public async Task<AboutUsModel> GetHTTP()
         {
-            var response = await httpClient.GetAsync("https://raw.githubusercontent.com/bushack/products/refs/heads/main/aboutus.json");
+            var response = await httpClient.GetAsync("https://raw.githubusercontent.com/bushack/files/refs/heads/main/about.json");
 
             if (response.IsSuccessStatusCode)
             {

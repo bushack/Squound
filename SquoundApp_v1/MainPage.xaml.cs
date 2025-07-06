@@ -1,16 +1,12 @@
-﻿using SquoundApp_v1.ViewModels;
-
-namespace SquoundApp_v1
+﻿namespace SquoundApp_v1
 {
     public partial class MainPage : ContentPage
     {
         int count = 0;
 
-        public MainPage(AboutUsViewModel viewModel)
+        public MainPage()
         {
             InitializeComponent();
-
-            BindingContext = viewModel;
         }
 
         private void OnCounterClicked(object? sender, EventArgs e)

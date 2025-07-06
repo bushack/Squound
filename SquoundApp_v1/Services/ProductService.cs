@@ -42,7 +42,7 @@ namespace SquoundApp_v1.Services
                 return productList;
 
             // Else
-            var response = await httpClient.GetAsync("https://raw.githubusercontent.com/bushack/products/refs/heads/main/products.json");
+            var response = await httpClient.GetAsync("https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json");
 
             if (response.IsSuccessStatusCode)
             {

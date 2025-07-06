@@ -47,8 +47,8 @@
         <Setter Property="ContentLayout" Value="Left"/>
     </Style>
 
-    <!-- FooterButton -->
-    <Style TargetType="ImageButton" x:Key="FooterButton">
+    <!-- FooterImageButton -->
+    <Style TargetType="ImageButton" x:Key="FooterImageButton">
         <Setter Property="Opacity" Value="1" />
         <Setter Property="BorderColor" Value="Transparent"/>
         <Setter Property="BorderWidth" Value="0"/>
@@ -57,6 +57,18 @@
         <Setter Property="VerticalOptions" Value="Center"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="CornerRadius" Value="10"/>
+    </Style>
+
+    <!-- FooterTextButton -->
+    <Style TargetType="Label" x:Key="FooterTextButton">
+        <Setter Property="TextColor" Value="{StaticResource White}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="BodyFont"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="HorizontalOptions" Value="Start"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
+        <Setter Property="Padding" Value="14"/>
     </Style>
 
     <!-- Horizontal ScrollView -->
@@ -228,6 +240,13 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
     </Style>
 
+    <Style TargetType="Image" x:Key="MainImage">
+        <Setter Property="Aspect" Value="AspectFit"/>
+        <Setter Property="Margin" Value="0, 0, 0, 20"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
+    </Style>
+
     <!-- Headline Labels display product names -->
     <Style TargetType="Label" x:Key="Headline">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
@@ -236,6 +255,7 @@
         <Setter Property="FontAttributes" Value="None" />
         <Setter Property="HorizontalOptions" Value="Start" />
         <Setter Property="HorizontalTextAlignment" Value="Start" />
+        <Setter Property="Margin" Value="20, 0, 20, 5" />
     </Style>
 
     <!-- Subheadline Labels display product manufacturer names -->
@@ -246,6 +266,7 @@
         <Setter Property="FontAttributes" Value="None" />
         <Setter Property="HorizontalOptions" Value="Start" />
         <Setter Property="HorizontalTextAlignment" Value="Start" />
+        <Setter Property="Margin" Value="20, 0, 20, 30" />
     </Style>
 
     <!-- Labels containing the main body of text on a page -->
@@ -257,6 +278,7 @@
         <Setter Property="LineBreakMode" Value="WordWrap" />
         <Setter Property="HorizontalOptions" Value="Start" />
         <Setter Property="HorizontalTextAlignment" Value="Start" />
+        <Setter Property="Margin" Value="20, 0, 20, 50" />
     </Style>
 
     <Style TargetType="Label" x:Key="PriceStyle">

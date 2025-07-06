@@ -47,8 +47,7 @@
 
             <!-- Description Below -->
             <Label Style="{StaticResource BodyStyle}"
-                   Text="{Binding Product.Description}"
-                   Padding="20, 0, 20, 100"/>
+                   Text="{Binding Product.Description}"/>
 
             <!-- Footer -->
             <views:FooterView/>

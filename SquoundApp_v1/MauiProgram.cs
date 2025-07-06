@@ -3,6 +3,7 @@ using CommunityToolkit.Maui;
 using SquoundApp_v1.Pages;
 using SquoundApp_v1.Services;
 using SquoundApp_v1.ViewModels;
+using SquoundApp_v1.Views;
 
 namespace SquoundApp_v1
 {
@@ -32,16 +33,21 @@ namespace SquoundApp_v1
             // ProductDetailViewModel is registered as a transient view model,
             // which means a new instance will be created each time it is requested.
             builder.Services.AddSingleton<AboutUsService>();
+            builder.Services.AddTransient<AboutUsViewModel>();
+            builder.Services.AddTransient<AboutUsPage>();
+
+            builder.Services.AddSingleton<FooterView>();
+            builder.Services.AddSingleton<FooterViewModel>();
+
             builder.Services.AddSingleton<ProductService>();
 
-            builder.Services.AddSingleton<AboutUsViewModel>();
             builder.Services.AddSingleton<ProductSearchViewModel>();
             builder.Services.AddTransient<ProductDetailViewModel>();
 
             builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<AboutUsPage>();
             builder.Services.AddSingleton<ProductSearchPage>();
             builder.Services.AddTransient<ProductDetailPage>();
+
 
 #if DEBUG
             builder.Logging.AddDebug();
