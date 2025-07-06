@@ -2,9 +2,9 @@ using SquoundApp_v1.ViewModels;
 
 namespace SquoundApp_v1.Pages;
 
-public partial class AboutUsPage : ContentPage
+public partial class AboutPage : ContentPage
 {
-	public AboutUsPage(AboutUsViewModel viewModel)
+	public AboutPage(AboutViewModel viewModel)
 	{
 		InitializeComponent();
 

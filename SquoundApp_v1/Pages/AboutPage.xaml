@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
              xmlns:views="clr-namespace:SquoundApp_v1.Views"
-             x:Class="SquoundApp_v1.Pages.AboutUsPage"
-             x:DataType="viewmodels:AboutUsViewModel"
-             Title="AboutUsPage">
+             x:Class="SquoundApp_v1.Pages.AboutPage"
+             x:DataType="viewmodels:AboutViewModel"
+             Title="AboutPage">
     
     <ScrollView>
         <VerticalStackLayout>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SquoundApp_v1.Models;
 using SquoundApp_v1.Pages;
@@ -12,14 +6,14 @@ using SquoundApp_v1.Services;
 
 namespace SquoundApp_v1.ViewModels
 {
-    public partial class AboutUsViewModel : BaseViewModel
+    public partial class AboutViewModel : BaseViewModel
     {
         [ObservableProperty]
-        private AboutUsModel model;
+        private AboutModel model;
 
         private readonly AboutUsService service;
 
-        public AboutUsViewModel(AboutUsService service)
+        public AboutViewModel(AboutUsService service)
         {
             this.service = service;
 
@@ -61,7 +55,7 @@ namespace SquoundApp_v1.ViewModels
                 await FetchDataAsync();
 
             // This is the call that initiates the change of page.
-            await Shell.Current.GoToAsync(nameof(AboutUsPage));
+            await Shell.Current.GoToAsync(nameof(AboutPage));
         }
 
         /*

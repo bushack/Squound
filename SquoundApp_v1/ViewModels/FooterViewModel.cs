@@ -14,14 +14,14 @@ namespace SquoundApp_v1.ViewModels
         async Task GoToAboutPageAsync()
         {
             // This is the call that initiates the change of page.
-            await Shell.Current.GoToAsync(nameof(AboutUsPage));
+            await Shell.Current.GoToAsync(nameof(AboutPage));
         }
 
         [RelayCommand]
         async Task GoToSellPageAsync()
         {
             // This is the call that initiates the change of page.
-            await Shell.Current.GoToAsync(nameof(AboutUsPage));
+            await Shell.Current.GoToAsync(nameof(AboutPage));
         }
     }
 }

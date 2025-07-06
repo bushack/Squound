@@ -1,19 +1,19 @@
 ﻿namespace SquoundApp_v1.Models
 {
-    public class AboutUsModel
+    public class AboutModel
     {
         public string Image { get; set; }
         public string Headline { get; set; }
         public string SubHeadline { get; set; }
         public string Text { get; set; }
 
-        public AboutUsModel()
+        public AboutModel()
         {
             // Default values.
             Image = "squound_logo.png";
-            Headline = "Oops!";
-            SubHeadline = "";
-            Text = "Don't you just hate it when you can't find what you're looking for?";
+            Headline = "Sorry!";
+            SubHeadline = "It's not you - it's us";
+            Text = "We can't find what we're looking for.";
         }
     }
 }

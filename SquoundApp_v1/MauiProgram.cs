@@ -36,8 +36,8 @@ namespace SquoundApp_v1
             builder.Services.AddSingleton<HttpService>();
 
             builder.Services.AddSingleton<AboutUsService>();
-            builder.Services.AddTransient<AboutUsViewModel>();
-            builder.Services.AddTransient<AboutUsPage>();
+            builder.Services.AddTransient<AboutViewModel>();
+            builder.Services.AddTransient<AboutPage>();
 
             builder.Services.AddSingleton<FooterViewModel>();
             builder.Services.AddSingleton<FooterView>();
