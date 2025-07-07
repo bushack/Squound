@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
+             xmlns:views="clr-namespace:SquoundApp_v1.Views"
+             x:Class="SquoundApp_v1.Pages.SellPage"
+             x:DataType="viewmodels:SellViewModel"
+             Title="SellPage">
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <views:HeaderView/>
+            <Image Source="{Binding Model.Image}"
+                   Style="{StaticResource MainImage}"/>
+            <Label Text="{Binding Model.Headline}"
+                   Style="{StaticResource Headline}"/>
+            <Label Text="{Binding Model.SubHeadline}"
+                   Style="{StaticResource SubHeadline}"/>
+            <Label Text="{Binding Model.Text}"
+                   Style="{StaticResource BodyStyle}" />
+            <views:FooterView/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

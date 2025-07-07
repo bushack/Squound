@@ -21,7 +21,7 @@ namespace SquoundApp_v1.ViewModels
         async Task GoToSellPageAsync()
         {
             // This is the call that initiates the change of page.
-            await Shell.Current.GoToAsync(nameof(AboutPage));
+            await Shell.Current.GoToAsync(nameof(SellPage));
         }
     }
 }

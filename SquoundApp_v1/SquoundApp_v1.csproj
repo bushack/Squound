@@ -39,17 +39,14 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-
-    <!-- Enable XAML compilation for Maui -->
-    <!-- <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation> -->
   </PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
-    <MauiIcon Include="Resources\AppIcon\squoundlogo.svg" />
+    <MauiIcon Include="Resources\AppIcon\squound_icon.png" BaseSize="512,512" />
     
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#000000" BaseSize="128,128" />
+    <MauiSplashScreen Include="Resources\Images\squound_logo.png" Color="#FFFFFF" BaseSize="512,512" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -57,9 +54,6 @@
     <!-- Template Images -->
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
     <MauiImage Update="Resources\Images\squound_banner.png" Resize="True" BaseSize="234,100" />
-    
-    <!-- Squound Logo -->
-    <MauiImage Update="Resources\Images\squound.png" Resize="True" BaseSize="500,500" />
     
     <!-- TabBar Icons -->
     <MauiImage Update="Resources\Images\account.png" Resize="True" BaseSize="100,100" />
@@ -106,6 +100,9 @@
 	  <MauiXaml Update="Pages\ProductSearchPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\SellPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\CategoriesView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -124,6 +121,10 @@
 	  <MauiXaml Update="Views\SpacerView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Resources\Splash\" />
 	</ItemGroup>
 
 </Project>

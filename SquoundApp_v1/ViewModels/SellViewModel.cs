@@ -6,18 +6,18 @@ using SquoundApp_v1.Services;
 
 namespace SquoundApp_v1.ViewModels
 {
-    public partial class AboutViewModel : BaseViewModel
+    public partial class SellViewModel : BaseViewModel
     {
         [ObservableProperty]
-        private AboutModel model;
+        private SellModel model;
 
-        private readonly AboutService service;
+        private readonly SellService service;
 
-        public AboutViewModel(AboutService service)
+        public SellViewModel(SellService service)
         {
             this.service = service;
 
-            Title = "About Us";
+            Title = "Sell";
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace SquoundApp_v1.ViewModels
                 await FetchDataAsync();
 
             // This is the call that initiates the change of page.
-            await Shell.Current.GoToAsync(nameof(AboutPage));
+            await Shell.Current.GoToAsync(nameof(SellPage));
         }
 
         /*

@@ -25,7 +25,7 @@
         <Border BackgroundColor="Transparent"
                 StrokeThickness="0">
             <Border.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToAboutPageCommand}"/>
+                <TapGestureRecognizer Command="{Binding GoToSellPageCommand}"/>
             </Border.GestureRecognizers>
             <Label Text="Sell to us"
                    Style="{StaticResource FooterTextButton}"
@@ -59,7 +59,7 @@
         <BoxView HeightRequest="25"
                  BackgroundColor="Transparent"/>
 
-        <Image Source="squound.png"
+        <Image Source="squound_logo.png"
                HorizontalOptions="Center"
                WidthRequest="80"
                HeightRequest="80"/>

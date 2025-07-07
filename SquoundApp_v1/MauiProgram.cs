@@ -19,8 +19,8 @@ namespace SquoundApp_v1
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("BarlowSemiCondensed-Regular.ttf", "HeadlineFont");
-                    fonts.AddFont("PublicSans-VariableFont_wght.ttf", "BodyFont");
-                    fonts.AddFont("PublicSans-VariableFont_wght.ttf", "FooterFont");
+                    fonts.AddFont("PublicSans-SemiBold.ttf", "BodyFont");
+                    fonts.AddFont("PublicSans-SemiBold.ttf", "FooterFont");
                     fonts.AddFont("BarlowSemiCondensed-Regular.ttf", "PriceFont");
                 });
 
@@ -35,9 +35,13 @@ namespace SquoundApp_v1
             // which means a new instance will be created each time it is requested.
             builder.Services.AddSingleton<HttpService>();
 
-            builder.Services.AddSingleton<AboutUsService>();
+            builder.Services.AddSingleton<AboutService>();
             builder.Services.AddTransient<AboutViewModel>();
             builder.Services.AddTransient<AboutPage>();
+
+            builder.Services.AddSingleton<SellService>();
+            builder.Services.AddTransient<SellViewModel>();
+            builder.Services.AddTransient<SellPage>();
 
             builder.Services.AddSingleton<FooterViewModel>();
             builder.Services.AddSingleton<FooterView>();

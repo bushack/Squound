@@ -9,7 +9,7 @@
 
         <views:SpacerView/>
         
-        <Image Source="squound.png"
+        <Image Source="squound_logo.png"
                Margin="15"
                HorizontalOptions="Center"
                WidthRequest="150"

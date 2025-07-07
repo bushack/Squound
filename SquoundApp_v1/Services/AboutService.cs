@@ -3,7 +3,7 @@ using SquoundApp_v1.Utilities;
 
 namespace SquoundApp_v1.Services
 {
-    public class AboutUsService
+    public class AboutService
     {
         AboutModel model = new();
 
