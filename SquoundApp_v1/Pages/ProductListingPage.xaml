@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:views="clr-namespace:SquoundApp_v1.Views"
+             xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
+             x:Class="SquoundApp_v1.Pages.ProductListingPage"
+             x:DataType="viewmodels:ProductListingViewModel"
+             Title="ProductListingPage">
+
+    <Grid RowDefinitions="Auto, *">
+        <views:HeaderView Grid.Row="0"/>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout>
+
+             <!-- Product Image -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="Transparent"
+                    StrokeShape="RoundRectangle 15"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center"
+                    Margin="20, 20, 20, 20">
+                <Image Source="{Binding Product.Image}"
+                       Aspect="AspectFit"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Fill"/>
+            </Border>
+
+            <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
+            <Grid ColumnDefinitions="*, Auto"
+                  RowDefinitions="Auto">
+
+                <!-- Stack Name + Manufacturer (Left Column) -->
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Style="{StaticResource Headline}"
+                           Text="{Binding Product.Name}"/>
+                    <Label Style="{StaticResource SubHeadline}"
+                           Text="{Binding Product.Manufacturer}"/>
+                </VerticalStackLayout>
+
+                <!-- Price Label (Right Column) -->
+                    <Label Style="{StaticResource Headline}"
+                           Text="{Binding Product.Price}"
+                           HorizontalOptions="End"
+                           HorizontalTextAlignment="End"
+                           Margin="20, 0, 20, 5"
+                           Grid.Column="1"/>
+            </Grid>
+
+            <!-- Description Below -->
+            <Label Style="{StaticResource MediumText}"
+                   Text="{Binding Product.Description}"
+                   BackgroundColor="Transparent"/>
+
+                <Label Style="{StaticResource MediumText}"
+                       Text="Contact us about this item"
+                       BackgroundColor="Transparent"
+                       HorizontalOptions="Center"
+                       Margin="0, 0, 0, 5"/>
+
+                <FlexLayout HorizontalOptions="Fill"
+                            VerticalOptions="Center"
+                            JustifyContent="SpaceEvenly"
+                            BackgroundColor="Transparent"
+                            HeightRequest="50"
+                            Margin="0, 0, 0, 10">
+
+                    <ImageButton Source="call.png" Padding="10" CornerRadius="20">
+                        <ImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
+                    
+                    <ImageButton Source="email.png" Padding="10" CornerRadius="20">
+                        <ImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
+                    
+                    <ImageButton Source="whatsapp.png" Padding="10" CornerRadius="20">
+                        <ImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
+                </FlexLayout>
+
+                <!-- Footer -->
+            <views:FooterView/>
+                
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

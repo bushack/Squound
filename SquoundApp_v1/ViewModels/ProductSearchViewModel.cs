@@ -30,7 +30,7 @@ namespace SquoundApp_v1.ViewModels
             if (product is null)
                 return;
 
-            await Shell.Current.GoToAsync($"{nameof(ProductDetailPage)}", true,
+            await Shell.Current.GoToAsync($"{nameof(ProductListingPage)}", true,
                 new Dictionary<string, object>
                 {
                     {"Product", product}

@@ -2,9 +2,9 @@ using SquoundApp_v1.ViewModels;
 
 namespace SquoundApp_v1.Pages;
 
-public partial class ProductDetailPage : ContentPage
+public partial class ProductListingPage : ContentPage
 {
-	public ProductDetailPage(ProductDetailViewModel viewModel)
+	public ProductListingPage(ProductListingViewModel viewModel)
 	{
 		InitializeComponent();
 
@@ -18,7 +18,7 @@ public partial class ProductDetailPage : ContentPage
         // For example, you can update the title of the page based on the product name.
         base.OnNavigatedTo(args);
 
-		if (BindingContext is ProductDetailViewModel viewModel && viewModel.Product != null)
+		if (BindingContext is ProductListingViewModel viewModel && viewModel.Product != null)
 		{
 			Title = viewModel.Product.Name;
 		}

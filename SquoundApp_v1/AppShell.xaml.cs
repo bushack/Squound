@@ -11,12 +11,12 @@ namespace SquoundApp_v1
 
             // Register routes for navigation
             // This allows you to navigate to specific pages using a route name.
-            // For example, you can navigate to ProductDetailPage using the route name "ProductDetailPage".
+            // For example, you can navigate to ProductListingPage using the route name "ProductListingPage".
             // The route name should match the name of the page class.
-            // nameof(ProductDetailPage) == "ProductDetailPage"
+            // nameof(ProductListingPage) == "ProductListingPage"
             Routing.RegisterRoute(nameof(AboutPage), typeof(AboutPage));
             Routing.RegisterRoute(nameof(SellPage), typeof(SellPage));
-            Routing.RegisterRoute(nameof(ProductDetailPage), typeof(ProductDetailPage));
+            Routing.RegisterRoute(nameof(ProductListingPage), typeof(ProductListingPage));
             Routing.RegisterRoute(nameof(ProductSearchPage), typeof(ProductSearchPage));
         }
     }

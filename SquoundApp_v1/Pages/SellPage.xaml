@@ -17,7 +17,7 @@
             <Label Text="{Binding Model.SubHeadline}"
                    Style="{StaticResource SubHeadline}"/>
             <Label Text="{Binding Model.Text}"
-                   Style="{StaticResource BodyStyle}" />
+                   Style="{StaticResource MediumText}" />
             <views:FooterView/>
         </VerticalStackLayout>
     </ScrollView>

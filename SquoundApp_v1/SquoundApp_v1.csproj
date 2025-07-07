@@ -67,6 +67,7 @@
     <MauiImage Update="Resources\Images\facebook.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\googlemaps.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\instagram.png" Resize="True" BaseSize="100,100" />
+    <MauiImage Update="Resources\Images\whatsapp.png" Resize="True" BaseSize="100,100" />
     
     <!-- Other Images -->
     <MauiImage Update="Resources\Images\random5.png" Resize="True" BaseSize="750,750" />
@@ -88,6 +89,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\ProductListingPage.xaml.cs">
+	    <DependentUpon>ProductListingPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\ProductSearchPage.xaml.cs">
 	    <DependentUpon>ProductSearchPage.xaml</DependentUpon>
 	  </Compile>
@@ -110,9 +114,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\HeaderView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\ProductView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SearchView.xaml">

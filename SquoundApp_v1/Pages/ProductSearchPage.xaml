@@ -9,23 +9,27 @@
              Title="{Binding Title}">
 
     <Grid ColumnDefinitions="*, *"
-          ColumnSpacing="10"
           RowDefinitions="Auto, *, Auto"
           RowSpacing="0">
 
         <views:HeaderView Grid.Row="0"
-                                Grid.ColumnSpan="2"/>
+                          Grid.ColumnSpan="2"/>
 
         <CollectionView BackgroundColor="Transparent"
                         Grid.Row="1"
                         Grid.ColumnSpan="2"
                         ItemsSource="{Binding ProductList}"
-                        SelectionMode="None">
+                        ItemsLayout="VerticalGrid, 2"
+                        SelectionMode="None"
+                        EmptyView="No search results">
 
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:ProductModel">
-                    <Grid Padding="10">
-                        <Border BackgroundColor="Pink">
+                    <Grid>
+                        <Border BackgroundColor="Transparent"
+                                Margin="10"
+                                StrokeShape="RoundRectangle 15"
+                                StrokeThickness="0">
                             <!-- The border defines a tappable area that allows the user to access a specific product -->
                             <Border.GestureRecognizers>
                                 <!-- TapGestureRecognizer is used to handle tap events on each item in the CollectionView -->
@@ -37,32 +41,32 @@
                                 <TapGestureRecognizer CommandParameter="{Binding .}"
                                                       Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductSearchViewModel}}, x:DataType=viewmodels:ProductSearchViewModel, Path=GoToDetailsCommand}"/>
                             </Border.GestureRecognizers>
-                            
-                            <Grid Padding="0"
-                                      RowDefinitions="Auto, Auto, Auto, Auto"
-                                      ColumnDefinitions="225, *">
 
-                                <Border Grid.RowSpan="4">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="10"/>
-                                </Border.StrokeShape>
-                                <Image Source="{Binding Image}"/>
-                            </Border>
-                            
-                            <Label Grid.Row="0" Grid.Column="1"
-                                   Text="{Binding Name}" FontSize="24"/>
-                            <Label Grid.Row="1" Grid.Column="1"
-                                    Text="{Binding Manufacturer}" FontSize="16"/>
-                            <Label Grid.Row="2" Grid.Column="1"
-                                    Text="{Binding Description}" FontSize="16"/>
-                            <Label Grid.Row="3" Grid.Column="1"
-                                    Text="{Binding Price}" FontSize="24"/>
-                            </Grid>
+                            <VerticalStackLayout>
+                                <Border StrokeShape="RoundRectangle 15"
+                                        StrokeThickness="0"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Center">
+                                    <Image Source="{Binding Image}"
+                                           Aspect="AspectFit"/>
+                                </Border>
+
+                                <Grid RowDefinitions="Auto"
+                                      ColumnDefinitions="65*, 35*"
+                                      Padding="0, 10, 0, 25"
+                                      ColumnSpacing="2">
+                                    <Label BackgroundColor="Transparent" Grid.Column="0" Text="{Binding Name}" Style="{StaticResource SmallBoldText}" HorizontalOptions="Start" />
+                                    <Label BackgroundColor="Transparent" Grid.Column="1" Text="{Binding Price}" Style="{StaticResource SmallBoldText}" HorizontalOptions="End" />
+                                </Grid>
+                            </VerticalStackLayout>
                         </Border>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-            
+
+            <CollectionView.Footer>
+                <views:FooterView/>
+            </CollectionView.Footer>
         </CollectionView>
 
         <ActivityIndicator Grid.RowSpan="2"
@@ -72,7 +76,7 @@
                            HorizontalOptions="Center"
                            VerticalOptions="Center"/>
 
-        <Button Grid.Row="2"
+        <!--<Button Grid.Row="2"
                 Grid.Column="0"
                 Margin="5"
                 Text="Get Products"
@@ -82,7 +86,7 @@
                 Grid.Column="1"
                 Margin="5"
                 Text="Clear"
-                Command="{Binding ClearProductsCommand}"/>
+                Command="{Binding ClearProductsCommand}"/>-->
 
     </Grid>
 

@@ -7,12 +7,10 @@
 
     <StackLayout Background="{StaticResource SquoundGradientBrush}">
 
-        <BoxView HeightRequest="10"
-                 BackgroundColor="Transparent"/>
-
         <!-- About Us Button -->
         <Border BackgroundColor="Transparent"
-                StrokeThickness="0">
+                StrokeThickness="0"
+                Margin="20, 20, 0, 10">
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding GoToAboutPageCommand}"/>
             </Border.GestureRecognizers>
@@ -23,7 +21,8 @@
 
         <!-- Sell to us Button -->
         <Border BackgroundColor="Transparent"
-                StrokeThickness="0">
+                StrokeThickness="0"
+                Margin="20, 10, 0, 30">
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding GoToSellPageCommand}"/>
             </Border.GestureRecognizers>
@@ -32,45 +31,35 @@
                    SemanticProperties.Description="Sell your items to us"/>
         </Border>
 
-        <BoxView HeightRequest="10"
-                 BackgroundColor="Transparent"/>
-        
-        <!--<Label Text="Follow us or get in touch"
-               Style="{StaticResource FooterText}"
-               SemanticProperties.Description="Follow us on social media or get in touch"
-               HorizontalOptions="Fill"/>
-
-        <BoxView HeightRequest="15"
-                 BackgroundColor="Transparent"/>-->
-
+        <!-- Social media and contact buttons -->
         <FlexLayout HeightRequest="30"
                     HorizontalOptions="Fill"
                     VerticalOptions="Center"
-                    JustifyContent="SpaceEvenly">
+                    JustifyContent="SpaceEvenly"
+                    Margin="0, 0, 0, 25">
 
             <ImageButton Source="facebook.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Facebook"/>
             <ImageButton Source="instagram.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Instagram"/>
             <ImageButton Source="call.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Call"/>
             <ImageButton Source="email.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="eMail"/>
+            <ImageButton Source="whatsapp.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Whatsapp"/>
             <ImageButton Source="googlemaps.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Google Maps"/>
 
         </FlexLayout>
 
-        <BoxView HeightRequest="25"
-                 BackgroundColor="Transparent"/>
-
+        <!-- Squound logo -->
         <Image Source="squound_logo.png"
                HorizontalOptions="Center"
                WidthRequest="80"
-               HeightRequest="80"/>
+               HeightRequest="80"
+               Margin="0, 0, 0, 10"/>
 
-        <BoxView HeightRequest="10"
-                 BackgroundColor="Transparent"/>
-
+        <!-- Copywrite -->
         <Label Text="&#169; 2025 Squound LLC. All Rights Reserved."
-               Style="{StaticResource Footer}"
+               Style="{StaticResource TinyText}"
                SemanticProperties.Description="Follow us on social media or get in touch"
                HorizontalOptions="Fill"
+               HorizontalTextAlignment="Center"
                Padding="10"/>
 
     </StackLayout>

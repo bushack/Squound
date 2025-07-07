@@ -19,9 +19,7 @@ namespace SquoundApp_v1
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("BarlowSemiCondensed-Regular.ttf", "HeadlineFont");
-                    fonts.AddFont("PublicSans-SemiBold.ttf", "BodyFont");
-                    fonts.AddFont("PublicSans-SemiBold.ttf", "FooterFont");
-                    fonts.AddFont("BarlowSemiCondensed-Regular.ttf", "PriceFont");
+                    fonts.AddFont("PublicSans-SemiBold.ttf", "RegularFont");
                 });
 
             // Register services and view models
@@ -31,7 +29,7 @@ namespace SquoundApp_v1
             // which means there will be only one instance of ProductService throughout the app.
             // ProductSearchViewModel is registered as a singleton view model,
             // which means there will be only one instance of ProductSearchViewModel throughout the app.
-            // ProductDetailViewModel is registered as a transient view model,
+            // ProductListingViewModel is registered as a transient view model,
             // which means a new instance will be created each time it is requested.
             builder.Services.AddSingleton<HttpService>();
 
@@ -49,11 +47,11 @@ namespace SquoundApp_v1
             builder.Services.AddSingleton<ProductService>();
 
             builder.Services.AddSingleton<ProductSearchViewModel>();
-            builder.Services.AddTransient<ProductDetailViewModel>();
+            builder.Services.AddTransient<ProductListingViewModel>();
 
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<ProductSearchPage>();
-            builder.Services.AddTransient<ProductDetailPage>();
+            builder.Services.AddTransient<ProductListingPage>();
 
 
 #if DEBUG
