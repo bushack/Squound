@@ -23,4 +23,22 @@ public partial class ProductListingPage : ContentPage
 			Title = viewModel.Product.Name;
 		}
     }
+
+	protected override void OnAppearing()
+	{
+		base.OnAppearing();
+
+		if (BindingContext is ProductListingViewModel viewModel && viewModel.Product != null)
+		{
+            // Default text to be used as Email subject and/or WhatsApp message.
+            var message = $"I%20am%20interested%20in%20the%20{viewModel.Product.Name}";
+
+            EmailButton.Url = $"mailto:squoundstuff@gmail.com" +
+				$"?subject={message}" +		// Email subject.
+                $"&body=";					// Email body.
+
+            WhatsAppButton.Url = $"https://wa.me/447884002384" +
+				$"?text={message}%20";		// WhatsApp message.
+        }
+    }
 }

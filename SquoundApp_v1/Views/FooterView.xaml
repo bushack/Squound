@@ -2,6 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
+             xmlns:custom="clr-namespace:SquoundApp_v1.Custom"
              x:Class="SquoundApp_v1.Views.FooterView"
              x:DataType="viewmodels:FooterViewModel">
 
@@ -38,12 +39,23 @@
                     JustifyContent="SpaceEvenly"
                     Margin="0, 0, 0, 25">
 
-            <ImageButton Source="facebook.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Facebook"/>
-            <ImageButton Source="instagram.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Instagram"/>
-            <ImageButton Source="call.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Call"/>
-            <ImageButton Source="email.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="eMail"/>
-            <ImageButton Source="whatsapp.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Whatsapp"/>
-            <ImageButton Source="googlemaps.png" Style="{StaticResource FooterImageButton}" SemanticProperties.Description="Google Maps"/>
+            <custom:HyperlinkImageButton Source="facebook.png" Style="{StaticResource FooterImageButton}" 
+                                         SemanticProperties.Description="Facebook"
+                                         Url="https://www.facebook.com/squound/"/>
+            <custom:HyperlinkImageButton Source="instagram.png" Style="{StaticResource FooterImageButton}"
+                                         SemanticProperties.Description="Instagram"
+                                         Url="https://www.instagram.com/squound/"/>
+            <!--<custom:HyperlinkImageButton Source="call.png" Style="{StaticResource FooterImageButton}"
+                                         SemanticProperties.Description="Call"/>-->
+            <custom:HyperlinkImageButton Source="email.png" Style="{StaticResource FooterImageButton}"
+                                         SemanticProperties.Description="eMail"
+                                         Url="mailto:squoundstuff@gmail.com"/>
+            <custom:HyperlinkImageButton Source="whatsapp.png" Style="{StaticResource FooterImageButton}"
+                                         SemanticProperties.Description="Whatsapp"
+                                         Url="https://wa.me/447884002384?text=Hi%20Squound%20"/>
+            <custom:HyperlinkImageButton Source="googlemaps.png" Style="{StaticResource FooterImageButton}"
+                                         SemanticProperties.Description="Google Maps"
+                                         Url="https://maps.app.goo.gl/CgLPEGtfJ6YWvL5f9"/>
 
         </FlexLayout>
 

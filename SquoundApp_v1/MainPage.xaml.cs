@@ -7,6 +7,8 @@
         public MainPage()
         {
             InitializeComponent();
+
+            Title = nameof(MainPage);
         }
 
         private void OnCounterClicked(object? sender, EventArgs e)

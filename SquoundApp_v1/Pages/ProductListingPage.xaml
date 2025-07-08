@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:custom="clr-namespace:SquoundApp_v1.Custom"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:views="clr-namespace:SquoundApp_v1.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
@@ -66,23 +67,23 @@
                             HeightRequest="50"
                             Margin="0, 0, 0, 10">
 
-                    <ImageButton Source="call.png" Padding="10" CornerRadius="20">
-                        <ImageButton.Behaviors>
+                    <custom:HyperlinkImageButton x:Name="CallButton" Source="call.png" Padding="10" CornerRadius="20">
+                        <custom:HyperlinkImageButton.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </ImageButton.Behaviors>
-                    </ImageButton>
-                    
-                    <ImageButton Source="email.png" Padding="10" CornerRadius="20">
-                        <ImageButton.Behaviors>
+                        </custom:HyperlinkImageButton.Behaviors>
+                    </custom:HyperlinkImageButton>
+
+                    <custom:HyperlinkImageButton x:Name="EmailButton" Source="email.png" Padding="10" CornerRadius="20">
+                        <custom:HyperlinkImageButton.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </ImageButton.Behaviors>
-                    </ImageButton>
-                    
-                    <ImageButton Source="whatsapp.png" Padding="10" CornerRadius="20">
-                        <ImageButton.Behaviors>
+                        </custom:HyperlinkImageButton.Behaviors>
+                    </custom:HyperlinkImageButton>
+
+                    <custom:HyperlinkImageButton x:Name="WhatsAppButton" Source="whatsapp.png" Padding="10" CornerRadius="20">
+                        <custom:HyperlinkImageButton.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </ImageButton.Behaviors>
-                    </ImageButton>
+                        </custom:HyperlinkImageButton.Behaviors>
+                    </custom:HyperlinkImageButton>
                 </FlexLayout>
 
                 <!-- Footer -->
