@@ -39,7 +39,7 @@
                                 <!-- Product, until it finds a ProductSearchViewModel, inside which is the command (GetProduct) -->
                                 <!-- that it should execute -->
                                 <TapGestureRecognizer CommandParameter="{Binding .}"
-                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductSearchViewModel}}, x:DataType=viewmodels:ProductSearchViewModel, Path=GoToDetailsCommand}"/>
+                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductSearchViewModel}}, x:DataType=viewmodels:ProductSearchViewModel, Path=GoToProductListingCommand}"/>
                             </Border.GestureRecognizers>
 
                             <VerticalStackLayout>
@@ -47,7 +47,7 @@
                                         StrokeThickness="0"
                                         HorizontalOptions="Fill"
                                         VerticalOptions="Center">
-                                    <Image Source="{Binding Image}"
+                                    <Image Source="{Binding Image0}"
                                            Aspect="AspectFit"/>
                                 </Border>
 

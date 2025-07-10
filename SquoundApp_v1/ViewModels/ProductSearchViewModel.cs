@@ -25,7 +25,7 @@ namespace SquoundApp_v1.ViewModels
         }
 
         [RelayCommand]
-        async Task GoToDetailsAsync(ProductModel product)
+        async Task GoToProductListingAsync(ProductModel product)
         {
             if (product is null)
                 return;
@@ -62,7 +62,7 @@ namespace SquoundApp_v1.ViewModels
                 // If the product service has a method to fetch products via HTTP, we call that.
                 // If you want to fetch products from an embedded JSON file instead, you can call:
                 // var products = await productService.GetProductsEmbedded();
-                var productList = await productService.GetProductsHTTP();
+                var productList = await productService.GetProductsHttp();
 
                 // Clear the existing products in the ObservableCollection.
                 // This ensures that the collection is updated with the new products fetched.
@@ -90,7 +90,7 @@ namespace SquoundApp_v1.ViewModels
             catch (Exception ex)
             { 
                 // Handle exceptions, e.g., log them or show an alert to the user.
-                Console.WriteLine($"Error fetching products: {ex.Message}");
+                Console.WriteLine($"Error fetching data: {ex.Message}");
 
                 await Shell.Current.DisplayAlert(
                     "Error",

@@ -31,7 +31,7 @@ namespace SquoundApp_v1.Services
             return productList;
         }
 
-        public async Task<List<ProductModel>> GetProductsHTTP()
+        public async Task<List<ProductModel>> GetProductsHttp()
         {
             if (productList?.Count > 0)
                 return productList;

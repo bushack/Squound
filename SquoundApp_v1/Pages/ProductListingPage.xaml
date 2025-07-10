@@ -20,13 +20,33 @@
                     BackgroundColor="Transparent"
                     StrokeShape="RoundRectangle 15"
                     HorizontalOptions="Fill"
-                    VerticalOptions="Center"
+                    VerticalOptions="Start"
+                    HeightRequest="500"
                     Margin="20, 20, 20, 20">
-                <Image Source="{Binding Product.Image}"
+                <!--<Image Source="{Binding Product.Image0}"
                        Aspect="AspectFit"
                        HorizontalOptions="Fill"
-                       VerticalOptions="Fill"/>
-            </Border>
+                       VerticalOptions="Fill"/>-->
+                    <CarouselView ItemsSource="{Binding Product.Images}"
+                                  HorizontalOptions="Fill"
+                                  VerticalOptions="Start"
+                                  PeekAreaInsets="0">
+                        <CarouselView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal"
+                                               ItemSpacing="0"
+                                               SnapPointsType="MandatorySingle"
+                                               SnapPointsAlignment="Start"/>
+                        </CarouselView.ItemsLayout>
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Image Source="{Binding .}"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Fill"
+                                       VerticalOptions="Fill"/>
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>
+                </Border>
 
             <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
             <Grid ColumnDefinitions="*, Auto"
