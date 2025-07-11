@@ -10,6 +10,8 @@ public partial class SellPage : ContentPage
 
         BindingContext = viewModel;
 
+        Title = nameof(SellPage);
+
         _ = viewModel.InitializeAsync();
     }
 }

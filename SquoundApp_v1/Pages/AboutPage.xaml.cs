@@ -10,6 +10,8 @@ public partial class AboutPage : ContentPage
 
 		BindingContext = viewModel;
 
-		_ = viewModel.InitializeAsync();
+        Title = nameof(AboutPage);
+
+        _ = viewModel.InitializeAsync();
     }
 }

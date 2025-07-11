@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using SquoundApp_v1.Models;
 using SquoundApp_v1.Pages;
 using SquoundApp_v1.Services;
+
 
 namespace SquoundApp_v1.ViewModels
 {
@@ -104,7 +100,7 @@ namespace SquoundApp_v1.ViewModels
         }
 
         [RelayCommand]
-        async Task ClearProducts()
+        Task ClearProducts()
         {
             // This command clears the Products collection.
             // It is typically used to reset the product list, for example, when the user wants to start a new search
@@ -112,6 +108,8 @@ namespace SquoundApp_v1.ViewModels
             // The ObservableCollection will notify the UI that it has been cleared,
             // so any bound UI elements will update accordingly.
             ProductList.Clear();
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -4,8 +4,7 @@
              xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
              xmlns:views="clr-namespace:SquoundApp_v1.Views"
              x:Class="SquoundApp_v1.Pages.SellPage"
-             x:DataType="viewmodels:SellViewModel"
-             Title="SellPage">
+             x:DataType="viewmodels:SellViewModel">
 
     <ScrollView>
         <VerticalStackLayout>

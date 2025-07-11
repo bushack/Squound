@@ -6,47 +6,32 @@
              xmlns:views="clr-namespace:SquoundApp_v1.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
              x:Class="SquoundApp_v1.Pages.ProductListingPage"
-             x:DataType="viewmodels:ProductListingViewModel"
-             Title="ProductListingPage">
+             x:DataType="viewmodels:ProductListingViewModel">
 
-    <Grid RowDefinitions="Auto, *">
-        <views:HeaderView Grid.Row="0"/>
+    <ScrollView>
+        <VerticalStackLayout>
+            <views:HeaderView/>
 
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout>
-
-             <!-- Product Image -->
-            <Border StrokeThickness="0"
-                    BackgroundColor="Transparent"
-                    StrokeShape="RoundRectangle 15"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Start"
-                    HeightRequest="500"
-                    Margin="20, 20, 20, 20">
-                <!--<Image Source="{Binding Product.Image0}"
-                       Aspect="AspectFit"
-                       HorizontalOptions="Fill"
-                       VerticalOptions="Fill"/>-->
-                    <CarouselView ItemsSource="{Binding Product.Images}"
-                                  HorizontalOptions="Fill"
-                                  VerticalOptions="Start"
+            <!-- Carousel of images -->
+            <CarouselView ItemsSource="{Binding Product.Images}"
+                                  HeightRequest="500"
+                                  Margin="0, 0, 0, 20"
                                   PeekAreaInsets="0">
-                        <CarouselView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Horizontal"
+                <CarouselView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal"
                                                ItemSpacing="0"
                                                SnapPointsType="MandatorySingle"
                                                SnapPointsAlignment="Start"/>
-                        </CarouselView.ItemsLayout>
-                        <CarouselView.ItemTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <Image Source="{Binding .}"
-                                       Aspect="AspectFit"
+                </CarouselView.ItemsLayout>
+                <CarouselView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Image Source="{Binding .}"
+                                       Aspect="AspectFill"
                                        HorizontalOptions="Fill"
                                        VerticalOptions="Fill"/>
-                            </DataTemplate>
-                        </CarouselView.ItemTemplate>
-                    </CarouselView>
-                </Border>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
 
             <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
             <Grid ColumnDefinitions="*, Auto"
@@ -61,7 +46,7 @@
                 </VerticalStackLayout>
 
                 <!-- Price Label (Right Column) -->
-                    <Label Style="{StaticResource Headline}"
+                <Label Style="{StaticResource Headline}"
                            Text="{Binding Product.Price}"
                            HorizontalOptions="End"
                            HorizontalTextAlignment="End"
@@ -74,42 +59,41 @@
                    Text="{Binding Product.Description}"
                    BackgroundColor="Transparent"/>
 
-                <Label Style="{StaticResource MediumText}"
+            <Label Style="{StaticResource MediumText}"
                        Text="Contact us about this item"
                        BackgroundColor="Transparent"
                        HorizontalOptions="Center"
                        Margin="0, 0, 0, 5"/>
 
-                <FlexLayout HorizontalOptions="Fill"
+            <FlexLayout HorizontalOptions="Fill"
                             VerticalOptions="Center"
                             JustifyContent="SpaceEvenly"
                             BackgroundColor="Transparent"
                             HeightRequest="50"
                             Margin="0, 0, 0, 10">
 
-                    <custom:HyperlinkImageButton x:Name="CallButton" Source="call.png" Padding="10" CornerRadius="20">
-                        <custom:HyperlinkImageButton.Behaviors>
-                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </custom:HyperlinkImageButton.Behaviors>
-                    </custom:HyperlinkImageButton>
+                <custom:HyperlinkImageButton x:Name="CallButton" Source="call.png" Padding="10" CornerRadius="20">
+                    <custom:HyperlinkImageButton.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                    </custom:HyperlinkImageButton.Behaviors>
+                </custom:HyperlinkImageButton>
 
-                    <custom:HyperlinkImageButton x:Name="EmailButton" Source="email.png" Padding="10" CornerRadius="20">
-                        <custom:HyperlinkImageButton.Behaviors>
-                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </custom:HyperlinkImageButton.Behaviors>
-                    </custom:HyperlinkImageButton>
+                <custom:HyperlinkImageButton x:Name="EmailButton" Source="email.png" Padding="10" CornerRadius="20">
+                    <custom:HyperlinkImageButton.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                    </custom:HyperlinkImageButton.Behaviors>
+                </custom:HyperlinkImageButton>
 
-                    <custom:HyperlinkImageButton x:Name="WhatsAppButton" Source="whatsapp.png" Padding="10" CornerRadius="20">
-                        <custom:HyperlinkImageButton.Behaviors>
-                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                        </custom:HyperlinkImageButton.Behaviors>
-                    </custom:HyperlinkImageButton>
-                </FlexLayout>
+                <custom:HyperlinkImageButton x:Name="WhatsAppButton" Source="whatsapp.png" Padding="10" CornerRadius="20">
+                    <custom:HyperlinkImageButton.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                    </custom:HyperlinkImageButton.Behaviors>
+                </custom:HyperlinkImageButton>
+            </FlexLayout>
 
-                <!-- Footer -->
+            <!-- Footer -->
             <views:FooterView/>
-                
-            </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

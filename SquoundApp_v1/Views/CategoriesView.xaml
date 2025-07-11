@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SquoundApp_v1.Views.CategoriesView">
+             xmlns:viewmodels="clr-namespace:SquoundApp_v1.ViewModels"
+             x:Class="SquoundApp_v1.Views.CategoriesView"
+             x:DataType="viewmodels:CategoriesViewModel">
     
     <ScrollView HorizontalOptions="Fill"
                 Style="{StaticResource HorizontalScrollView}">
         
         <HorizontalStackLayout VerticalOptions="Center">
             
-            <Button Style="{StaticResource TextButton}" Text="Lounge" />
-            <Button Style="{StaticResource TextButton}" Text="Dining" />
-            <Button Style="{StaticResource TextButton}" Text="Office" />
-            <Button Style="{StaticResource TextButton}" Text="Bedroom" />
-            <Button Style="{StaticResource TextButton}" Text="Lighting" />
-            <Button Style="{StaticResource TextButton}" Text="Decor" />
-            <Button Style="{StaticResource TextButton}" Text="Accessories" />
+            <Button Style="{StaticResource TextButton}" Text="Lounge" Command="{Binding GoToProductSearchCommand}" />
+            <Button Style="{StaticResource TextButton}" Text="Dining" Command="{Binding GoToProductSearchCommand}" />
+            <Button Style="{StaticResource TextButton}" Text="Office" Command="{Binding GoToProductSearchCommand}" />
+            <Button Style="{StaticResource TextButton}" Text="Bedroom" Command="{Binding GoToProductSearchCommand}" />
+            <Button Style="{StaticResource TextButton}" Text="Lighting" Command="{Binding GoToProductSearchCommand}" />
+            <Button Style="{StaticResource TextButton}" Text="Decor" Command="{Binding GoToProductSearchCommand}" />
+            <Button Style="{StaticResource TextButton}" Text="Accessories" Command="{Binding GoToProductSearchCommand}" />
             
         </HorizontalStackLayout>
         

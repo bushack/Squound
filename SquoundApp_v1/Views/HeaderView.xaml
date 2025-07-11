@@ -10,7 +10,7 @@
         <views:SpacerView/>
         
         <Image Source="squound_logo.png"
-               Margin="15"
+               Margin="0, 15, 0, 15"
                HorizontalOptions="Center"
                WidthRequest="150"
                HeightRequest="150"/>

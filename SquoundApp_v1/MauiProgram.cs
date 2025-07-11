@@ -31,27 +31,33 @@ namespace SquoundApp_v1
             // which means there will be only one instance of ProductSearchViewModel throughout the app.
             // ProductListingViewModel is registered as a transient view model,
             // which means a new instance will be created each time it is requested.
-            builder.Services.AddSingleton<HttpService>();
 
-            builder.Services.AddSingleton<AboutService>();
-            builder.Services.AddTransient<AboutViewModel>();
+            // Pages
             builder.Services.AddTransient<AboutPage>();
-
-            builder.Services.AddSingleton<SellService>();
-            builder.Services.AddTransient<SellViewModel>();
+            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddTransient<ProductListingPage>();
+            builder.Services.AddSingleton<ProductSearchPage>();
             builder.Services.AddTransient<SellPage>();
 
-            builder.Services.AddSingleton<FooterViewModel>();
+            // Services
+            builder.Services.AddSingleton<AboutService>();
+            builder.Services.AddSingleton<HttpService>();
+            builder.Services.AddSingleton<ProductService>();
+            builder.Services.AddSingleton<SellService>();
+
+            // Views
+            builder.Services.AddSingleton<HeaderView>();
+            builder.Services.AddSingleton<CategoriesView>();
             builder.Services.AddSingleton<FooterView>();
 
-            builder.Services.AddSingleton<ProductService>();
-
-            builder.Services.AddSingleton<ProductSearchViewModel>();
+            // View Models
+            builder.Services.AddTransient<AboutViewModel>();
+            builder.Services.AddSingleton<CategoriesViewModel>();
+            builder.Services.AddSingleton<FooterViewModel>();
             builder.Services.AddTransient<ProductListingViewModel>();
+            builder.Services.AddSingleton<ProductSearchViewModel>();
+            builder.Services.AddTransient<SellViewModel>();
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<ProductSearchPage>();
-            builder.Services.AddTransient<ProductListingPage>();
 
 
 #if DEBUG
