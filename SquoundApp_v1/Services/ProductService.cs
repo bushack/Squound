@@ -6,7 +6,7 @@ namespace SquoundApp_v1.Services
 {
     public class ProductService
     {
-        HttpClient httpClient;
+        readonly HttpClient httpClient;
 
         List<ProductModel> productList = new();
 
@@ -22,13 +22,13 @@ namespace SquoundApp_v1.Services
             //httpClient.BaseAddress = new Uri("https://api.example.com/");
         }
 
-        public async Task<List<ProductModel>> Clear()
+        public void Clear()
         {
             // Check if the product list is already populated
             if (productList?.Count > 0)
+            {
                 productList.Clear();
-
-            return productList;
+            }
         }
 
         public async Task<List<ProductModel>> GetProductsHttp()

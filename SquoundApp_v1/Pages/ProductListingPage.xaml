@@ -14,9 +14,10 @@
 
             <!-- Carousel of images -->
             <CarouselView ItemsSource="{Binding Product.Images}"
-                                  HeightRequest="500"
-                                  Margin="0, 0, 0, 20"
-                                  PeekAreaInsets="0">
+                          IndicatorView="Indicator"
+                          HeightRequest="500"
+                          Margin="0, 0, 0, 10"
+                          PeekAreaInsets="0">
                 <CarouselView.ItemsLayout>
                     <LinearItemsLayout Orientation="Horizontal"
                                                ItemSpacing="0"
@@ -32,6 +33,11 @@
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
             </CarouselView>
+            <IndicatorView x:Name="Indicator"
+                           IndicatorColor="{StaticResource Gray200}"
+                           SelectedIndicatorColor="{StaticResource SquoundTangerine}"
+                           HorizontalOptions="Center"
+                           Margin="0, 0, 0, 10"/>
 
             <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
             <Grid ColumnDefinitions="*, Auto"
