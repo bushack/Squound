@@ -11,7 +11,7 @@ namespace SquoundApp_v1.ViewModels
     {
         public ObservableCollection<ProductModel> ProductList { get; } = new();
 
-        ProductService productService;
+        readonly ProductService productService;
 
         public ProductSearchViewModel(ProductService productService)
         {

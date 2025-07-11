@@ -34,7 +34,7 @@ namespace SquoundApp_v1.Custom
                     catch (Exception ex)
                     {
                         // Handle any exceptions that may occur when trying to open the URL
-                        Console.WriteLine($"Unable to launch {Url}");
+                        Console.WriteLine($"Unable to launch {Url} : {ex.Message}");
 
                         await Shell.Current.DisplayAlert(
                             $"App not found",
