@@ -15,7 +15,7 @@ namespace SquoundApp
         // This URL is used for debugging purposes on Android devices or emulators.
         public static readonly string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "10.0.2.2" : "localhost";
         public static readonly string Scheme = "https";
-        public static readonly string Port = "5001";
-        public static readonly string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/squound_products/{{0}}";
+        public static readonly string Port = "7184";
+        public static readonly string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/productmodels/{{0}}";
     }
 }

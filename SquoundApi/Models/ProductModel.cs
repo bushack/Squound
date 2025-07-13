@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace SquoundApp.Models
+namespace SquoundApi.Models
 {
-    public class Product
+    public class ProductModel
     {
         [Required]
-        public required int Id { get; set; }
+        public required long Id { get; set; }
 
         [Required]
         public required string Name { get; set; }
