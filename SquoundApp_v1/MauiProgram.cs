@@ -58,8 +58,6 @@ namespace SquoundApp_v1
             builder.Services.AddSingleton<ProductSearchViewModel>();
             builder.Services.AddTransient<SellViewModel>();
 
-
-
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
