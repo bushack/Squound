@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:views="clr-namespace:SquoundApp.Views"
+             x:Class="SquoundApp.Pages.HomePage"
+             Title="HomePage">
+    
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="{StaticResource SquoundRorange}"/>
+    </ContentPage.Behaviors>
+
+    <ScrollView>
+        
+        <VerticalStackLayout>
+            
+            <views:HeaderView/>
+            
+            <Image Style="{StaticResource MainImage}"
+                   Source="https://raw.githubusercontent.com/bushack/images/main/shop_interior.jpg"
+                   Aspect="AspectFit"
+                   SemanticProperties.Description="Image of the shop interior" />
+            
+            <Label Style="{StaticResource Headline}"
+                   Text="Welcome to Squound!"/>
+            <Label Style="{StaticResource SubHeadline}"
+                   Text="Mid-Century Magnificence"/>
+            <Label Style="{StaticResource MediumText}"
+                   Text="The quick brown fox jumps over the lazy dog."/>
+
+            
+            <Image Style="{StaticResource MainImage}"
+                   Source="https://raw.githubusercontent.com/bushack/images/main/shop_exterior.jpg"
+                   Aspect="AspectFit"
+                   SemanticProperties.Description="Image of the shop exterior" />
+
+            <Label Style="{StaticResource Headline}"
+                   Text="Come and Browse"/>
+            <Label Style="{StaticResource SubHeadline}"
+                   Text="Dogs Welcome!"/>
+            <Label Style="{StaticResource MediumText}"
+                   Text="The quick brown fox jumps over the lazy dog."/>
+
+            
+            <Image Style="{StaticResource MainImage}"
+                   Source="https://raw.githubusercontent.com/bushack/images/main/underbank.jpg"
+                   Aspect="AspectFit"
+                   SemanticProperties.Description="Image of Little Underbank in Stockport" />
+
+            <Label Style="{StaticResource Headline}"
+                   Text="Where Are We?"/>
+            <Label Style="{StaticResource SubHeadline}"
+                   Text="About Stockport"/>
+            <Label Style="{StaticResource MediumText}"
+                   Text="The quick brown fox jumps over the lazy dog."/>
+
+
+            <Image Style="{StaticResource MainImage}"
+                   Source="https://raw.githubusercontent.com/bushack/images/main/team.jpg"
+                   Aspect="AspectFit"
+                   SemanticProperties.Description="Image of the shop exterior" />
+
+            <Label Style="{StaticResource Headline}"
+                   Text="Meet The Team"/>
+            <Label Style="{StaticResource SubHeadline}"
+                   Text="Squoundrels"/>
+            <Label Style="{StaticResource MediumText}"
+                   Text="The quick brown dog jumps over the lazy Squoundrels."/>
+
+            <views:FooterView/>
+            
+        </VerticalStackLayout>
+        
+    </ScrollView>
+    
+</ContentPage>
