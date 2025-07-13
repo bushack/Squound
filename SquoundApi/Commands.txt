@@ -1,0 +1,26 @@
+﻿
+GET
+===
+
+curl -k -v -X GET "https://localhost:7184/api/productmodels" |jq
+
+
+
+POST
+====
+
+curl -k -v -X POST https://localhost:7184/api/productmodels/ --header "Content-Type: application/json" --data "{ \"id\": 1167, \"name\": \"Christopher Michael Collier\", \"manufacturer\": \"Monica Anne and John Collier\", \"description\": \"My brother\", \"price\": 1 }" | jq
+
+
+
+PUT
+===
+
+curl -k -v -X PUT https://localhost:7184/api/productmodels/ --header "Content-Type: application/json" --data "{ \"id\": 1167, \"name\": \"Christopher Collier\", \"manufacturer\": \"Monica and John Collier\", \"description\": \"My younger brother\", \"price\": 2 }" | jq
+
+
+
+DELETE
+======
+
+curl -k -v -X DELETE "https://localhost:7184/api/productmodels/<<<ID_NUMBER>>>" |jq

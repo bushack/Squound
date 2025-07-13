@@ -19,5 +19,23 @@ namespace SquoundApi.Models
 
         [Required]
         public required int Price { get; set; }
+
+        [Required]
+        public required string Image0 { get; set; }
+
+        [Required]
+        public required string Image1 { get; set; }
+
+        [Required]
+        public required string Image2 { get; set; }
+
+        [Required]
+        public required string Image3 { get; set; }
+
+        [Required]
+        public required string Image4 { get; set; }
+
+        [Required]
+        public required string Image5 { get; set; }
     }
 }

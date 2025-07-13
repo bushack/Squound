@@ -22,7 +22,8 @@ namespace SquoundApi.Controllers
             Product_Does_Not_Exist,
             Product_Could_Not_Be_Created,
             Product_Could_Not_Be_Updated,
-            Product_Could_Not_Be_Deleted
+            Product_Could_Not_Be_Deleted,
+            Undefined_Error
         }
 
         public ProductModelsController(IProductRepository productRepository)
@@ -34,6 +35,28 @@ namespace SquoundApi.Controllers
         public IActionResult List()
         {
             return Ok(productRepository.All);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult Get(long id)
+        {
+            try
+            {
+                var product = productRepository.Find(id);
+
+                if (product == null)
+                {
+                    return NotFound(ErrorCode.Product_Does_Not_Exist.ToString());
+                }
+
+                // Success.
+                return Ok(product);
+            }
+
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status303SeeOther, ErrorCode.Undefined_Error.ToString());
+            }
         }
 
         [HttpPost]
