@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Connections.Features;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using SquoundApi.Interfaces;
 using SquoundApi.Models;
@@ -42,7 +41,7 @@ namespace SquoundApi.Controllers
         {
             try
             {
-                var product = productRepository.Find(id);
+                var product = productRepository.Get(id);
 
                 if (product == null)
                 {

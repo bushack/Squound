@@ -53,7 +53,7 @@
                                       Padding="0, 10, 0, 25"
                                       ColumnSpacing="2">
                                     <Label BackgroundColor="Transparent" Grid.Column="0" Text="{Binding Name}" Style="{StaticResource SmallBoldText}" HorizontalOptions="Start" />
-                                    <Label BackgroundColor="Transparent" Grid.Column="1" Text="{Binding Price}" Style="{StaticResource SmallBoldText}" HorizontalOptions="End" />
+                                    <Label BackgroundColor="Transparent" Grid.Column="1" Text="{Binding Price, StringFormat='{}{0:C2}'}" Style="{StaticResource SmallBoldText}" HorizontalOptions="End" />
                                 </Grid>
                             </VerticalStackLayout>
                         </Border>

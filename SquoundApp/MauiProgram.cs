@@ -1,5 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
+
+using System.Globalization;
+using System.Threading;
+
 using SquoundApp.Pages;
 using SquoundApp.Services;
 using SquoundApp.Utilities;
@@ -12,6 +16,15 @@ namespace SquoundApp
     {
         public static MauiApp CreateMauiApp()
         {
+            // Set the default culture to en-GB (UK).
+            // This ensures currencies will always be displayed as
+            // UK Pound Sterling (unless overridded elsewhere).
+            var culture = new CultureInfo("en-GB");
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()

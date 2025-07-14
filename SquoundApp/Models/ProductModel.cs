@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+
 
 namespace SquoundApp.Models
 {
@@ -38,11 +34,11 @@ namespace SquoundApp.Models
             Images[(int)index] = value;
         }
 
-        public required int Id { get; set; }
+        public required long Id { get; set; }
         public required string Name { get; set; }
         public required string Manufacturer { get; set; }
         public required string Description { get; set; }
-        public required string Price { get; set; }
+        public required decimal Price { get; set; }
         public required string Image0 { get => GetImage(ImageIndex.IMAGE_0); set => SetImage(ImageIndex.IMAGE_0, value); }
         public required string Image1 { get => GetImage(ImageIndex.IMAGE_1); set => SetImage(ImageIndex.IMAGE_1, value); }
         public required string Image2 { get => GetImage(ImageIndex.IMAGE_2); set => SetImage(ImageIndex.IMAGE_2, value); }

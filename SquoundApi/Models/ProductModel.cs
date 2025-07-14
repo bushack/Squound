@@ -18,7 +18,7 @@ namespace SquoundApi.Models
         public required string Description { get; set; }
 
         [Required]
-        public required int Price { get; set; }
+        public required decimal Price { get; set; }
 
         [Required]
         public required string Image0 { get; set; }

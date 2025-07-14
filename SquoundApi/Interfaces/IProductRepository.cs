@@ -7,7 +7,8 @@ namespace SquoundApi.Interfaces
     {
         bool DoesProductExist(long id);
         IEnumerable<ProductModel> All { get; }
-        ProductModel Find(long id);
+        IEnumerable<ProductModel> Get(long id);
+        ProductModel? Find(long id);
         void Insert(ProductModel product);
         void Update(ProductModel product);
         void Delete(long id);

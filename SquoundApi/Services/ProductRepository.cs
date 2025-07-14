@@ -25,8 +25,21 @@ namespace SquoundApi.Services
                 return productList;
             }
         }
+        public IEnumerable<ProductModel> Get(long id)
+        {
+            var product = this.Find(id);
 
-        public ProductModel Find(long id)
+            if (product == null)
+            {
+                // If no product is found, return an empty enumerable.
+                return Enumerable.Empty<ProductModel>();
+            }
+
+            // Return a list containing the single found product.
+            return new List<ProductModel> { product };
+        }
+
+        public ProductModel? Find(long id)
         {
             return productList.FirstOrDefault(product => product.Id == id);
         }
@@ -39,15 +52,24 @@ namespace SquoundApi.Services
         public void Update(ProductModel product)
         {
             var productToUpdate = this.Find(product.Id);
-            var index = productList.IndexOf(productToUpdate);
 
-            productList.RemoveAt(index);
-            productList.Insert(index, product);
+            if (productToUpdate != null)
+            {
+                var index = productList.IndexOf(productToUpdate);
+
+                productList.RemoveAt(index);
+                productList.Insert(index, product);
+            }
         }
 
         public void Delete(long id)
         {
-            productList.Remove(this.Find(id));
+            var productToDelete = this.Find(id);
+
+            if (productToDelete != null)
+            {
+                productList.Remove(productToDelete);
+            }
         }
 
         private void InitializeData()
@@ -58,7 +80,7 @@ namespace SquoundApi.Services
                 Name = "1970s Teak Cabinet",
                 Manufacturer = "Abbess",
                 Description = "Teak sliding doors with inset aluminium circular pulls, robust metal legs and adjustable internal shelf. Versatile and charming.",
-                Price = 1234,
+                Price = 1020.30m,
                 Image0 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_1_.jpg",
                 Image1 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_2_.jpg",
                 Image2 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_3_.jpg",
@@ -73,7 +95,7 @@ namespace SquoundApi.Services
                 Name = "Mid-Century Tallboy",
                 Manufacturer = "Wrighton Furniture",
                 Description = "Elegant styling, circular pulls, sculptural leg detailing and beautiful timbers make this an especially unusual & desirable piece.",
-                Price = 100000000,
+                Price = 6789.99m,
                 Image0 = "https://raw.githubusercontent.com/bushack/images/main/mid_century_tallboy_wrighton.jpg",
                 Image1 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_2_.jpg",
                 Image2 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_3_.jpg",
@@ -88,7 +110,7 @@ namespace SquoundApi.Services
                 Name = "1960s Tallboy",
                 Manufacturer = "Austinsuite",
                 Description = "Designed by Frank Guille for top end British maker Austinsuite. Elegant lines, sculpted full length pulls, tapered legs and differing drawer sizes combine with high quality timbers and beautiful craftmanship making this one of the most desirable British mid century tallboys you can find.",
-                Price = 1234,
+                Price = 2345.67m,
                 Image0 = "https://raw.githubusercontent.com/bushack/images/main/tallboy_austinsuite.jpg",
                 Image1 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_2_.jpg",
                 Image2 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_3_.jpg",
@@ -103,7 +125,7 @@ namespace SquoundApi.Services
                 Name = "Mid-Century Tallboy",
                 Manufacturer = "Homeworthy Furniture",
                 Description = "Quality craftmanship, curvaceous pulls, overhanging top and afromosia detailing; classic mid century styling & super desirable.",
-                Price = 1234,
+                Price = 3456.78m,
                 Image0 = "https://raw.githubusercontent.com/bushack/images/main/tallboy_homeworthy.jpg",
                 Image1 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_2_.jpg",
                 Image2 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_3_.jpg",
@@ -118,7 +140,7 @@ namespace SquoundApi.Services
                 Name = "Mid-Century Tallboy",
                 Manufacturer = "Avalon Furniture",
                 Description = "Beautifully grained, rich honey coloured timbers, sculpted solid afromosia pulls and shapely flaring solid beech legs; a fabulous, classic design from Avalon.",
-                Price = 1234,
+                Price = 4567.89m,
                 Image0 = "https://raw.githubusercontent.com/bushack/images/main/tallboy_avalon.jpg",
                 Image1 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_2_.jpg",
                 Image2 = "https://raw.githubusercontent.com/bushack/images/main/cabinet_abbess_3_.jpg",

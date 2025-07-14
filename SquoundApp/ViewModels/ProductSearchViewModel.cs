@@ -57,8 +57,9 @@ namespace SquoundApp.ViewModels
                 // The fetched products will be added to the Products collection.
                 // If the product service has a method to fetch products via HTTP, we call that.
                 // If you want to fetch products from an embedded JSON file instead, you can call:
-                // var products = await productService.GetProductsEmbedded();
-                var productList = await productService.GetProductsHttp();
+                // var productList = await productService.GetProductsEmbedded();
+                //var productList = await productService.GetProductsHttp();
+                var productList = await productService.GetProductsApi();
 
                 // Clear the existing products in the ObservableCollection.
                 // This ensures that the collection is updated with the new products fetched.

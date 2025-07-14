@@ -23,7 +23,7 @@ namespace SquoundApp.Utilities
             {
                 var response = await httpClient.GetAsync(url);
 
-                if (!response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode == false)
                     return default;
 
                 return await response.Content.ReadFromJsonAsync<T>();
