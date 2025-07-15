@@ -1,0 +1,9 @@
+﻿
+	Add-Migration <DescriptiveName>			Generates migration file to be applied at 'Update-Database'
+											The project *must* have no errors or the file will be empty
+
+	Remove-Migration						Deletes the previously generated migration file
+
+	Update-Database							Applies changes to the database
+											If the update changed the database schema (added new table etc.)
+											the solution *must* be cleaned and re-built with no errors

@@ -38,7 +38,7 @@ namespace SquoundApp.Services
             string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "10.0.2.2" : "localhost";
             string Scheme = "https";
             string Port = "7184";
-            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/productmodels/";
+            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/";
 
             var response = await httpService.GetJsonAsync<List<ProductModel>>(RestUrl);
 

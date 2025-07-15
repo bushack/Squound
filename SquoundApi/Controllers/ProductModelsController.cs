@@ -10,9 +10,9 @@ namespace SquoundApi.Controllers
     // Route to access the controller.
     // Token [controller] is replaced with the name of the class without the "Controller" suffix.
     [Route("api/[controller]")]
-    public class ProductModelsController : ControllerBase
+    public class ProductModelsController(IProductRepository productRepository) : ControllerBase
     {
-        private readonly IProductRepository productRepository;
+        private readonly IProductRepository productRepository = productRepository;
 
         public enum ErrorCode
         {
@@ -23,11 +23,6 @@ namespace SquoundApi.Controllers
             Product_Could_Not_Be_Updated,
             Product_Could_Not_Be_Deleted,
             Undefined_Error
-        }
-
-        public ProductModelsController(IProductRepository productRepository)
-        {
-            this.productRepository = productRepository;
         }
 
         [HttpGet]
