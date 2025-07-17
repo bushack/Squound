@@ -2,7 +2,7 @@
 
 namespace SquoundApp.Utilities
 {
-    class HttpService
+    public class HttpService
     {
         protected readonly HttpClient httpClient;
 
