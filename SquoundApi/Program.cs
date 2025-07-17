@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 using SquoundApi.Data;
+using SquoundApi.Factories;
 using SquoundApi.Interfaces;
 using SquoundApi.Models;
 using SquoundApi.Services;
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer("
 
 // Add services to the container.
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+builder.Services.AddSingleton<IDtoFactory, DtoFactory>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

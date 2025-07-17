@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SquoundApp.Models;
+
+using Shared.DataTransfer;
 
 
 namespace SquoundApp.ViewModels
@@ -16,11 +17,11 @@ namespace SquoundApp.ViewModels
         // See SquoundApp/Pages/ProductSearchPage.xaml.cs for the navigation logic which can be
         // found in the TapGestureRecognizer command handler for the product item.
         [ObservableProperty]
-        ProductModel product;
+        ProductDto product = new();
 
         public ProductListingViewModel()
         {
-            Title = "Product Details";
+            Title = "Product Listing";
         }
     }
 }

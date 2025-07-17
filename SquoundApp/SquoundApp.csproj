@@ -140,6 +140,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Update="Pages\ProductListingPage.xaml.cs">
 	    <DependentUpon>ProductListingPage.xaml</DependentUpon>
 	  </Compile>

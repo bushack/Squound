@@ -1,29 +1,29 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Text.Json;
 
-using SquoundApp.Models;
 using SquoundApp.Utilities;
+
+using Shared.DataTransfer;
 
 
 namespace SquoundApp.Services
 {
     public class ProductService
     {
-        List<ProductModel> productList = new();
+        List<ProductDto> productList = new();
 
         public void Clear()
         {
             // Check if the product list is already populated
-            if (productList?.Count > 0)
+            if (productList.Count > 0)
             {
                 productList.Clear();
             }
         }
 
 
-        public async Task<List<ProductModel>?> GetProductsApi()
+        public async Task<List<ProductDto>?> GetProductsApi()
         {
-            if (productList?.Count > 0)
+            if (productList.Count > 0)
             {
                 return productList;
             }
@@ -40,7 +40,7 @@ namespace SquoundApp.Services
             string Port = "7184";
             string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/";
 
-            var response = await httpService.GetJsonAsync<List<ProductModel>>(RestUrl);
+            var response = await httpService.GetJsonAsync<List<ProductDto>>(RestUrl);
 
             if (response != null)
             {
@@ -50,14 +50,14 @@ namespace SquoundApp.Services
             return productList;
         }
 
-        public async Task<List<ProductModel>?> GetProductsHttp()
+        public async Task<List<ProductDto>?> GetProductsHttp()
         {
             if (productList?.Count > 0)
                 return productList;
 
             var httpService = ServiceLocator.GetService<HttpService>();
 
-            var response = await httpService.GetJsonAsync<List<ProductModel>>("https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json");
+            var response = await httpService.GetJsonAsync<List<ProductDto>>("https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json");
 
             if (response != null)
             {
@@ -67,7 +67,7 @@ namespace SquoundApp.Services
             return productList;
         }
 
-        public async Task<List<ProductModel>?> GetProductsEmbedded()
+        public async Task<List<ProductDto>?> GetProductsEmbedded()
         {
             if (productList?.Count > 0)
                 return productList;
@@ -77,7 +77,7 @@ namespace SquoundApp.Services
             using var stream = await FileSystem.OpenAppPackageFileAsync("Resources/Raw/products.json");
             using var reader = new StreamReader(stream);
             var contents = await reader.ReadToEndAsync();
-            var products = JsonSerializer.Deserialize<List<ProductModel>>(contents);
+            var products = JsonSerializer.Deserialize<List<ProductDto>>(contents);
 
             if (products != null)
             {

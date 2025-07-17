@@ -1,11 +1,12 @@
 ﻿using SquoundApp.Models;
 using SquoundApp.Utilities;
 
+
 namespace SquoundApp.Services
 {
     public class AboutService
     {
-        AboutModel model = new();
+        readonly AboutModel model = new();
 
         public async Task<AboutModel> GetHTTP()
         {

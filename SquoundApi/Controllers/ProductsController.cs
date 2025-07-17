@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics;
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using SquoundApi.Data;
+using SquoundApi.Interfaces;
 using SquoundApi.Models;
-using System.Diagnostics;
 
 
 namespace SquoundApi.Controllers
@@ -12,9 +14,10 @@ namespace SquoundApi.Controllers
     // Route to access the controller.
     // Token [controller] is replaced with the name of the class without the "Controller" suffix.
     [Route("api/[controller]")]
-    public class ProductsController(DatabaseContext dbContext) : ControllerBase
+    public class ProductsController(DatabaseContext dbContext, IDtoFactory dtoFactory) : ControllerBase
     {
         private readonly DatabaseContext dbContext = dbContext;
+        private readonly IDtoFactory dtoFactory = dtoFactory;
 
         public enum ErrorCode
         {
@@ -32,14 +35,21 @@ namespace SquoundApi.Controllers
         {
             try
             {
-                var products = await dbContext.Products.ToListAsync();
+                var productModels = await dbContext.Products.ToListAsync();
 
-                if (products.Count.Equals(0))
+                if (productModels.Any() == false)
                 {
                     return NotFound(ErrorCode.Product_Does_Not_Exist.ToString());
                 }
 
-                return Ok(products);
+                var productDtos = new List<Shared.DataTransfer.ProductDto>();
+
+                foreach (var model in productModels)
+                {
+                    productDtos.Add(dtoFactory.CreateProductDto(model));
+                }
+
+                return Ok(productDtos);
             }
 
             catch (Exception ex)
@@ -55,7 +65,7 @@ namespace SquoundApi.Controllers
         {
             // TODO
 
-            Debug.WriteLine($"ac : Not yet implemented");
+            Debug.WriteLine($"***** ac : Not yet implemented *****");
 
             return NotFound(ErrorCode.Undefined_Error.ToString());
         }

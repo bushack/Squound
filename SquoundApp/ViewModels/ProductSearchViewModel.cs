@@ -1,15 +1,18 @@
 ﻿using System.Collections.ObjectModel;
+
 using CommunityToolkit.Mvvm.Input;
-using SquoundApp.Models;
+
 using SquoundApp.Pages;
 using SquoundApp.Services;
+
+using Shared.DataTransfer;
 
 
 namespace SquoundApp.ViewModels
 {
     public partial class ProductSearchViewModel : BaseViewModel
     {
-        public ObservableCollection<ProductModel> ProductList { get; } = new();
+        public ObservableCollection<ProductDto> ProductList { get; } = new();
 
         readonly ProductService productService;
 
@@ -21,7 +24,7 @@ namespace SquoundApp.ViewModels
         }
 
         [RelayCommand]
-        async Task GoToProductListingAsync(ProductModel product)
+        async Task GoToProductListingAsync(ProductDto product)
         {
             if (product is null)
                 return;
@@ -61,6 +64,9 @@ namespace SquoundApp.ViewModels
                 //var productList = await productService.GetProductsHttp();
                 var productList = await productService.GetProductsApi();
 
+                if (productList == null)
+                    return;
+
                 // Clear the existing products in the ObservableCollection.
                 // This ensures that the collection is updated with the new products fetched.
                 // ObservableCollection is used here so that the UI can automatically update
@@ -84,6 +90,7 @@ namespace SquoundApp.ViewModels
                     ProductList.Add(product);
                 }
             }
+
             catch (Exception ex)
             { 
                 // Handle exceptions, e.g., log them or show an alert to the user.
@@ -94,6 +101,7 @@ namespace SquoundApp.ViewModels
                     "An error occurred while attempting to fetch data",
                     "OK");
             }
+
             finally
             {
                 IsBusy = false;
