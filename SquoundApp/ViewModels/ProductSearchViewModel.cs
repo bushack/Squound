@@ -6,6 +6,7 @@ using SquoundApp.Pages;
 using SquoundApp.Services;
 
 using Shared.DataTransfer;
+using System.Diagnostics;
 
 
 namespace SquoundApp.ViewModels
@@ -34,6 +35,45 @@ namespace SquoundApp.ViewModels
                 {
                     {"Product", product}
                 });
+        }
+
+        [RelayCommand]
+        async Task LoadProductsAsync(string category)
+        {
+            if (IsBusy)
+                return;
+
+            try
+            {
+                IsBusy = true;
+
+                var productList = await productService.GetProductsApi(category);
+
+                if (productList == null)
+                    return;
+
+                ProductList.Clear();
+                foreach (var product in productList)
+                {
+                    ProductList.Add(product);
+                }
+            }
+
+            catch (Exception ex)
+            {
+                // Handle exceptions, e.g., log them or show an alert to the user.
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+
+                await Shell.Current.DisplayAlert(
+                    "Error",
+                    "An error occurred while attempting to fetch data",
+                    "OK");
+            }
+
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]

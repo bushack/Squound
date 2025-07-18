@@ -28,7 +28,7 @@ namespace SquoundApp.Services
         }
 
 
-        public async Task<List<ProductDto>?> GetProductsApi()
+        public async Task<List<ProductDto>?> GetProductsApi(string? category = null)
         {
             if (productList.Count > 0)
             {
@@ -44,7 +44,21 @@ namespace SquoundApp.Services
             string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "10.0.2.2" : "localhost";
             string Scheme = "https";
             string Port = "7184";
-            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search/category?category=Lighting&sort=price_desc";
+            //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category=None&manufacturer=Austinsuite&sortby=PriceDesc&pagenumber=1&pagesize=10";
+            //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category=Lighting&sortby=PriceAsc&pagenumber=1&pagesize=10";
+            //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/12";
+            //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/all";
+
+            string RestUrl = "";
+            if (category != null)
+            {
+                RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category={category}&sortby=PriceAsc&pagenumber=1&pagesize=10";
+            }
+
+            else
+            {
+                RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/all";
+            }
 
             var response = await httpService.GetJsonAsync<List<ProductDto>>(RestUrl);
 

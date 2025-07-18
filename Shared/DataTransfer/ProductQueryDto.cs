@@ -1,47 +1,60 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
 
-using System.ComponentModel.DataAnnotations;
 
 namespace Shared.DataTransfer
 {
+    public enum ProductSortOption
+    {
+        //Relevance = 0, : TODO
+        PriceAsc = 1,
+        PriceDesc = 2,
+        NameAsc = 3,
+        NameDesc = 4,
+    }
+
     public class ProductQueryDto
     {
-        private decimal minPrice = 0;
-        private decimal maxPrice = decimal.MaxValue;
+        /// <summary>
+        /// A sensible and pracitcal upper limit for maximum price.
+        /// </summary>
+        public const double PracticalMaximumPrice = 999999999999.99;
 
-        public string? SortBy { get; set; }
+        /// <summary>
+        /// Gets or sets the the method used for sorting operations.
+        /// </summary>
+        public ProductSortOption? SortBy { get; set; } = ProductSortOption.PriceAsc;
 
-        public string? Category { get; set; }
+        /// <summary>
+        /// Gets or sets the unique identifier for the product.
+        /// </summary>
+        public long? Id { get; set; } = null;
 
-        public string? Manufacturer { get; set; }
+        /// <summary>
+        /// Gets or sets the name of the product category.
+        /// </summary>
+        public string? Category { get; set; } = null;
 
-        public decimal MinPrice
-        {
-            get;
+        /// <summary>
+        /// Gets or sets the name of the product manufacturer.
+        /// </summary>
+        public string? Manufacturer { get; set; } = null;
 
-            set
-            {
-                minPrice = value;
+        /// <summary>
+        /// Gets or sets the keyword used for filtering or searching operations.
+        /// </summary>
+        public string? Keyword { get; set; } = null;
 
-                if (minPrice < 0) minPrice = 0;
+        /// <summary>
+        /// Gets or sets the minimum value for queries restricted by price range.
+        /// </summary>
+        [Range(0, PracticalMaximumPrice)]
+        public decimal MinPrice { get; set; } = 0;
 
-                if (minPrice > maxPrice) minPrice = maxPrice;
-            }
-        }
-
-        public decimal MaxPrice
-        {
-            get;
-
-            set
-            {
-                maxPrice = value;
-
-                if (maxPrice > decimal.MaxValue) maxPrice = decimal.MaxValue;
-
-                if (maxPrice < minPrice) maxPrice = minPrice;
-            }
-        }
+        /// <summary>
+        /// Gets or sets the maximum value for queries restricted by price range.
+        /// </summary>
+        [Range(0, PracticalMaximumPrice)]
+        public decimal MaxPrice { get; set; } = (decimal)PracticalMaximumPrice;
 
         /// <summary>
         /// Gets or sets the current page number for pagination.

@@ -1,3 +1,4 @@
+using SquoundApp.Pages;
 using SquoundApp.ViewModels;
 using SquoundApp.Utilities;
 
@@ -17,5 +18,16 @@ public partial class CategoriesView : ContentView
         // The instance is created in the file MauiProgram.cs with the line:
         // builder.Services.AddSingleton<CategoriesViewModel>();
         BindingContext = ServiceLocator.GetService<CategoriesViewModel>();
+    }
+
+    private async void OnButtonClicked(Object sender, EventArgs e)
+    {
+        if (Shell.Current.CurrentPage.Title.Equals(nameof(ProductSearchPage)))
+            return;
+
+        if (sender is Button button && button.CommandParameter is string category)
+        {
+            await Shell.Current.GoToAsync($"{nameof(ProductSearchPage)}?category={Uri.EscapeDataString(category)}");
+        }
     }
 }

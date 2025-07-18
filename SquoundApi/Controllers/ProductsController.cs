@@ -32,6 +32,35 @@ namespace SquoundApi.Controllers
             Undefined_Error
         }
 
+        private void Sanitize(ProductQueryDto query)
+        {
+            if (query.MinPrice < 0)
+                query.MinPrice = 0;
+
+            if (query.MinPrice > query.MaxPrice)
+                query.MinPrice = query.MaxPrice;
+
+            if (query.MaxPrice < query.MinPrice)
+                query.MaxPrice = query.MinPrice;
+
+            if (query.PageNumber < 1)
+                query.PageNumber = 1;
+
+            if (query.PageSize < 10)
+                query.PageSize = 10;
+
+            if (query.PageSize > 100)
+                query.PageSize = 100;
+        }
+
+        /// <summary>
+        /// Retrieves all products from the database.
+        /// </summary>
+        /// <remarks>This method fetches all product records from the database and converts them into DTOs
+        /// for client consumption. If no products are found, a 404 Not Found response is returned. If an error occurs
+        /// during processing, a 400 Bad Request response is returned.</remarks>
+        /// <returns>An <see cref="IActionResult"/> containing a list of product DTOs if products exist, a 404 Not Found
+        /// response if no products are found, or a 400 Bad Request response in case of an error.</returns>
         [HttpGet("all")]
         public async Task<IActionResult> All()
         {
@@ -62,13 +91,30 @@ namespace SquoundApi.Controllers
             }
         }
 
-        //
+        /// <summary>
+        /// Searches for products based on the specified query parameters.
+        /// </summary>
+        /// <remarks>This method supports filtering, sorting, and pagination of product results. Filters
+        /// can be applied for id, category, manufacturer, minimum price, and maximum price. Sorting can be performed by
+        /// price, name, or ID in ascending or descending order. Pagination is controlled using the page number and page
+        /// size parameters.</remarks>
+        /// <param name="query">The query parameters used to filter, sort, and paginate the product search results.</param>
+        /// <returns>An <see cref="IActionResult"/> containing a list of products matching the query parameters. Returns a 404
+        /// status code if no products match the criteria. Returns a 400 status code if an error occurs during
+        /// processing.</returns>
         [HttpGet("search")]
-        public async Task<IActionResult> Search(ProductQueryDto query)
+        public async Task<IActionResult> Search([FromQuery]ProductQueryDto query)
         {
             try
             {
+                this.Sanitize(query);
+
                 var products = dbContext.Products.AsQueryable();
+
+                if (query.Id != null)
+                {
+                    products = products.Where(predicate => (predicate.Id == query.Id));
+                }
 
                 // Filter by category.
                 if (string.IsNullOrEmpty(query.Category) == false)
@@ -83,29 +129,24 @@ namespace SquoundApi.Controllers
                 }
 
                 // Exclude products below minimum price.
-                if (query.MinPrice.HasValue)
-                {
-                    products = products.Where(predicate => (predicate.Price >= query.MinPrice));
-                }
+                products = products.Where(predicate => (predicate.Price >= query.MinPrice));
 
                 // Exclude products above maximum price.
-                if (query.MaxPrice.HasValue)
-                {
-                    products = products.Where(predicate => (predicate.Price <= query.MaxPrice));
-                }
+                products = products.Where(predicate => (predicate.Price <= query.MaxPrice));
 
                 // Sort by.
-                if (string.IsNullOrEmpty(query.SortBy) == false)
+                if (query.SortBy != null)
                 {
-                    products = query.SortBy.ToLower() switch
+                    products = query.SortBy switch
                     {
-                        "price_asc" => products.OrderBy(predicate => predicate.Price),
-                        "price_desc" => products.OrderByDescending(predicate => predicate.Price),
+                        ProductSortOption.PriceAsc => products.OrderBy(predicate => predicate.Price),
+                        ProductSortOption.PriceDesc => products.OrderByDescending(predicate => predicate.Price),
 
-                        "name_asc" => products.OrderBy(predicate => predicate.Name),
-                        "name_desc" => products.OrderByDescending(predicate => predicate.Name),
+                        ProductSortOption.NameAsc => products.OrderBy(predicate => predicate.Name),
+                        ProductSortOption.NameDesc => products.OrderByDescending(predicate => predicate.Name),
 
-                        _ => products
+                        // Default sort by id.
+                        _ => products.OrderBy(predicate => predicate.Id)
                     };
                 }
 
@@ -136,63 +177,15 @@ namespace SquoundApi.Controllers
             }
         }
 
-        // GET : api/products/search/category?category=Lighting&sort=price_desc
-        [HttpGet("search/category")]
-        public async Task<IActionResult> Get(string category, string sort)
-        {
-            try
-            {
-                var query = dbContext.Products.AsQueryable();
-
-                if (string.IsNullOrEmpty(category) == false)
-                {
-                    query = query.Where(predicate => (predicate.Category.Name == category));
-                }
-
-                if (sort == "price_asc")
-                {
-                    query = query.OrderBy(predicate => (predicate.Price));
-                }
-
-                else if (sort == "price_desc")
-                {
-                    query = query.OrderByDescending(predicate => (predicate.Price));
-                }
-
-                var productModels = await query.ToListAsync();
-
-                if (productModels.Count == 0)
-                {
-                    return NotFound(ErrorCode.Product_Does_Not_Exist.ToString());
-                }
-
-                var productDtos = new List<Shared.DataTransfer.ProductDto>();
-
-                foreach (var model in productModels)
-                {
-                    productDtos.Add(dtoFactory.CreateProductDto(model));
-                }
-
-                return Ok(productDtos);
-            }
-
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error fetching products : {ex.Message}");
-
-                return BadRequest(ErrorCode.Undefined_Error.ToString());
-            }
-        }
-
         // GET : api/products/123456
         [HttpGet("{id}")]
-        public IActionResult Get(long id)
+        public async Task<IActionResult> Get(long id)
         {
-            // TODO
+            var query = new ProductQueryDto();
 
-            Debug.WriteLine($"***** ac : Not yet implemented *****");
+            query.Id = id;
 
-            return NotFound(ErrorCode.Undefined_Error.ToString());
+            return await this.Search(query);
         }
 
         [HttpPost]

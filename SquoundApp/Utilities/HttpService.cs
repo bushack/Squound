@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Diagnostics;
+using System.Net.Http.Json;
 
 namespace SquoundApp.Utilities
 {
@@ -32,7 +33,7 @@ namespace SquoundApp.Utilities
             catch (Exception ex)
             {
                 // Handle exceptions, e.g., log them or show an alert to the user.
-                Console.WriteLine($"{nameof(HttpService)} Error : {ex.Message}");
+                Debug.WriteLine($"{nameof(HttpService)} Error : {ex.Message}");
 
                 await Shell.Current.DisplayAlert(
                     $"{nameof(HttpService)} Error",

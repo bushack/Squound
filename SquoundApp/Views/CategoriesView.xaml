@@ -14,7 +14,7 @@
             <Button Style="{StaticResource TextButton}" Text="Dining" Command="{Binding GoToProductSearchCommand}" />
             <Button Style="{StaticResource TextButton}" Text="Office" Command="{Binding GoToProductSearchCommand}" />
             <Button Style="{StaticResource TextButton}" Text="Bedroom" Command="{Binding GoToProductSearchCommand}" />
-            <Button Style="{StaticResource TextButton}" Text="Lighting" Command="{Binding GoToProductSearchCommand}" />
+            <Button Style="{StaticResource TextButton}" Text="Lighting" Clicked="OnButtonClicked" CommandParameter="Lighting"/>
             <Button Style="{StaticResource TextButton}" Text="Decor" Command="{Binding GoToProductSearchCommand}" />
             <Button Style="{StaticResource TextButton}" Text="Accessories" Command="{Binding GoToProductSearchCommand}" />
             
