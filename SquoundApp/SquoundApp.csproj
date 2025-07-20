@@ -150,6 +150,9 @@
 	  <Compile Update="Pages\ProductSearchPage.xaml.cs">
 	    <DependentUpon>ProductSearchPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\ProductFilterView.xaml.cs">
+	    <DependentUpon>ProductFilterView.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -178,6 +181,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SearchView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\ProductFilterView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SpacerView.xaml">

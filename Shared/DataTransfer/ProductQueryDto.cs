@@ -17,12 +17,12 @@ namespace Shared.DataTransfer
         /// <summary>
         /// A sensible and pracitcal upper limit for maximum price.
         /// </summary>
-        public const double PracticalMaximumPrice = 999999999999.99;
+        public const double PracticalMaximumPrice = 999999.99;
 
         /// <summary>
         /// Gets or sets the the method used for sorting operations.
         /// </summary>
-        public ProductSortOption? SortBy { get; set; } = ProductSortOption.PriceAsc;
+        public ProductSortOption SortBy { get; set; } = ProductSortOption.PriceAsc;
 
         /// <summary>
         /// Gets or sets the unique identifier for the product.

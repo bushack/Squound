@@ -1,0 +1,91 @@
+using SquoundApp.Utilities;
+using SquoundApp.ViewModels;
+
+namespace SquoundApp.Views;
+
+
+public partial class ProductFilterView : ContentView
+{
+	public ProductFilterView()
+	{
+		InitializeComponent();
+
+        BindingContext = ServiceLocator.GetService<ProductFilterViewModel>();
+    }
+
+    private void OnSortButtonClicked(object sender, EventArgs e)
+    {
+        SortButton.IsVisible = false;
+        SortButton.IsEnabled = false;
+        FilterButton.IsVisible = false;
+        FilterButton.IsEnabled = false;
+
+        SortLayout.IsVisible = true;
+        SortLayout.IsEnabled = true;
+        FilterLayout.IsVisible = false;
+        FilterLayout.IsEnabled = false;
+
+        HeadingLabel.Text = "Sort Options";
+        HeadingLabel.IsVisible = true;
+    }
+
+    private void OnFilterButtonClicked(object sender, EventArgs e)
+    {
+        SortButton.IsVisible = false;
+        SortButton.IsEnabled = false;
+        FilterButton.IsVisible = false;
+        FilterButton.IsEnabled = false;
+
+        SortLayout.IsVisible = false;
+        SortLayout.IsEnabled = false;
+        FilterLayout.IsVisible = true;
+        FilterLayout.IsEnabled = true;
+
+        HeadingLabel.Text = "Filter Options";
+        HeadingLabel.IsVisible = true;
+    }
+
+    private void OnSortApplyButtonClicked(object sender, EventArgs e)
+    {
+        SortButton.IsVisible = true;
+        SortButton.IsEnabled = true;
+        FilterButton.IsVisible = true;
+        FilterButton.IsEnabled = true;
+
+        SortLayout.IsVisible = false;
+        SortLayout.IsEnabled = false;
+        FilterLayout.IsVisible = false;
+        FilterLayout.IsEnabled = false;
+
+        HeadingLabel.IsVisible = false;
+    }
+
+    private void OnCheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        if ((BindingContext is ProductFilterViewModel viewModel) && (sender is RadioButton radioButton))
+        {
+            switch (radioButton.Content)
+            {
+                case "NameAsc":
+                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.NameAsc;
+                    break;
+
+                case "NameDesc":
+                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.NameDesc;
+                    break;
+
+                case "PriceAsc":
+                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceAsc;
+                    break;
+
+                case "PriceDesc":
+                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceDesc;
+                    break;
+
+                default:
+                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceAsc;
+                    break;
+            }
+        }
+    }
+}

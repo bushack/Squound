@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
              x:Class="SquoundApp.Views.CategoriesView"
              x:DataType="viewmodels:CategoriesViewModel">
-    
-    <ScrollView HorizontalOptions="Fill"
-                Style="{StaticResource HorizontalScrollView}">
+
+    <VerticalStackLayout>
         
-        <HorizontalStackLayout VerticalOptions="Center">
-            
-            <Button Style="{StaticResource TextButton}" Text="Lounge" Command="{Binding GoToProductSearchCommand}" />
-            <Button Style="{StaticResource TextButton}" Text="Dining" Command="{Binding GoToProductSearchCommand}" />
-            <Button Style="{StaticResource TextButton}" Text="Office" Command="{Binding GoToProductSearchCommand}" />
-            <Button Style="{StaticResource TextButton}" Text="Bedroom" Command="{Binding GoToProductSearchCommand}" />
-            <Button Style="{StaticResource TextButton}" Text="Lighting" Clicked="OnButtonClicked" CommandParameter="Lighting"/>
-            <Button Style="{StaticResource TextButton}" Text="Decor" Command="{Binding GoToProductSearchCommand}" />
-            <Button Style="{StaticResource TextButton}" Text="Accessories" Command="{Binding GoToProductSearchCommand}" />
-            
-        </HorizontalStackLayout>
-        
-    </ScrollView>
+        <ScrollView HorizontalOptions="Fill"
+                    Style="{StaticResource HorizontalScrollView}">
+
+            <HorizontalStackLayout VerticalOptions="Center">
+
+                <Button Style="{StaticResource TextButton}" Text="Lounge" Command="{Binding GoToProductSearchCommand}" />
+                <Button Style="{StaticResource TextButton}" Text="Dining" Command="{Binding GoToProductSearchCommand}" />
+                <Button Style="{StaticResource TextButton}" Text="Office" Command="{Binding GoToProductSearchCommand}" />
+                <Button Style="{StaticResource TextButton}" Text="Bedroom" Command="{Binding GoToProductSearchCommand}" />
+                <Button Style="{StaticResource TextButton}" Text="Lighting" Clicked="OnButtonClicked" CommandParameter="Lighting"/>
+                <Button Style="{StaticResource TextButton}" Text="Decor" Command="{Binding GoToProductSearchCommand}" />
+                <Button Style="{StaticResource TextButton}" Text="Accessories" Command="{Binding GoToProductSearchCommand}" />
+
+            </HorizontalStackLayout>
+
+        </ScrollView>
+
+        <views:ProductFilterView/>
+
+    </VerticalStackLayout>
 
 </ContentView>

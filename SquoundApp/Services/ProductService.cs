@@ -41,9 +41,9 @@ namespace SquoundApp.Services
 
             // URL of debug REST service (Android does not support https://localhost:5001)
             // This URL is used for debugging purposes on Android devices or emulators.
-            string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "10.0.2.2" : "localhost";
-            string Scheme = "https";
-            string Port = "7184";
+            string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "192.168.1.114" : "localhost";
+            string Scheme = DeviceInfo.Platform == DevicePlatform.Android ? "http" : "https";
+            string Port = DeviceInfo.Platform == DevicePlatform.Android ? "5050" : "7184";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category=None&manufacturer=Austinsuite&sortby=PriceDesc&pagenumber=1&pagesize=10";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category=Lighting&sortby=PriceAsc&pagenumber=1&pagesize=10";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/12";

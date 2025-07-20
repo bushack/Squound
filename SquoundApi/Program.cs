@@ -9,6 +9,13 @@ using SquoundApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Allow external access to API from Android device via Kestrel.
+//builder.WebHost.ConfigureKestrel(serverOptions =>
+//{
+//    serverOptions.ListenAnyIP(5050); // http
+//    serverOptions.ListenAnyIP(5001, listenOptions => listenOptions.UseHttps()); // https
+//});
+
 // Add SQL database to the project.
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=ProductDb;Trusted_Connection=True;"));
 

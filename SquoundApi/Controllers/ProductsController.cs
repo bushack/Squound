@@ -107,36 +107,50 @@ namespace SquoundApi.Controllers
         {
             try
             {
+                Debug.WriteLine($"* * * Initiating Product Database Search... * * *");
+
                 this.Sanitize(query);
 
-                var products = dbContext.Products.AsQueryable();
+                var products = dbContext.Products.Include(predicate => predicate.Category).AsQueryable();
 
-                if (query.Id != null)
+                if (query.Id is not null)
                 {
+                    Debug.WriteLine($"* * * Filtering by Id: {query.Id} * * *");
                     products = products.Where(predicate => (predicate.Id == query.Id));
                 }
 
                 // Filter by category.
                 if (string.IsNullOrEmpty(query.Category) == false)
                 {
+                    Debug.WriteLine($"* * * Filtering by Category: {query.Category} * * *");
                     products = products.Where(predicate => (predicate.Category.Name == query.Category));
                 }
 
                 // Filter by manufacturer.
                 if (string.IsNullOrEmpty(query.Manufacturer) == false)
                 {
+                    Debug.WriteLine($"* * * Filtering by Manufacturer: {query.Manufacturer} * * *");
                     products = products.Where(predicate => (predicate.Manufacturer == query.Manufacturer));
                 }
 
                 // Exclude products below minimum price.
-                products = products.Where(predicate => (predicate.Price >= query.MinPrice));
+                if ((query.MinPrice > 0) && (query.MinPrice <= (decimal)Shared.DataTransfer.ProductQueryDto.PracticalMaximumPrice))
+                {
+                    Debug.WriteLine($"* * * Filtering by MinPrice: {query.MinPrice} * * *");
+                    products = products.Where(predicate => (predicate.Price >= query.MinPrice));
+                }
 
                 // Exclude products above maximum price.
-                products = products.Where(predicate => (predicate.Price <= query.MaxPrice));
+                if ((query.MaxPrice > 0) && (query.MaxPrice <= (decimal)Shared.DataTransfer.ProductQueryDto.PracticalMaximumPrice))
+                {
+                    Debug.WriteLine($"* * * Filtering by MaxPrice: {query.MaxPrice} * * *");
+                    products = products.Where(predicate => (predicate.Price <= query.MaxPrice));
+                }
 
                 // Sort by.
-                if (query.SortBy != null)
+                //if (query.SortBy is not null)
                 {
+                    Debug.WriteLine($"* * * Sorting by: {nameof(query.SortBy)} * * *");
                     products = query.SortBy switch
                     {
                         ProductSortOption.PriceAsc => products.OrderBy(predicate => predicate.Price),
@@ -151,10 +165,14 @@ namespace SquoundApi.Controllers
                 }
 
                 // Pagination.
-                var pagedResult = await products.Skip((query.PageNumber - 1) * query.PageSize).Take(query.PageSize).ToListAsync();
+                var skip = (query.PageNumber - 1) * query.PageSize;
+                var take = query.PageSize;
+                Debug.WriteLine($"* * * Paging: Skip {skip}, Take {take} * * *");
+                var pagedResult = await products.Skip(skip).Take(take).ToListAsync();
 
                 if (pagedResult.Count == 0)
                 {
+                    Debug.WriteLine("* * * No products found * * *");
                     return NotFound(ErrorCode.Product_Does_Not_Exist.ToString());
                 }
 
@@ -166,14 +184,19 @@ namespace SquoundApi.Controllers
                     productDtos.Add(dtoFactory.CreateProductDto(model));
                 }
 
+                Debug.WriteLine($"* * * Returning {productDtos.Count} products * * *");
                 return Ok(productDtos);
             }
 
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching products : {ex.Message}");
-
+                Debug.WriteLine($"* * * Error fetching products: {ex.Message} * * *");
                 return BadRequest(ErrorCode.Undefined_Error.ToString());
+            }
+
+            finally
+            {
+                Debug.WriteLine($"* * * Product Database Search Complete * * *");
             }
         }
 
