@@ -62,6 +62,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<HeaderView>();
             builder.Services.AddSingleton<CategoriesView>();
             builder.Services.AddSingleton<FooterView>();
+            builder.Services.AddSingleton<ProductFilterView>();
 
             // View Models
             builder.Services.AddTransient<AboutViewModel>();

@@ -105,13 +105,16 @@
     <MauiImage Update="Resources\Images\settings.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\shopping.png" Resize="True" BaseSize="100,100" />
     
-    <!-- Button Images -->
+    <!-- Button Icons -->
     <MauiImage Update="Resources\Images\call.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\email.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\facebook.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\googlemaps.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\instagram.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\whatsapp.png" Resize="True" BaseSize="100,100" />
+    
+    <!-- General Icons -->
+    <MauiImage Update="Resources\Images\selected.png" Resize="True" BaseSize="100,100" />
     
     <!-- Other Images -->
     <MauiImage Update="Resources\Images\random5.png" Resize="True" BaseSize="750,750" />

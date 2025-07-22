@@ -60,32 +60,32 @@ public partial class ProductFilterView : ContentView
         HeadingLabel.IsVisible = false;
     }
 
-    private void OnCheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        if ((BindingContext is ProductFilterViewModel viewModel) && (sender is RadioButton radioButton))
-        {
-            switch (radioButton.Content)
-            {
-                case "NameAsc":
-                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.NameAsc;
-                    break;
+    //private void OnCheckedChanged(object sender, CheckedChangedEventArgs e)
+    //{
+    //    if ((BindingContext is ProductFilterViewModel viewModel) && (sender is RadioButton radioButton))
+    //    {
+    //        switch (radioButton.Content)
+    //        {
+    //            case "NameAsc":
+    //                viewModel.SortOption = Shared.DataTransfer.ProductSortOption.NameAsc;
+    //                break;
 
-                case "NameDesc":
-                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.NameDesc;
-                    break;
+    //            case "NameDesc":
+    //                viewModel.SortOption = Shared.DataTransfer.ProductSortOption.NameDesc;
+    //                break;
 
-                case "PriceAsc":
-                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceAsc;
-                    break;
+    //            case "PriceAsc":
+    //                viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceAsc;
+    //                break;
 
-                case "PriceDesc":
-                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceDesc;
-                    break;
+    //            case "PriceDesc":
+    //                viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceDesc;
+    //                break;
 
-                default:
-                    viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceAsc;
-                    break;
-            }
-        }
-    }
+    //            default:
+    //                viewModel.SortOption = Shared.DataTransfer.ProductSortOption.PriceAsc;
+    //                break;
+    //        }
+    //    }
+    //}
 }

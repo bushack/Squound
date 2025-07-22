@@ -5,18 +5,18 @@ namespace SquoundApp.ViewModels
 {
     public partial class BaseViewModel : ObservableObject
     {
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-        bool isBusy = false;
+        public bool IsNotBusy => !IsBusy;
 
         [ObservableProperty]
-        string title = "";
+        [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+        private bool isBusy = false;
+
+        [ObservableProperty]
+        private string title = "";
 
         public BaseViewModel()
         {
             // Constructor logic can go here if needed.
         }
-
-        public bool IsNotBusy => !IsBusy;
     }
 }

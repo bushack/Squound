@@ -7,25 +7,67 @@
              
              BackgroundColor="Transparent">
 
-    <Grid RowDefinitions="50, *"
-          ColumnDefinitions="50*, 50*">
+    <Grid RowDefinitions="50, *" ColumnDefinitions="1*, 1*">
+        
         <Button x:Name="SortButton" Grid.Row="0" Grid.Column="0" Text="Sort" BackgroundColor="Transparent" Clicked="OnSortButtonClicked" />
         <Button x:Name="FilterButton" Grid.Row="0" Grid.Column="1" Text="Filter" BackgroundColor="Transparent" Clicked="OnFilterButtonClicked" />
         <Label x:Name="HeadingLabel" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BackgroundColor="Transparent" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White"/>
-        <VerticalStackLayout x:Name="SortLayout" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" RadioButtonGroup.GroupName="SortBy" IsVisible="False" IsEnabled="False">
-            <RadioButton Content="Name : A - Z" HorizontalOptions="Center" TextColor="White" Value="NameAsc" CheckedChanged="OnCheckedChanged" IsChecked="{Binding IsSortOptionNameAsc}" />
-            <RadioButton Content="Name : Z - A" HorizontalOptions="Center" TextColor="White" Value="NameDesc" CheckedChanged="OnCheckedChanged" IsChecked="{Binding IsSortOptionNameDesc}" />
-            <RadioButton Content="Price : Low - High" HorizontalOptions="Center" TextColor="White" Value="PriceAsc" CheckedChanged="OnCheckedChanged" IsChecked="{Binding IsSortOptionPriceAsc}" />
-            <RadioButton Content="Price : High - Low" HorizontalOptions="Center" TextColor="White" Value="PriceDesc" CheckedChanged="OnCheckedChanged" IsChecked="{Binding IsSortOptionPriceDesc}" />
-            <Grid RowDefinitions="50"
-                  ColumnDefinitions="50*, 50*">
+
+        <!-- Displays the Sort Menu -->
+        <VerticalStackLayout x:Name="SortLayout"
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="2"
+                             IsVisible="False"
+                             IsEnabled="False">
+
+            <Grid RowDefinitions="Auto, Auto, Auto, Auto"
+                  ColumnDefinitions="Auto, *"
+                  HorizontalOptions="Center"
+                  BackgroundColor="Transparent">
+
+                <!-- Row 0 : Sort by Name Ascending -->
+                <Grid Grid.Row="0" Grid.Column="0" HeightRequest="20">
+                    <Image Source="selected.png" IsVisible="{Binding IsSortOptionNameAscending}"/>
+                </Grid>
+                <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Text="Name: Ascending" HorizontalOptions="Start" Command="{Binding SetSortOptionAsNameAscendingCommand}"/>
+
+                <!-- Row 1 : Sort by Name Descending -->
+                <Grid Grid.Row="1" Grid.Column="0" HeightRequest="20">
+                    <Image Source="selected.png" IsVisible="{Binding IsSortOptionNameDescending}"/>
+                </Grid>
+                <Button Grid.Row="1" Grid.Column="1" BackgroundColor="Transparent" Text="Name: Descending" HorizontalOptions="Start" Command="{Binding SetSortOptionAsNameDescendingCommand}"/>
+
+                <!-- Row 2 : Sort by Price Ascending -->
+                <Grid Grid.Row="2" Grid.Column="0" HeightRequest="20">
+                    <Image Source="selected.png" IsVisible="{Binding IsSortOptionPriceAscending}"/>
+                </Grid>
+                <Button Grid.Row="2" Grid.Column="1" BackgroundColor="Transparent" Text="Price: Ascending" HorizontalOptions="Start" Command="{Binding SetSortOptionAsPriceAscendingCommand}"/>
+
+                <!-- Row 3 : Sort by Price Descending -->
+                <Grid Grid.Row="3" Grid.Column="0" HeightRequest="20">
+                    <Image Source="selected.png" IsVisible="{Binding IsSortOptionPriceDescending}"/>
+                </Grid>
+                <Button Grid.Row="3" Grid.Column="1" BackgroundColor="Transparent" Text="Price: Descending" HorizontalOptions="Start" Command="{Binding SetSortOptionAsPriceDescendingCommand}"/>
+            </Grid>
+
+            <!-- Bottom of Menu : Apply and Cancel Buttons -->
+            <Grid RowDefinitions="Auto" ColumnDefinitions="1*, 1*">
                 <Button Text="Apply" Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent" Clicked="OnSortApplyButtonClicked"/>
                 <Button Text="Cancel" Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Clicked="OnSortApplyButtonClicked"/>
             </Grid>
+
         </VerticalStackLayout>
-        <VerticalStackLayout x:Name="FilterLayout" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsVisible="False" IsEnabled="False">
-            <Grid RowDefinitions="50, 50, 50"
-                  ColumnDefinitions="50*, 50*">
+        
+        <!-- Displays the Filter Menu -->
+        <VerticalStackLayout x:Name="FilterLayout"
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="2"
+                             IsVisible="False"
+                             IsEnabled="False">
+
+            <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="1*, 1*">
                 <Label Grid.Row="0" Grid.Column="0" Text="Keyword" HorizontalOptions="Center" VerticalOptions="Center"/>
                 <Entry Grid.Row="0" Grid.Column="1" Placeholder="Enter Keyword" PlaceholderColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
                 <Label Grid.Row="1" Grid.Column="0" Text="Minimum Price" HorizontalOptions="Center" VerticalOptions="Center"/>
@@ -33,11 +75,15 @@
                 <Label Grid.Row="2" Grid.Column="0" Text="Maximum Price" HorizontalOptions="Center" VerticalOptions="Center"/>
                 <Entry Grid.Row="2" Grid.Column="1" Placeholder="None" HorizontalOptions="Center" VerticalOptions="Center"/>
             </Grid>
-            <Grid RowDefinitions="50"
-                  ColumnDefinitions="50*, 50*">
+
+            <!-- Bottom of Menu : Apply and Cancel Buttons -->
+            <Grid RowDefinitions="Auto" ColumnDefinitions="1*, 1*">
                 <Button Text="Apply" Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent" Clicked="OnSortApplyButtonClicked"/>
                 <Button Text="Cancel" Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Clicked="OnSortApplyButtonClicked"/>
             </Grid>
+            
         </VerticalStackLayout>
+        
     </Grid>
+    
 </ContentView>
