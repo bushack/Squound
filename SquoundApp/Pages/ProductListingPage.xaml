@@ -10,7 +10,7 @@
 
     <ScrollView>
         <VerticalStackLayout>
-            <views:HeaderView/>
+            <views:BasicHeaderView/>
 
             <!-- Carousel of images -->
             <CarouselView ItemsSource="{Binding Product.Images}"

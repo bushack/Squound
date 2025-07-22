@@ -70,7 +70,7 @@
         <Setter Property="VerticalOptions" Value="Center"/>
     </Style>
 
-    <!-- Horizontal ScrollView -->
+    <!-- HorizontalScrollView -->
     <Style TargetType="ScrollView" x:Key="HorizontalScrollView">
         <Setter Property="Orientation" Value="Horizontal"/>
         <Setter Property="HorizontalScrollBarVisibility" Value="Never"/>
@@ -79,7 +79,25 @@
         <Setter Property="HorizontalOptions" Value="Center"/>
         <Setter Property="VerticalOptions" Value="Center"/>
     </Style>
-    
+
+    <!-- LozengeBorder -->
+    <Style TargetType="Border" x:Key="LozengeBorder">
+        <Setter Property="StrokeShape" Value="RoundRectangle 25"/>
+        <Setter Property="StrokeThickness" Value="0"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BackgroundColor" Value="White"/>
+        <Setter Property="HorizontalOptions" Value="Fill"/>
+    </Style>
+
+    <!-- GenericEntry -->
+    <Style TargetType="Entry" x:Key="GenericEntry">
+        <Setter Property="TextColor" Value="Black"/>
+        <Setter Property="BackgroundColor" Value="White"/>
+        <Setter Property="HorizontalTextAlignment" Value="Center"/>
+        <Setter Property="VerticalTextAlignment" Value="Center"/>
+        <Setter Property="PlaceholderColor" Value="{StaticResource Gray400}"/>
+    </Style>
+
     <Style TargetType="Button">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />

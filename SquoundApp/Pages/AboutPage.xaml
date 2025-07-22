@@ -8,7 +8,7 @@
     
     <ScrollView>
         <VerticalStackLayout>
-            <views:HeaderView/>
+            <views:BasicHeaderView/>
             <Image Source="{Binding Model.Image}"
                    Style="{StaticResource MainImage}"/>
             <Label Text="{Binding Model.Headline}"

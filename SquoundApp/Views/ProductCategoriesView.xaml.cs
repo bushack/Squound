@@ -5,14 +5,14 @@ using SquoundApp.Utilities;
 namespace SquoundApp.Views;
 
 
-public partial class CategoriesView : ContentView
+public partial class ProductCategoriesView : ContentView
 {
-	public CategoriesView()
+	public ProductCategoriesView()
 	{
 		InitializeComponent();
 
         // The ViewModel is the decision maker working in the background for the View.
-        // Therefore the DataType in the file CategoriesView.xaml is set to CategoriesViewModel,
+        // Therefore the DataType in the file ProductCategoriesView.xaml is set to CategoriesViewModel,
         // this assists the XAML compiler in providing IntelliSense and type checking.
         // However, the actual instance of the ViewModel is provided by the ServiceLocator,
         // The instance is created in the file MauiProgram.cs with the line:

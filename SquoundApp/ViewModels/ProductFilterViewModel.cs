@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using SquoundApp.Pages;
+
 using Shared.DataTransfer;
 
 
@@ -8,17 +10,26 @@ namespace SquoundApp.ViewModels
 {
     public partial class ProductFilterViewModel : BaseViewModel
     {
+        // Variables for sort options.
         [ObservableProperty]
-        private bool isSortOptionNameAscending = false;
+        [NotifyPropertyChangedFor(nameof(IsSortOptionNotNameAscending))]
+        public bool isSortOptionNameAscending = false;
+        public bool IsSortOptionNotNameAscending => !IsSortOptionNameAscending;
 
         [ObservableProperty]
-        private bool isSortOptionNameDescending = false;
+        [NotifyPropertyChangedFor(nameof(IsSortOptionNotNameDescending))]
+        public bool isSortOptionNameDescending = false;
+        public bool IsSortOptionNotNameDescending => !IsSortOptionNameDescending;
 
         [ObservableProperty]
-        private bool isSortOptionPriceAscending = true;
+        [NotifyPropertyChangedFor(nameof(IsSortOptionNotPriceAscending))]
+        public bool isSortOptionPriceAscending = true;
+        public bool IsSortOptionNotPriceAscending => !IsSortOptionPriceAscending;
 
         [ObservableProperty]
-        private bool isSortOptionPriceDescending = false;
+        [NotifyPropertyChangedFor(nameof(IsSortOptionNotPriceDescending))]
+        public bool isSortOptionPriceDescending = false;
+        public bool IsSortOptionNotPriceDescending => !IsSortOptionPriceDescending;
 
         /// <summary>
         /// Default constructor.
@@ -36,9 +47,6 @@ namespace SquoundApp.ViewModels
         {
             if (value)
             {
-                //isSortOptionNameDescending = false;
-                //isSortOptionPriceAscending = false;
-                //isSortOptionPriceDescending = false;
             }
         }
 
@@ -50,9 +58,6 @@ namespace SquoundApp.ViewModels
         {
             if (value)
             {
-                //isSortOptionNameAscending = false;
-                //isSortOptionPriceAscending = false;
-                //isSortOptionPriceDescending = false;
             }
         }
 
@@ -64,9 +69,6 @@ namespace SquoundApp.ViewModels
         {
             if (value)
             {
-                //isSortOptionNameAscending = false;
-                //isSortOptionNameDescending = false;
-                //isSortOptionPriceDescending = false;
             }
         }
 
@@ -78,9 +80,6 @@ namespace SquoundApp.ViewModels
         {
             if (value)
             {
-                //isSortOptionNameAscending = false;
-                //isSortOptionNameDescending = false;
-                //isSortOptionPriceAscending = false;
             }
         }
 
@@ -92,6 +91,7 @@ namespace SquoundApp.ViewModels
             IsSortOptionPriceAscending = false;
             IsSortOptionPriceDescending = false;
         }
+
         [RelayCommand]
         private void SetSortOptionAsNameDescending()
         {
@@ -109,6 +109,7 @@ namespace SquoundApp.ViewModels
             IsSortOptionPriceAscending = true;
             IsSortOptionPriceDescending = false;
         }
+
         [RelayCommand]
         private void SetSortOptionAsPriceDescending()
         {
@@ -116,6 +117,15 @@ namespace SquoundApp.ViewModels
             IsSortOptionNameDescending = false;
             IsSortOptionPriceAscending = false;
             IsSortOptionPriceDescending = true;
+        }
+
+        [RelayCommand]
+        async Task GoToProductSearchAsync()
+        {
+            if (Shell.Current.CurrentPage.Title.Equals(nameof(ProductSearchPage)))
+                return;
+
+            await Shell.Current.GoToAsync(nameof(ProductSearchPage));
         }
     }
 }

@@ -1,3 +1,4 @@
+using SquoundApp.Pages;
 using SquoundApp.Utilities;
 using SquoundApp.ViewModels;
 
@@ -58,6 +59,19 @@ public partial class ProductFilterView : ContentView
         FilterLayout.IsEnabled = false;
 
         HeadingLabel.IsVisible = false;
+    }
+
+
+
+    private async void OnButtonClicked(Object sender, EventArgs e)
+    {
+        if (Shell.Current.CurrentPage.Title.Equals(nameof(ProductSearchPage)))
+            return;
+
+        if (sender is Button button && button.CommandParameter is string category)
+        {
+            await Shell.Current.GoToAsync($"{nameof(ProductSearchPage)}?category={Uri.EscapeDataString(category)}");
+        }
     }
 
     //private void OnCheckedChanged(object sender, CheckedChangedEventArgs e)

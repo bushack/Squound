@@ -14,7 +14,7 @@
         
         <VerticalStackLayout>
             
-            <views:HeaderView/>
+            <views:BasicHeaderView/>
             
             <Image Style="{StaticResource MainImage}"
                    Source="https://raw.githubusercontent.com/bushack/images/main/shop_interior.jpg"
