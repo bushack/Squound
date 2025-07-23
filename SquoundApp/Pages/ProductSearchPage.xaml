@@ -17,7 +17,7 @@
                         IsEnabled="{Binding IsNotBusy}">
 
             <CollectionView.Header>
-                <views:HeaderView/>
+                <views:AdvancedHeaderView/>
             </CollectionView.Header>
 
             <CollectionView.ItemTemplate>

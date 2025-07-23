@@ -17,7 +17,7 @@ public partial class ProductCategoriesView : ContentView
         // However, the actual instance of the ViewModel is provided by the ServiceLocator,
         // The instance is created in the file MauiProgram.cs with the line:
         // builder.Services.AddSingleton<CategoriesViewModel>();
-        BindingContext = ServiceLocator.GetService<CategoriesViewModel>();
+        BindingContext = ServiceLocator.GetService<HeaderViewModel>();
     }
 
     private async void OnButtonClicked(Object sender, EventArgs e)

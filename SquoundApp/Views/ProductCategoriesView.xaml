@@ -4,7 +4,7 @@
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
              x:Class="SquoundApp.Views.ProductCategoriesView"
-             x:DataType="viewmodels:CategoriesViewModel">
+             x:DataType="viewmodels:HeaderViewModel">
 
     <VerticalStackLayout>
         
@@ -13,13 +13,16 @@
 
             <HorizontalStackLayout VerticalOptions="Center">
 
-                <Button Style="{StaticResource TextButton}" Text="Lounge" Command="{Binding GoToProductSearchCommand}" />
-                <Button Style="{StaticResource TextButton}" Text="Dining" Command="{Binding GoToProductSearchCommand}" />
-                <Button Style="{StaticResource TextButton}" Text="Office" Command="{Binding GoToProductSearchCommand}" />
-                <Button Style="{StaticResource TextButton}" Text="Bedroom" Command="{Binding GoToProductSearchCommand}" />
+                <Button Style="{StaticResource TextButton}" Text="Lounge" Clicked="OnButtonClicked" CommandParameter="Lounge"/>
+                <Button Style="{StaticResource TextButton}" Text="Dining" Clicked="OnButtonClicked" CommandParameter="Dining"/>
+                <Button Style="{StaticResource TextButton}" Text="Office" Clicked="OnButtonClicked" CommandParameter="Office"/>
+                <Button Style="{StaticResource TextButton}" Text="Bedroom" Clicked="OnButtonClicked" CommandParameter="Bedroom"/>
                 <Button Style="{StaticResource TextButton}" Text="Lighting" Clicked="OnButtonClicked" CommandParameter="Lighting"/>
-                <Button Style="{StaticResource TextButton}" Text="Decor" Command="{Binding GoToProductSearchCommand}" />
-                <Button Style="{StaticResource TextButton}" Text="Accessories" Command="{Binding GoToProductSearchCommand}" />
+                <Button Style="{StaticResource TextButton}" Text="Decor" Clicked="OnButtonClicked" CommandParameter="Decor"/>
+                <Button Style="{StaticResource TextButton}" Text="Accessories" Clicked="OnButtonClicked" CommandParameter="Accessories"/>
+                
+                <!-- Depreciated -->
+                <!--<Button Style="{StaticResource TextButton}" Text="Accessories" Command="{Binding GoToProductSearchCommand}" />-->
 
             </HorizontalStackLayout>
 

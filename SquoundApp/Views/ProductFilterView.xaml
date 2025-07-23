@@ -4,23 +4,35 @@
              xmlns:behaviours="clr-namespace:SquoundApp.Behaviours"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
              x:Class="SquoundApp.Views.ProductFilterView"
-             x:DataType="viewmodels:ProductFilterViewModel"
+             x:DataType="viewmodels:HeaderViewModel"
              
              BackgroundColor="Transparent">
 
     <Grid RowDefinitions="50, *" ColumnDefinitions="1*, 1*">
         
-        <Button x:Name="SortButton" Grid.Row="0" Grid.Column="0" Text="Sort" BackgroundColor="Transparent" Clicked="OnSortButtonClicked" />
-        <Button x:Name="FilterButton" Grid.Row="0" Grid.Column="1" Text="Filter" BackgroundColor="Transparent" Clicked="OnFilterButtonClicked" />
-        <Label x:Name="HeadingLabel" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BackgroundColor="Transparent" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White"/>
+        <!-- Displays the title of the active menu -->
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" BackgroundColor="Transparent"
+               Text="{Binding Title}" IsVisible="{Binding IsTitleLabelVisible}"
+               HorizontalOptions="Center" VerticalOptions="Center" TextColor="White"/>
+        
+        <!-- Activates the sort menu -->
+        <Button Grid.Row="0" Grid.Column="0" Text="Sort" BackgroundColor="Transparent"
+                Command="{Binding SortButtonCommand}"
+                IsEnabled="{Binding IsSortButtonActive}"
+                IsVisible="{Binding IsSortButtonActive}" />
+        
+        <!-- Activates the filter menu -->
+        <Button Grid.Row="0" Grid.Column="1" Text="Filter" BackgroundColor="Transparent"
+                Command="{Binding FilterButtonCommand}"
+                IsEnabled="{Binding IsFilterButtonActive}"
+                IsVisible="{Binding IsFilterButtonActive}" />
 
         <!-- Displays the Sort Menu -->
-        <VerticalStackLayout x:Name="SortLayout"
-                             Grid.Row="1"
+        <VerticalStackLayout Grid.Row="1"
                              Grid.Column="0"
                              Grid.ColumnSpan="2"
-                             IsVisible="False"
-                             IsEnabled="False">
+                             IsEnabled="{Binding IsSortMenuActive}"
+                             IsVisible="{Binding IsSortMenuActive}">
 
             <Grid RowDefinitions="Auto, Auto, Auto, Auto"
                   ColumnDefinitions="Auto, *"
@@ -32,46 +44,55 @@
                     <Image Source="selected.png" IsVisible="{Binding IsSortOptionNameAscending}"/>
                     <Image Source="unselected.png" IsVisible="{Binding IsSortOptionNotNameAscending}"/>
                 </Grid>
-                <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Text="Name: Ascending" HorizontalOptions="Start" Command="{Binding SetSortOptionAsNameAscendingCommand}"/>
+                <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
+                        Text="Name: Ascending" HorizontalOptions="Start"
+                        Command="{Binding SetSortOptionAsNameAscendingCommand}"/>
 
                 <!-- Row 1 : Sort by Name Descending -->
                 <Grid Grid.Row="1" Grid.Column="0" HeightRequest="20">
                     <Image Source="selected.png" IsVisible="{Binding IsSortOptionNameDescending}"/>
                     <Image Source="unselected.png" IsVisible="{Binding IsSortOptionNotNameDescending}"/>
                 </Grid>
-                <Button Grid.Row="1" Grid.Column="1" BackgroundColor="Transparent" Text="Name: Descending" HorizontalOptions="Start" Command="{Binding SetSortOptionAsNameDescendingCommand}"/>
+                <Button Grid.Row="1" Grid.Column="1" BackgroundColor="Transparent"
+                        Text="Name: Descending" HorizontalOptions="Start"
+                        Command="{Binding SetSortOptionAsNameDescendingCommand}"/>
 
                 <!-- Row 2 : Sort by Price Ascending -->
                 <Grid Grid.Row="2" Grid.Column="0" HeightRequest="20">
                     <Image Source="selected.png" IsVisible="{Binding IsSortOptionPriceAscending}"/>
                     <Image Source="unselected.png" IsVisible="{Binding IsSortOptionNotPriceAscending}"/>
                 </Grid>
-                <Button Grid.Row="2" Grid.Column="1" BackgroundColor="Transparent" Text="Price: Ascending" HorizontalOptions="Start" Command="{Binding SetSortOptionAsPriceAscendingCommand}"/>
+                <Button Grid.Row="2" Grid.Column="1" BackgroundColor="Transparent"
+                        Text="Price: Ascending" HorizontalOptions="Start"
+                        Command="{Binding SetSortOptionAsPriceAscendingCommand}"/>
 
                 <!-- Row 3 : Sort by Price Descending -->
                 <Grid Grid.Row="3" Grid.Column="0" HeightRequest="20">
                     <Image Source="selected.png" IsVisible="{Binding IsSortOptionPriceDescending}"/>
                     <Image Source="unselected.png" IsVisible="{Binding IsSortOptionNotPriceDescending}"/>
                 </Grid>
-                <Button Grid.Row="3" Grid.Column="1" BackgroundColor="Transparent" Text="Price: Descending" HorizontalOptions="Start" Command="{Binding SetSortOptionAsPriceDescendingCommand}"/>
+                <Button Grid.Row="3" Grid.Column="1" BackgroundColor="Transparent"
+                        Text="Price: Descending" HorizontalOptions="Start"
+                        Command="{Binding SetSortOptionAsPriceDescendingCommand}"/>
             </Grid>
 
-            <!-- Bottom of Menu : Apply and Cancel Buttons -->
+            <!-- Bottom of Sort Menu : Apply and Cancel Buttons -->
             <Grid RowDefinitions="Auto" ColumnDefinitions="1*, 1*">
-                <Button Text="Apply" Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent" Clicked="OnSortApplyButtonClicked"/>
-                <Button Text="Cancel" Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Clicked="OnSortApplyButtonClicked"/>
+                <Button Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent"
+                        Text="Apply" Command="{Binding ApplySortCommand}"/>
+                <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
+                        Text="Cancel" Command="{Binding CancelSortCommand}"/>
             </Grid>
 
         </VerticalStackLayout>
         
         
         <!-- Displays the Filter Menu -->
-        <VerticalStackLayout x:Name="FilterLayout"
-                             Grid.Row="1"
+        <VerticalStackLayout Grid.Row="1"
                              Grid.Column="0"
                              Grid.ColumnSpan="2"
-                             IsVisible="False"
-                             IsEnabled="False">
+                             IsEnabled="{Binding IsFilterMenuActive}"
+                             IsVisible="{Binding IsFilterMenuActive}">
 
             <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="1*, 1*">
 
@@ -83,6 +104,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="Enter Keyword"
                            Keyboard="Text" MaxLength="20"
+                           Text="{Binding FilterKeyword}"
                            Style="{StaticResource GenericEntry}"/>
                 </Border>
 
@@ -94,10 +116,11 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="None"
                            Keyboard="Numeric" MaxLength="6"
+                           Text="{Binding FilterMinimumPrice}"
                            Style="{StaticResource GenericEntry}">
-                    <Entry.Behaviors>
-                        <behaviours:NumericValidationBehaviour />
-                    </Entry.Behaviors>
+                        <Entry.Behaviors>
+                            <behaviours:NumericValidationBehaviour />
+                        </Entry.Behaviors>
                     </Entry>
                 </Border>
 
@@ -109,6 +132,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="None"
                            Keyboard="Numeric" MaxLength="6"
+                           Text="{Binding FilterMaximumPrice}"
                            Style="{StaticResource GenericEntry}">
                         <Entry.Behaviors>
                             <behaviours:NumericValidationBehaviour />
@@ -117,10 +141,14 @@
                 </Border>
             </Grid>
 
-            <!-- Bottom of Menu : Apply and Cancel Buttons -->
-            <Grid RowDefinitions="Auto" ColumnDefinitions="1*, 1*">
-                <Button Text="Apply" Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent" Clicked="OnSortApplyButtonClicked"/>
-                <Button Text="Cancel" Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Clicked="OnSortApplyButtonClicked"/>
+            <!-- Bottom of Filter Menu : Apply, Reset and Cancel Buttons -->
+            <Grid RowDefinitions="Auto" ColumnDefinitions="1*, 1*, 1*">
+                <Button Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent"
+                        Text="Apply" Command="{Binding ApplyFilterCommand}"/>
+                <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
+                        Text="Reset" Command="{Binding ResetFilterCommand}"/>
+                <Button Grid.Row="0" Grid.Column="2" BackgroundColor="Transparent"
+                        Text="Cancel" Command="{Binding CancelFilterCommand}"/>
             </Grid>
             
         </VerticalStackLayout>

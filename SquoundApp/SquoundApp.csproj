@@ -154,6 +154,9 @@
 	  <Compile Update="Pages\ProductSearchPage.xaml.cs">
 	    <DependentUpon>ProductSearchPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\AdvancedHeaderView.xaml.cs">
+	    <DependentUpon>AdvancedHeaderView.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\ProductCategoriesView.xaml.cs">
 	    <DependentUpon>ProductCategoriesView.xaml</DependentUpon>
 	  </Compile>
@@ -184,7 +187,7 @@
 	  <MauiXaml Update="Views\FooterView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\HeaderView.xaml">
+	  <MauiXaml Update="Views\AdvancedHeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\LoadingOverlayView.xaml">

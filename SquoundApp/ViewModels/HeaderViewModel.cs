@@ -3,13 +3,28 @@ using CommunityToolkit.Mvvm.Input;
 
 using SquoundApp.Pages;
 
-using Shared.DataTransfer;
-
 
 namespace SquoundApp.ViewModels
 {
-    public partial class ProductFilterViewModel : BaseViewModel
+    public partial class HeaderViewModel : BaseViewModel
     {
+        // Variables involved in showing and hiding the sort and filter menus.
+        [ObservableProperty]
+        public bool isTitleLabelVisible = true;
+
+        [ObservableProperty]
+        public bool isSortButtonActive = true;
+
+        [ObservableProperty]
+        public bool isFilterButtonActive = true;
+
+        [ObservableProperty]
+        public bool isSortMenuActive = false;
+
+        [ObservableProperty]
+        public bool isFilterMenuActive = false;
+
+
         // Variables for sort options.
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsSortOptionNotNameAscending))]
@@ -31,12 +46,23 @@ namespace SquoundApp.ViewModels
         public bool isSortOptionPriceDescending = false;
         public bool IsSortOptionNotPriceDescending => !IsSortOptionPriceDescending;
 
+
+        // Variables for filter options.
+        [ObservableProperty]
+        public string filterKeyword = "";
+
+        [ObservableProperty]
+        public string filterMinimumPrice = "";
+
+        [ObservableProperty]
+        public string filterMaximumPrice = "";
+
+
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public ProductFilterViewModel()
+        public HeaderViewModel()
         {
-            Title = "Product Filter";
         }
 
         /// <summary>
@@ -117,6 +143,90 @@ namespace SquoundApp.ViewModels
             IsSortOptionNameDescending = false;
             IsSortOptionPriceAscending = false;
             IsSortOptionPriceDescending = true;
+        }
+
+        [RelayCommand]
+        private void OnSortButton()
+        {
+            Title = "Sort Options";
+
+            IsTitleLabelVisible = true;
+
+            IsSortButtonActive = false;
+            IsFilterButtonActive = false;
+
+            IsSortMenuActive = true;
+            IsFilterMenuActive = false;
+        }
+
+        [RelayCommand]
+        private void OnFilterButton()
+        {
+            Title = "Filter Options";
+
+            IsTitleLabelVisible = true;
+
+            IsSortButtonActive = false;
+            IsFilterButtonActive = false;
+
+            IsSortMenuActive = false;
+            IsFilterMenuActive = true;
+        }
+
+        [RelayCommand]
+        private void OnApplySort()
+        {
+            IsTitleLabelVisible = false;
+
+            IsSortButtonActive = true;
+            IsFilterButtonActive = true;
+
+            IsSortMenuActive = false;
+            IsFilterMenuActive = false;
+        }
+
+        [RelayCommand]
+        private void OnCancelSort()
+        {
+            IsTitleLabelVisible = false;
+
+            IsSortButtonActive = true;
+            IsFilterButtonActive = true;
+
+            IsSortMenuActive = false;
+            IsFilterMenuActive = false;
+        }
+
+        [RelayCommand]
+        private void OnApplyFilter()
+        {
+            IsTitleLabelVisible = false;
+
+            IsSortButtonActive = true;
+            IsFilterButtonActive = true;
+
+            IsSortMenuActive = false;
+            IsFilterMenuActive = false;
+        }
+
+        [RelayCommand]
+        private void OnResetFilter()
+        {
+            FilterKeyword = "";
+            FilterMinimumPrice = "";
+            FilterMaximumPrice = "";
+        }
+
+        [RelayCommand]
+        private void OnCancelFilter()
+        {
+            IsTitleLabelVisible = false;
+
+            IsSortButtonActive = true;
+            IsFilterButtonActive = true;
+
+            IsSortMenuActive = false;
+            IsFilterMenuActive = false;
         }
 
         [RelayCommand]

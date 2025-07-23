@@ -14,7 +14,7 @@
     <Grid RowDefinitions="Auto, *"
           ColumnDefinitions="10*, Auto, 10*">
         
-        <views:HeaderView Grid.Row="0"
+        <views:AdvancedHeaderView Grid.Row="0"
                                 Grid.ColumnSpan="3"/>
 
         <!-- Product Search Entry Box -->
