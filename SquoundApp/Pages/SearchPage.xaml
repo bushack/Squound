@@ -4,11 +4,17 @@
              xmlns:dtos="clr-namespace:Shared.DataTransfer;assembly=Shared"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
-             x:Class="SquoundApp.Pages.ProductSearchPage"
-             x:DataType="viewmodels:ProductSearchViewModel">
+             x:Class="SquoundApp.Pages.SearchPage"
+             x:DataType="viewmodels:SearchViewModel">
 
-    <Grid>
-        <CollectionView BackgroundColor="Transparent"
+    <Grid RowDefinitions="Auto, *">
+        
+        <!-- Row 0 : Displays the page title, category search bar and the sort and filter buttons -->
+        <views:AdvancedHeaderView Grid.Row="0"/>
+        
+        <!-- Row 1 : Displays the vertically scrollable collection of products -->
+        <CollectionView Grid.Row="1"
+                        BackgroundColor="Transparent"
                         ItemsSource="{Binding ProductList}"
                         ItemsLayout="VerticalGrid, 2"
                         SelectionMode="None"
@@ -16,10 +22,15 @@
                         IsVisible="{Binding IsNotBusy}"
                         IsEnabled="{Binding IsNotBusy}">
 
+            <!-- Displays the number of products returned by the search -->
             <CollectionView.Header>
-                <views:AdvancedHeaderView/>
+                <Label Text="{Binding ProductList.Count, StringFormat='{0} Items'}"
+                       TextColor="Black" Margin="0, 8, 0, 2"
+                       Style="{StaticResource SmallText}"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
             </CollectionView.Header>
 
+            <!-- Defines the layout of a single item in the scrollable collection -->
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="dtos:ProductDto">
                     <Grid>
@@ -36,9 +47,10 @@
                                 <!-- Product, until it finds a ProductSearchViewModel, inside which is the command (GetProduct) -->
                                 <!-- that it should execute -->
                                 <TapGestureRecognizer CommandParameter="{Binding .}"
-                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ProductSearchViewModel}}, x:DataType=viewmodels:ProductSearchViewModel, Path=GoToProductListingCommand}"/>
+                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SearchViewModel}}, x:DataType=viewmodels:SearchViewModel, Path=GoToProductListingCommand}"/>
                             </Border.GestureRecognizers>
 
+                            <!-- Main image with rounded corners -->
                             <VerticalStackLayout>
                                 <Border StrokeShape="RoundRectangle 15"
                                         StrokeThickness="0"
@@ -48,6 +60,7 @@
                                            Aspect="AspectFit"/>
                                 </Border>
 
+                                <!-- Name and price of item -->
                                 <Grid RowDefinitions="Auto"
                                       ColumnDefinitions="65*, 35*"
                                       Padding="0, 10, 0, 25"
@@ -68,19 +81,8 @@
 
         <!-- Bind the page's DataType (ProductSearchViewModel) to the LoadingOverlayView -->
         <!-- This prompts the LoadingOverlayView to display itself when the ViewModel's IsBusy property is true -->
-        <views:LoadingOverlayView x:DataType="{Binding .}"/>
-
-        <!--<Button Grid.Row="2"
-                Grid.Column="0"
-                Margin="5"
-                Text="Get Products"
-                Command="{Binding GetProductsCommand}"/>
-        
-        <Button Grid.Row="2"
-                Grid.Column="1"
-                Margin="5"
-                Text="Clear"
-                Command="{Binding ClearProductsCommand}"/>-->
+        <views:LoadingOverlayView Grid.Row="0" Grid.RowSpan="2" x:DataType="{Binding .}"/>
 
     </Grid>
+    
 </ContentPage>

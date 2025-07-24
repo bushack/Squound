@@ -3,15 +3,15 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.Pages;
 
-public partial class ProductSearchPage : ContentPage, IQueryAttributable
+public partial class SearchPage : ContentPage, IQueryAttributable
 {
-	public ProductSearchPage(ProductSearchViewModel viewModel)
+	public SearchPage(SearchViewModel viewModel)
 	{
 		InitializeComponent();
 
 		BindingContext = viewModel;
 
-        Title = nameof(ProductSearchPage);
+        Title = nameof(SearchPage);
     }
 
     //protected override void OnNavigatedTo(NavigatedToEventArgs args)
@@ -33,9 +33,9 @@ public partial class ProductSearchPage : ContentPage, IQueryAttributable
     {
         if (query.TryGetValue("category", out var categoryObj) && categoryObj is string category)
         {
-            if (BindingContext is ProductSearchViewModel viewModel)
+            if (BindingContext is SearchViewModel viewModel)
             {
-                viewModel.LoadProductsCommand.Execute(category);
+                viewModel.GetProductsCommand.Execute(category);
             }
         }
     }

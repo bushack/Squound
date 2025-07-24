@@ -68,6 +68,7 @@
 
         <!-- Copywrite -->
         <Label Text="&#169; 2025 Squound LLC. All Rights Reserved."
+               TextColor="White"
                Style="{StaticResource TinyText}"
                SemanticProperties.Description="Follow us on social media or get in touch"
                HorizontalOptions="Fill"

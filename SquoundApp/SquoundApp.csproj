@@ -151,17 +151,20 @@
 	  <Compile Update="Pages\ProductListingPage.xaml.cs">
 	    <DependentUpon>ProductListingPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\ProductSearchPage.xaml.cs">
-	    <DependentUpon>ProductSearchPage.xaml</DependentUpon>
+	  <Compile Update="Pages\SearchPage.xaml.cs">
+	    <DependentUpon>SearchPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\AdvancedHeaderView.xaml.cs">
 	    <DependentUpon>AdvancedHeaderView.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\ProductCategoriesView.xaml.cs">
-	    <DependentUpon>ProductCategoriesView.xaml</DependentUpon>
+	  <Compile Update="Views\SearchCategoriesView.xaml.cs">
+	    <DependentUpon>SearchCategoriesView.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\ProductFilterView.xaml.cs">
-	    <DependentUpon>ProductFilterView.xaml</DependentUpon>
+	  <Compile Update="Views\SearchPreferencesView.xaml.cs">
+	    <DependentUpon>SearchPreferencesView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\SearchHeadingView.xaml.cs">
+	    <DependentUpon>SearchHeadingView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -172,7 +175,7 @@
 	  <MauiXaml Update="Pages\HomePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\ProductSearchPage.xaml">
+	  <MauiXaml Update="Pages\SearchPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\SellPage.xaml">
@@ -181,7 +184,7 @@
 	  <MauiXaml Update="Views\BasicHeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\ProductCategoriesView.xaml">
+	  <MauiXaml Update="Views\SearchCategoriesView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\FooterView.xaml">
@@ -193,10 +196,7 @@
 	  <MauiXaml Update="Views\LoadingOverlayView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\SearchView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\ProductFilterView.xaml">
+	  <MauiXaml Update="Views\SearchPreferencesView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SpacerView.xaml">

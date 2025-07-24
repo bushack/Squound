@@ -49,7 +49,7 @@ namespace SquoundApp
             builder.Services.AddTransient<AboutPage>();
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddTransient<ProductListingPage>();
-            builder.Services.AddSingleton<ProductSearchPage>();
+            builder.Services.AddSingleton<SearchPage>();
             builder.Services.AddTransient<SellPage>();
 
             // Services
@@ -62,15 +62,15 @@ namespace SquoundApp
             builder.Services.AddSingleton<AdvancedHeaderView>();
             builder.Services.AddSingleton<BasicHeaderView>();
             builder.Services.AddSingleton<FooterView>();
-            builder.Services.AddSingleton<ProductCategoriesView>();
-            builder.Services.AddSingleton<ProductFilterView>();
+            builder.Services.AddSingleton<SearchHeadingView>();
+            builder.Services.AddSingleton<SearchCategoriesView>();
+            builder.Services.AddSingleton<SearchPreferencesView>();
 
             // View Models
             builder.Services.AddTransient<AboutViewModel>();
             builder.Services.AddSingleton<FooterViewModel>();
-            builder.Services.AddSingleton<HeaderViewModel>();
+            builder.Services.AddSingleton<SearchViewModel>();
             builder.Services.AddTransient<ProductListingViewModel>();
-            builder.Services.AddSingleton<ProductSearchViewModel>();
             builder.Services.AddTransient<SellViewModel>();
 
 #if DEBUG

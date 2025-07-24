@@ -344,7 +344,7 @@
 
     <!-- Tiny Text Lables -->
     <Style TargetType="Label" x:Key="TinyText">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontFamily" Value="RegularFont" />
         <Setter Property="FontAttributes" Value="None" />

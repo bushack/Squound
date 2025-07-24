@@ -17,7 +17,7 @@ namespace SquoundApp
             Routing.RegisterRoute(nameof(AboutPage), typeof(AboutPage));
             Routing.RegisterRoute(nameof(SellPage), typeof(SellPage));
             Routing.RegisterRoute(nameof(ProductListingPage), typeof(ProductListingPage));
-            Routing.RegisterRoute(nameof(ProductSearchPage), typeof(ProductSearchPage));
+            Routing.RegisterRoute(nameof(SearchPage), typeof(SearchPage));
         }
     }
 }

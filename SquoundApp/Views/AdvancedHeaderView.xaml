@@ -3,24 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:SquoundApp.Views"
              x:Class="SquoundApp.Views.AdvancedHeaderView">
-    
-        <!-- Squound Logo Header and Buttons -->
-    <VerticalStackLayout Background="{StaticResource SquoundGradientBrush}">
 
-        <views:SpacerView/>
-        
-        <Image Source="squound_logo.png"
-               Margin="0, 15, 0, 15"
-               HorizontalOptions="Center"
-               WidthRequest="150"
-               HeightRequest="150"/>
+    <!-- The AdvancedHeaderView is a ContentView that contains the header for the ProductSearchPage -->
+    <VerticalStackLayout BackgroundColor="Transparent">
 
-        <views:SpacerView/>
+        <!-- Displays the current search category. eg. "Lighting" -->
+        <views:SearchHeadingView Margin="0, 10, 0, 10"/>
 
-        <views:ProductCategoriesView/>
+        <!-- Horizontal scrollbar of product categories -->
+        <views:SearchCategoriesView/>
 
-        <views:ProductFilterView/>
+        <!-- Displays the sort and filter buttons and their menus -->
+        <views:SearchPreferencesView/>
 
+        <!-- Whitespace spacer to push the content down -->
         <views:SpacerView/>
 
     </VerticalStackLayout>

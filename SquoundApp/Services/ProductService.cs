@@ -27,8 +27,12 @@ namespace SquoundApp.Services
             }
         }
 
-
-        public async Task<List<ProductDto>?> GetProductsApi(string? category = null)
+        /// <summary>
+        /// Asynchronously retrieves a list of products from a REST API.
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        public async Task<List<ProductDto>?> GetProductsRestApi(string? category = null)
         {
             if (productList.Count > 0)
             {
@@ -70,12 +74,18 @@ namespace SquoundApp.Services
             return productList;
         }
 
-        public async Task<List<ProductDto>?> GetProductsHttp()
+        /// <summary>
+        /// Asynchronously retrieves a list of products from a remote JSON file.
+        /// </summary>
+        /// <param name="url">URL of the file to read.
+        /// Example: "https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json"</param>
+        /// <returns></returns>
+        public async Task<List<ProductDto>?> GetProductsRemoteJson(string url)
         {
             if (productList?.Count > 0)
                 return productList;
 
-            var response = await httpService.GetJsonAsync<List<ProductDto>>("https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json");
+            var response = await httpService.GetJsonAsync<List<ProductDto>>(url);
 
             if (response != null)
             {
@@ -85,14 +95,20 @@ namespace SquoundApp.Services
             return productList;
         }
 
-        public async Task<List<ProductDto>?> GetProductsEmbedded()
+        /// <summary>
+        /// Asynchronously retrieves a list of products from an embedded JSON file.
+        /// </summary>
+        /// <param name="filename">Relative filepath of the file to read.
+        /// Example: "Resources/Raw/products.json"</param>
+        /// <returns></returns>
+        public async Task<List<ProductDto>?> GetProductsEmbeddedJson(string filename)
         {
             if (productList?.Count > 0)
                 return productList;
 
             // Else read from embedded JSON file
             // See https://www.youtube.com/watch?v=DuNLR_NJv8U
-            using var stream = await FileSystem.OpenAppPackageFileAsync("Resources/Raw/products.json");
+            using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
             using var reader = new StreamReader(stream);
             var contents = await reader.ReadToEndAsync();
             var products = JsonSerializer.Deserialize<List<ProductDto>>(contents);
