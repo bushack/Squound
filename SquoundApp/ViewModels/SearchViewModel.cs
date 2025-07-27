@@ -14,7 +14,100 @@ namespace SquoundApp.ViewModels
 {
     public partial class SearchViewModel : BaseViewModel
     {
-        // Variables involved in showing and hiding the sort and filter menus.
+        // Query DTO that holds the most recently applied search criteria.
+        private ProductQueryDto PreviousQuery { get; set; } = new();
+
+        // Query DTO that holds the current but not yet applied search criteria.
+        public ProductQueryDto CurrentQuery { get; private set; } = new();
+
+
+        // Variables for filter options.
+        [ObservableProperty]
+        private string category = string.Empty;
+
+        [ObservableProperty]
+        private string manufacturer = string.Empty;
+
+        [ObservableProperty]
+        private string keyword = string.Empty;
+
+        [ObservableProperty]
+        private string minimumPrice = string.Empty;
+
+        [ObservableProperty]
+        private string maximumPrice = string.Empty;
+
+        [ObservableProperty]
+        private bool sortByNameAscending = false;
+
+        [ObservableProperty]
+        private bool sortByNameDescending = false;
+
+        [ObservableProperty]
+        private bool sortByPriceAscending = true;
+
+        [ObservableProperty]
+        private bool sortByPriceDescending = false;
+
+
+        // Partial methods to handle changes in filter properties.
+        partial void OnCategoryChanged(string value) { CurrentQuery.Category = value; }
+        partial void OnManufacturerChanged(string value) { CurrentQuery.Manufacturer = value; }
+        partial void OnKeywordChanged(string value) { CurrentQuery.Keyword = value; }
+        partial void OnMinimumPriceChanged(string value)
+        {
+            // Extract only the digits from the string.
+            var digits = new string(value.Where(char.IsDigit).ToArray());
+
+            // Try to parse the digits to a decimal.
+            if (decimal.TryParse(digits, out decimal price))
+            {
+                CurrentQuery.MinPrice = price;
+            }
+
+            // If the parsed price is less than zero or greater than the maximum price, reset it to zero.
+            if (CurrentQuery.MinPrice < 0 || (CurrentQuery.MinPrice > CurrentQuery.MaxPrice))
+            {
+                // If the parsed price is less than zero, reset it to zero.
+                CurrentQuery.MinPrice = 0;
+            }
+        }
+        partial void OnMaximumPriceChanged(string value)
+        {
+            // Extract only the digits from the string.
+            var digits = new string(value.Where(char.IsDigit).ToArray());
+
+            // Try to parse the digits to a decimal.
+            if (decimal.TryParse(digits, out decimal price))
+            {
+                CurrentQuery.MaxPrice = price;
+            }
+
+            // If the parsed price is less than zero or less than the minimum price, reset it to the maximum practical price.
+            if (CurrentQuery.MaxPrice < 0 || (CurrentQuery.MaxPrice < CurrentQuery.MinPrice))
+            {
+                CurrentQuery.MaxPrice = (decimal)ProductQueryDto.PracticalMaximumPrice;
+            }
+        }
+        partial void OnSortByNameAscendingChanged(bool value)
+        {
+            CurrentQuery.SortBy = value ? ProductSortOption.NameAsc : CurrentQuery.SortBy;
+        }
+        partial void OnSortByNameDescendingChanged(bool value)
+        {
+            CurrentQuery.SortBy = value ? ProductSortOption.NameDesc : CurrentQuery.SortBy;
+        }
+        partial void OnSortByPriceAscendingChanged(bool value)
+        {
+            CurrentQuery.SortBy = value ? ProductSortOption.PriceAsc : CurrentQuery.SortBy;
+        }
+        partial void OnSortByPriceDescendingChanged(bool value)
+        {
+            CurrentQuery.SortBy = value ? ProductSortOption.PriceDesc : CurrentQuery.SortBy;
+        }
+
+
+        // Variables responsible for showing and hiding the sort and filter menus.
         [ObservableProperty]
         public bool isTitleLabelVisible = true;
 
@@ -29,42 +122,6 @@ namespace SquoundApp.ViewModels
 
         [ObservableProperty]
         public bool isFilterMenuActive = false;
-
-
-        // Variables for sort options.
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsSortOptionNotNameAscending))]
-        public bool isSortOptionNameAscending = false;
-        public bool IsSortOptionNotNameAscending => !IsSortOptionNameAscending;
-
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsSortOptionNotNameDescending))]
-        public bool isSortOptionNameDescending = false;
-        public bool IsSortOptionNotNameDescending => !IsSortOptionNameDescending;
-
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsSortOptionNotPriceAscending))]
-        public bool isSortOptionPriceAscending = true;
-        public bool IsSortOptionNotPriceAscending => !IsSortOptionPriceAscending;
-
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsSortOptionNotPriceDescending))]
-        public bool isSortOptionPriceDescending = false;
-        public bool IsSortOptionNotPriceDescending => !IsSortOptionPriceDescending;
-
-
-        // Variables for filter options.
-        [ObservableProperty]
-        public string category = "";
-
-        [ObservableProperty]
-        public string filterKeyword = "";
-
-        [ObservableProperty]
-        public string filterMinimumPrice = "";
-
-        [ObservableProperty]
-        public string filterMaximumPrice = "";
 
 
         /// <summary>
@@ -85,90 +142,48 @@ namespace SquoundApp.ViewModels
         public SearchViewModel(ProductService productService)
         {
             this.productService = productService;
-
-            Title = "Search";
         }
 
-        /// <summary>
-        /// OnChanged methods are called AFTER the value has been set.
-        /// </summary>
-        /// <param name="value">The value applied to isSortOptionNameAscending.</param>
-        partial void OnIsSortOptionNameAscendingChanged(bool value)
-        {
-            if (value)
-            {
-            }
-        }
 
-        /// <summary>
-        /// OnChanged methods are called AFTER the value has been set.
-        /// </summary>
-        /// <param name="value">The value applied to isSortOptionNameDescending.</param>
-        partial void OnIsSortOptionNameDescendingChanged(bool value)
-        {
-            if (value)
-            {
-            }
-        }
-
-        /// <summary>
-        /// OnChanged methods are called AFTER the value has been set.
-        /// </summary>
-        /// <param name="value">The value applied to isSortOptionPriceAscending.</param>
-        partial void OnIsSortOptionPriceAscendingChanged(bool value)
-        {
-            if (value)
-            {
-            }
-        }
-
-        /// <summary>
-        /// OnChanged methods are called AFTER the value has been set.
-        /// </summary>
-        /// <param name="value">The value applied to isSortOptionPriceDescending.</param>
-        partial void OnIsSortOptionPriceDescendingChanged(bool value)
-        {
-            if (value)
-            {
-            }
-        }
-
+        // Methods responsible for setting the sort options.
         [RelayCommand]
         private void SetSortOptionAsNameAscending()
         {
-            IsSortOptionNameAscending = true;
-            IsSortOptionNameDescending = false;
-            IsSortOptionPriceAscending = false;
-            IsSortOptionPriceDescending = false;
+            SortByNameAscending = true;
+            SortByNameDescending = false;
+            SortByPriceAscending = false;
+            SortByPriceDescending = false;
         }
 
         [RelayCommand]
         private void SetSortOptionAsNameDescending()
         {
-            IsSortOptionNameAscending = false;
-            IsSortOptionNameDescending = true;
-            IsSortOptionPriceAscending = false;
-            IsSortOptionPriceDescending = false;
+            SortByNameAscending = false;
+            SortByNameDescending = true;
+            SortByPriceAscending = false;
+            SortByPriceDescending = false;
         }
 
         [RelayCommand]
         private void SetSortOptionAsPriceAscending()
         {
-            IsSortOptionNameAscending = false;
-            IsSortOptionNameDescending = false;
-            IsSortOptionPriceAscending = true;
-            IsSortOptionPriceDescending = false;
+            SortByNameAscending = false;
+            SortByNameDescending = false;
+            SortByPriceAscending = true;
+            SortByPriceDescending = false;
         }
 
         [RelayCommand]
         private void SetSortOptionAsPriceDescending()
         {
-            IsSortOptionNameAscending = false;
-            IsSortOptionNameDescending = false;
-            IsSortOptionPriceAscending = false;
-            IsSortOptionPriceDescending = true;
+            SortByNameAscending = false;
+            SortByNameDescending = false;
+            SortByPriceAscending = false;
+            SortByPriceDescending = true;
         }
 
+
+        // Methods responsible for showing and hiding the sort and filter menus.
         [RelayCommand]
         private void OnSortButton()
         {
@@ -176,11 +191,11 @@ namespace SquoundApp.ViewModels
 
             IsTitleLabelVisible = true;
 
-            IsSortButtonActive = false;
-            IsFilterButtonActive = false;
-
             IsSortMenuActive = true;
             IsFilterMenuActive = false;
+
+            IsSortButtonActive = false;
+            IsFilterButtonActive = false;
         }
 
         [RelayCommand]
@@ -190,67 +205,109 @@ namespace SquoundApp.ViewModels
 
             IsTitleLabelVisible = true;
 
-            IsSortButtonActive = false;
-            IsFilterButtonActive = false;
-
             IsSortMenuActive = false;
             IsFilterMenuActive = true;
+
+            IsSortButtonActive = false;
+            IsFilterButtonActive = false;
         }
 
+
+        // Methods responsible for applying and canceling the sort and filter options.
         [RelayCommand]
-        private void OnApplySort()
+        private async Task OnApplySort()
         {
+            // Save the current query to the previous query before applying the new sort.
+            PreviousQuery = CurrentQuery;
+
+            // Trigger the product retrieval based on the current sort and filter options.
+            await GetProductsAsync();
+
+            // Hide the menu label.
             IsTitleLabelVisible = false;
 
-            IsSortButtonActive = true;
-            IsFilterButtonActive = true;
-
+            // Deactivate and hide the sort and filter menus.
             IsSortMenuActive = false;
             IsFilterMenuActive = false;
+
+            // Reactivate and show the sort and filter buttons.
+            IsSortButtonActive = true;
+            IsFilterButtonActive = true;
         }
 
         [RelayCommand]
         private void OnCancelSort()
         {
+            // Restore the sort option from the previous query.
+            // We must use the 'SetSortOptionAs...' methods to ensure the UI reflects the changes.
+            if (PreviousQuery.SortBy == ProductSortOption.NameAsc) SetSortOptionAsNameAscending();
+            else if (PreviousQuery.SortBy == ProductSortOption.NameDesc) SetSortOptionAsNameDescending();
+            else if (PreviousQuery.SortBy == ProductSortOption.PriceAsc) SetSortOptionAsPriceAscending();
+            else if (PreviousQuery.SortBy == ProductSortOption.PriceDesc) SetSortOptionAsPriceDescending();
+
+            // Hide the menu label.
             IsTitleLabelVisible = false;
 
-            IsSortButtonActive = true;
-            IsFilterButtonActive = true;
-
+            // Deactivate and hide the sort and filter menus.
             IsSortMenuActive = false;
             IsFilterMenuActive = false;
+
+            // Reactivate and show the sort and filter buttons.
+            IsSortButtonActive = true;
+            IsFilterButtonActive = true;
         }
 
         [RelayCommand]
-        private void OnApplyFilter()
+        private async Task OnApplyFilter()
         {
+            // Save the current query to the previous query before applying the new filter.
+            PreviousQuery = CurrentQuery;
+
+            // Trigger the product retrieval based on the current sort and filter options.
+            await GetProductsAsync();
+
+            // Hide the menu label.
             IsTitleLabelVisible = false;
 
-            IsSortButtonActive = true;
-            IsFilterButtonActive = true;
-
+            // Deactivate and hide the sort and filter menus.
             IsSortMenuActive = false;
             IsFilterMenuActive = false;
+
+            // Reactivate and show the sort and filter buttons.
+            IsSortButtonActive = true;
+            IsFilterButtonActive = true;
         }
 
         [RelayCommand]
         private void OnResetFilter()
         {
-            FilterKeyword = "";
-            FilterMinimumPrice = "";
-            FilterMaximumPrice = "";
+            Keyword = string.Empty;
+            Category = string.Empty;
+            Manufacturer = string.Empty;
+            MinimumPrice = string.Empty;
+            MaximumPrice = string.Empty;
         }
 
         [RelayCommand]
         private void OnCancelFilter()
         {
+            // Restore the previous query to the current query.
+            CurrentQuery.Category       = PreviousQuery.Category;
+            CurrentQuery.Manufacturer   = PreviousQuery.Manufacturer;
+            CurrentQuery.Keyword        = PreviousQuery.Keyword;
+            CurrentQuery.MinPrice       = PreviousQuery.MinPrice;
+            CurrentQuery.MaxPrice       = PreviousQuery.MaxPrice;
+
+            // Hide the menu label.
             IsTitleLabelVisible = false;
 
-            IsSortButtonActive = true;
-            IsFilterButtonActive = true;
-
+            // Deactivate and hide the sort and filter menus.
             IsSortMenuActive = false;
             IsFilterMenuActive = false;
+
+            // Reactivate and show the sort and filter buttons.
+            IsSortButtonActive = true;
+            IsFilterButtonActive = true;
         }
 
 
@@ -276,10 +333,9 @@ namespace SquoundApp.ViewModels
         /// <summary>
         /// Initiates a fetch operation to retrieve products based on the specified category.
         /// </summary>
-        /// <param name="category"></param>
         /// <returns></returns>
         [RelayCommand]
-        async Task GetProductsAsync(string category)
+        async Task GetProductsAsync()
         {
             // Check if the view model is already busy fetching data
             // This prevents multiple simultaneous fetch operations which could
@@ -297,30 +353,33 @@ namespace SquoundApp.ViewModels
                 // and to prevent the user from initiating another fetch operation while one is already in progress.
                 IsBusy = true;
 
+                // Clear the existing products in the ObservableCollection.
+                // This ensures that the collection is updated with whatever is returned by the API.
+                // ObservableCollection is used here so that the UI can automatically update
+                // when items are added or removed, without needing to manually refresh the UI.
+                // This is a key feature of ObservableCollection, which is designed for data binding in UI frameworks.
+                ProductList.Clear();
+
                 // Retrieve products from the product service.
                 // This method is expected to return a list of products asynchronously.
                 // The retrieved products will be added to the productList collection.
                 // To retrieve products from a remote JSON file, use:
-                // var productList = await productService.GetProductsRemoteJson();
+                // var productList = await productService.GetProductsRemoteJson
+                // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json");
                 // To retrieve products from an embedded JSON file instead, use:
                 // var productList = await productService.GetProductsEmbeddedJson();
-                var productList = await productService.GetProductsRestApi(category);
+                var productList = await productService.GetProductsRestApi(CurrentQuery);
 
                 if (productList == null)
                     return;
 
-                // Clear the existing products in the ObservableCollection.
-                // This ensures that the collection is updated with the new products fetched.
-                // ObservableCollection is used here so that the UI can automatically update
-                // when items are added or removed, without needing to manually refresh the UI.
-                // This is a key feature of ObservableCollection, which is designed for data binding in UI frameworks.
                 // The foreach loop iterates over the fetched products and adds each one to the Products collection.
                 // This ensures that the UI reflects the latest data.
                 // The Products collection is an ObservableCollection, which means that any changes to it
                 // will automatically notify the UI to update, making it easy to display dynamic data.
                 // This is particularly useful in MVVM (Model-View-ViewModel) patterns where the ViewModel
                 // holds the data and the View binds to it.
-                ProductList.Clear();
+                //ProductList.Clear();
                 foreach (var product in productList)
                 {
                     // Add each product to the ObservableCollection.
@@ -350,5 +409,44 @@ namespace SquoundApp.ViewModels
                 IsBusy = false;
             }
         }
+
+
+        //
+        //private ProductQueryDto BuildQuery()
+        //{
+        //    // Create a new instance of ProductQueryDto to hold the search criteria.
+        //    var query = new ProductQueryDto
+        //    {
+        //        Category = string.IsNullOrEmpty(this.Category) ? null : this.Category,
+        //        Keyword = string.IsNullOrEmpty(this.FilterKeyword) ? null : this.FilterKeyword,
+        //        MinPrice = string.IsNullOrEmpty(this.FilterMinimumPrice) ? 0 : decimal.Parse(this.FilterMinimumPrice),
+        //        MaxPrice = string.IsNullOrEmpty(this.FilterMaximumPrice) ? (decimal)ProductQueryDto.PracticalMaximumPrice : decimal.Parse(this.FilterMaximumPrice),
+        //        PageNumber = 1,     // Default to the first page.
+        //        PageSize = 10,      // Default page size.
+        //    };
+
+        //    // Determine the sort option based on the selected properties.
+        //    if (IsSortOptionNameAscending)
+        //    {
+        //        query.SortBy = ProductSortOption.NameAsc;
+        //    }
+
+        //    else if (IsSortOptionNameDescending)
+        //    {
+        //        query.SortBy = ProductSortOption.NameDesc;
+        //    }
+
+        //    else if (IsSortOptionPriceAscending)
+        //    {
+        //        query.SortBy = ProductSortOption.PriceAsc;
+        //    }
+
+        //    else if (IsSortOptionPriceDescending)
+        //    {
+        //        query.SortBy = ProductSortOption.PriceDesc;
+        //    }
+
+        //    return query;
+        //}
     }
 }

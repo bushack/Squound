@@ -67,5 +67,71 @@ namespace Shared.DataTransfer
         /// </summary>
         [Range(10, 100, ErrorMessage = "Page size must be between 10 and 100")]
         public int PageSize { get; set; } = 10;
+
+        /// <summary>
+        /// Gets a value indicating whether the current sort option is set to sort products by price in ascending order.
+        /// </summary>
+        //public bool IsSortOptionPriceAsc => this.SortBy == ProductSortOption.PriceAsc;
+        //public bool IsSortOptionNotPriceAsc => this.SortBy != ProductSortOption.PriceAsc;
+        //public bool IsSortOptionPriceDesc => this.SortBy == ProductSortOption.PriceDesc;
+        //public bool IsSortOptionNotPriceDesc => this.SortBy != ProductSortOption.PriceDesc;
+        //public bool IsSortOptionNameAsc => this.SortBy == ProductSortOption.NameAsc;
+        //public bool IsSortOptionNotNameAsc => this.SortBy != ProductSortOption.NameAsc;
+        //public bool IsSortOptionNameDesc => this.SortBy == ProductSortOption.NameDesc;
+        //public bool IsSortOptionNotNameDesc => this.SortBy != ProductSortOption.NameDesc;
+
+        /// <summary>
+        /// Resets all filter properties to their default values.
+        /// </summary>
+        //public void ResetFilter()
+        //{
+        //    this.Id = null;
+        //    this.Category = null;
+        //    this.Manufacturer = null;
+        //    this.Keyword = null;
+
+        //    this.MinPrice = 0;
+        //    this.MaxPrice = (decimal)PracticalMaximumPrice;
+        //}
+
+        /// <summary>
+        /// Converts the DTO properties into a query string format for use in REST API calls.
+        /// </summary>
+        public string ToQueryString()
+        {
+            var queryString = string.Empty;
+
+            // If the Id is provided, we are looking for one specific
+            // product and therefore all other filters are irrelevant.
+            if (this.Id is not null)
+                return queryString += $"id={this.Id}";
+
+            // Append the category, manufacturer, keyword, and price filters if they are set.
+            if (string.IsNullOrEmpty(this.Category) is false)
+                queryString += $"category={this.Category.ToLower()}&";
+
+            if (string.IsNullOrEmpty(this.Manufacturer) is false)
+                queryString += $"manufacturer={this.Manufacturer.ToLower()}&";
+
+            if (string.IsNullOrEmpty(this.Keyword) is false)
+                queryString += $"keyword={this.Keyword.ToLower()}&";
+
+            // Append the MinPrice and MaxPrice if they are non-zero.
+            if (this.MinPrice > 0)
+                queryString += $"minprice={this.MinPrice}&";
+
+            if (this.MaxPrice > 0)
+                queryString += $"maxprice={this.MaxPrice}&";
+
+            // Append the sorting and pagination parameters.
+            // Note that SortBy is always set to a default value, so it does not need to be checked.
+            // The PageNumber and PageSize are also always set to default values, so they do not need to be checked.
+            queryString += $"sortby={this.SortBy.ToString().ToLower()}" +
+                $"&pagenumber={this.PageNumber.ToString()}" +
+                $"&pagesize={this.PageSize.ToString()}";
+
+            // Remove the trailing '&' if it exists.
+            return queryString.TrimEnd('&');
+        }
     }
 }

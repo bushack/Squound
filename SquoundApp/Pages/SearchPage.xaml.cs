@@ -35,7 +35,10 @@ public partial class SearchPage : ContentPage, IQueryAttributable
         {
             if (BindingContext is SearchViewModel viewModel)
             {
-                viewModel.GetProductsCommand.Execute(category);
+                // Previously we passed the category as a string, but now we use the ProductQueryDto.
+                // This allows us to pass more parameters if needed in the future.
+                // Therefore this method is effectively obsolete.
+                viewModel.GetProductsCommand.Execute(null);
             }
         }
     }

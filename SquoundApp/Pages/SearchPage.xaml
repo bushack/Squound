@@ -61,12 +61,11 @@
                                 </Border>
 
                                 <!-- Name and price of item -->
-                                <Grid RowDefinitions="Auto"
-                                      ColumnDefinitions="65*, 35*"
+                                <Grid RowDefinitions="Auto, Auto"
                                       Padding="0, 10, 0, 25"
                                       ColumnSpacing="2">
-                                    <Label BackgroundColor="Transparent" Grid.Column="0" Text="{Binding Name}" Style="{StaticResource SmallBoldText}" HorizontalOptions="Start" />
-                                    <Label BackgroundColor="Transparent" Grid.Column="1" Text="{Binding Price, StringFormat='{}{0:C2}'}" Style="{StaticResource SmallBoldText}" HorizontalOptions="End" />
+                                    <Label BackgroundColor="Transparent" Grid.Row="0" Text="{Binding Name}" Style="{StaticResource SmallBoldText}" HorizontalOptions="Center"  Margin="0, 0, 0, 5"/>
+                                    <Label BackgroundColor="Transparent" Grid.Row="1" Text="{Binding Price, StringFormat='{}{0:C2}'}" Style="{StaticResource SmallBoldText}" HorizontalOptions="Center"/>
                                 </Grid>
                             </VerticalStackLayout>
                         </Border>

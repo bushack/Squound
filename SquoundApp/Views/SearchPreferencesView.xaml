@@ -41,8 +41,8 @@
 
                 <!-- Row 0 : Sort by Name Ascending -->
                 <Grid Grid.Row="0" Grid.Column="0" HeightRequest="20">
-                    <Image Source="selected.png" IsVisible="{Binding IsSortOptionNameAscending}"/>
-                    <Image Source="unselected.png" IsVisible="{Binding IsSortOptionNotNameAscending}"/>
+                    <Image Source="selected.png" IsVisible="{Binding SortByNameAscending}"/>
+                    <Image Source="unselected.png" IsVisible="True"/>
                 </Grid>
                 <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
                         Text="Name: Ascending" HorizontalOptions="Start"
@@ -50,8 +50,8 @@
 
                 <!-- Row 1 : Sort by Name Descending -->
                 <Grid Grid.Row="1" Grid.Column="0" HeightRequest="20">
-                    <Image Source="selected.png" IsVisible="{Binding IsSortOptionNameDescending}"/>
-                    <Image Source="unselected.png" IsVisible="{Binding IsSortOptionNotNameDescending}"/>
+                    <Image Source="selected.png" IsVisible="{Binding SortByNameDescending}"/>
+                    <Image Source="unselected.png" IsVisible="True"/>
                 </Grid>
                 <Button Grid.Row="1" Grid.Column="1" BackgroundColor="Transparent"
                         Text="Name: Descending" HorizontalOptions="Start"
@@ -59,8 +59,8 @@
 
                 <!-- Row 2 : Sort by Price Ascending -->
                 <Grid Grid.Row="2" Grid.Column="0" HeightRequest="20">
-                    <Image Source="selected.png" IsVisible="{Binding IsSortOptionPriceAscending}"/>
-                    <Image Source="unselected.png" IsVisible="{Binding IsSortOptionNotPriceAscending}"/>
+                    <Image Source="selected.png" IsVisible="{Binding SortByPriceAscending}"/>
+                    <Image Source="unselected.png" IsVisible="True"/>
                 </Grid>
                 <Button Grid.Row="2" Grid.Column="1" BackgroundColor="Transparent"
                         Text="Price: Ascending" HorizontalOptions="Start"
@@ -68,8 +68,8 @@
 
                 <!-- Row 3 : Sort by Price Descending -->
                 <Grid Grid.Row="3" Grid.Column="0" HeightRequest="20">
-                    <Image Source="selected.png" IsVisible="{Binding IsSortOptionPriceDescending}"/>
-                    <Image Source="unselected.png" IsVisible="{Binding IsSortOptionNotPriceDescending}"/>
+                    <Image Source="selected.png" IsVisible="{Binding SortByPriceDescending}"/>
+                    <Image Source="unselected.png" IsVisible="True"/>
                 </Grid>
                 <Button Grid.Row="3" Grid.Column="1" BackgroundColor="Transparent"
                         Text="Price: Descending" HorizontalOptions="Start"
@@ -104,7 +104,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="Enter Keyword"
                            Keyboard="Text" MaxLength="20"
-                           Text="{Binding FilterKeyword}"
+                           Text="{Binding Keyword}"
                            Style="{StaticResource GenericEntry}"/>
                 </Border>
 
@@ -116,7 +116,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="None"
                            Keyboard="Numeric" MaxLength="6"
-                           Text="{Binding FilterMinimumPrice}"
+                           Text="{Binding MinimumPrice}"
                            Style="{StaticResource GenericEntry}">
                         <Entry.Behaviors>
                             <behaviours:NumericValidationBehaviour />
@@ -132,7 +132,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="None"
                            Keyboard="Numeric" MaxLength="6"
-                           Text="{Binding FilterMaximumPrice}"
+                           Text="{Binding MaximumPrice}"
                            Style="{StaticResource GenericEntry}">
                         <Entry.Behaviors>
                             <behaviours:NumericValidationBehaviour />

@@ -18,27 +18,13 @@ namespace SquoundApp.Services
             this.httpService = httpService;
         }
 
-        public void Clear()
-        {
-            // Check if the product list is already populated
-            if (productList.Count > 0)
-            {
-                productList.Clear();
-            }
-        }
-
         /// <summary>
         /// Asynchronously retrieves a list of products from a REST API.
         /// </summary>
-        /// <param name="category"></param>
+        /// <param name="dto"></param>
         /// <returns></returns>
-        public async Task<List<ProductDto>?> GetProductsRestApi(string? category = null)
+        public async Task<List<ProductDto>?> GetProductsRestApi(ProductQueryDto dto)
         {
-            if (productList.Count > 0)
-            {
-                return productList;
-            }
-
             // For the release version of the project we will set the base address for the HttpService
             // This is useful if you are making multiple requests to the same base URL.
             // For example "https://squound.azure.net/api/products/";
@@ -48,29 +34,25 @@ namespace SquoundApp.Services
             string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "192.168.1.114" : "localhost";
             string Scheme = DeviceInfo.Platform == DevicePlatform.Android ? "http" : "https";
             string Port = DeviceInfo.Platform == DevicePlatform.Android ? "5050" : "7184";
+            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?{dto.ToQueryString()}";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category=None&manufacturer=Austinsuite&sortby=PriceDesc&pagenumber=1&pagesize=10";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category=Lighting&sortby=PriceAsc&pagenumber=1&pagesize=10";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/12";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/all";
 
-            string RestUrl = "";
-            if (category != null)
-            {
-                RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category={category}&sortby=PriceAsc&pagenumber=1&pagesize=10";
-            }
+            // Always clear the internal list prior to initiating a new fetch.
+            productList.Clear();
 
-            else
-            {
-                RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/all";
-            }
-
+            // Fetch the products from the REST API using the provided ProductQueryDto.
             var response = await httpService.GetJsonAsync<List<ProductDto>>(RestUrl);
 
-            if (response != null)
+            // If the response is not null, assign it to the internal list.
+            if (response is not null)
             {
                 productList = response;
             }
 
+            // Return the internal list of products.
             return productList;
         }
 
