@@ -4,10 +4,12 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-using SquoundApp.Services;
 using SquoundApp.Pages;
+using SquoundApp.Services;
+using SquoundApp.States;
 
 using Shared.DataTransfer;
+using Shared.StateMachine;
 
 
 namespace SquoundApp.ViewModels
@@ -51,9 +53,18 @@ namespace SquoundApp.ViewModels
 
 
         // Partial methods to handle changes in filter properties.
-        partial void OnCategoryChanged(string value) { CurrentQuery.Category = value; }
-        partial void OnManufacturerChanged(string value) { CurrentQuery.Manufacturer = value; }
-        partial void OnKeywordChanged(string value) { CurrentQuery.Keyword = value; }
+        partial void OnCategoryChanged(string value)
+        {
+            CurrentQuery.Category = value;
+        }
+        partial void OnManufacturerChanged(string value)
+        {
+            CurrentQuery.Manufacturer = value;
+        }
+        partial void OnKeywordChanged(string value)
+        {
+            CurrentQuery.Keyword = value;
+        }
         partial void OnMinimumPriceChanged(string value)
         {
             // Extract only the digits from the string.
@@ -62,14 +73,33 @@ namespace SquoundApp.ViewModels
             // Try to parse the digits to a decimal.
             if (decimal.TryParse(digits, out decimal price))
             {
-                CurrentQuery.MinPrice = price;
+                // If the parsed price is out of the valid range.
+                if (price < 0 || price > (decimal)ProductQueryDto.PracticalMaximumPrice)
+                {
+                    CurrentQuery.MinPrice = null;
+                }
+
+                // If the parsed price is greater than the maximum price.
+                // Set both minimum and maximum prices to the parsed price.
+                else if (price > CurrentQuery.MaxPrice)
+                {
+                    CurrentQuery.MinPrice = price;
+                    CurrentQuery.MaxPrice = price;
+
+                    RestoreQueryToUserInterface(CurrentQuery);
+                }
+
+                // If the parsed price is valid and within the range.
+                else
+                {
+                    CurrentQuery.MinPrice = price;
+                }
             }
 
-            // If the parsed price is less than zero or greater than the maximum price, reset it to zero.
-            if (CurrentQuery.MinPrice < 0 || (CurrentQuery.MinPrice > CurrentQuery.MaxPrice))
+            else
             {
-                // If the parsed price is less than zero, reset it to zero.
-                CurrentQuery.MinPrice = 0;
+                // If parsing fails.
+                CurrentQuery.MinPrice = null;
             }
         }
         partial void OnMaximumPriceChanged(string value)
@@ -80,13 +110,33 @@ namespace SquoundApp.ViewModels
             // Try to parse the digits to a decimal.
             if (decimal.TryParse(digits, out decimal price))
             {
-                CurrentQuery.MaxPrice = price;
+                // If the parsed price is out of the valid range.
+                if (price < 0 || price > (decimal)ProductQueryDto.PracticalMaximumPrice)
+                {
+                    CurrentQuery.MaxPrice = null;
+                }
+
+                // If the parsed price is less than the minimum price.
+                // Set both minimum and maximum prices to the parsed price.
+                else if (price < CurrentQuery.MinPrice)
+                {
+                    CurrentQuery.MinPrice = price;
+                    CurrentQuery.MaxPrice = price;
+
+                    RestoreQueryToUserInterface(CurrentQuery);
+                }
+
+                // If the parsed price is valid and within the range.
+                else
+                {
+                    CurrentQuery.MaxPrice = price;
+                }
             }
 
-            // If the parsed price is less than zero or less than the minimum price, reset it to the maximum practical price.
-            if (CurrentQuery.MaxPrice < 0 || (CurrentQuery.MaxPrice < CurrentQuery.MinPrice))
+            else
             {
-                CurrentQuery.MaxPrice = (decimal)ProductQueryDto.PracticalMaximumPrice;
+                // If parsing fails.
+                CurrentQuery.MaxPrice = null;
             }
         }
         partial void OnSortByNameAscendingChanged(bool value)
@@ -109,19 +159,19 @@ namespace SquoundApp.ViewModels
 
         // Variables responsible for showing and hiding the sort and filter menus.
         [ObservableProperty]
-        public bool isTitleLabelVisible = true;
+        private bool isTitleLabelVisible = true;
 
         [ObservableProperty]
-        public bool isSortButtonActive = true;
+        private bool isSortButtonActive = true;
 
         [ObservableProperty]
-        public bool isFilterButtonActive = true;
+        private bool isFilterButtonActive = true;
 
         [ObservableProperty]
-        public bool isSortMenuActive = false;
+        private bool isSortMenuActive = false;
 
         [ObservableProperty]
-        public bool isFilterMenuActive = false;
+        private bool isFilterMenuActive = false;
 
 
         /// <summary>
@@ -129,23 +179,74 @@ namespace SquoundApp.ViewModels
         /// </summary>
         public ObservableCollection<ProductDto> ProductList { get; } = new();
 
+
+        /// <summary>
+        /// Represents the state machine used to manage the states and transitions of the <see cref="SearchViewModel"/>.
+        /// </summary>
+        /// <remarks>This state machine is responsible for controlling the behavior and lifecycle of the
+        /// <see cref="SearchViewModel"/>. It ensures that the view model transitions between states in a predictable
+        /// and controlled manner.</remarks>
+        private readonly StateMachine<SearchViewModel> stateMachine;
+
+
         /// <summary>
         /// Responsible for retrieving products from the REST API.
         /// </summary>
-        readonly ProductService productService;
+        private readonly ProductService productService;
 
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="SearchViewModel"/> class
+        /// with the specified product service.
         /// </summary>
-        /// <param name="productService"></param>
-        public SearchViewModel(ProductService productService)
+        /// <param name="service">The <see cref="ProductService"/> instance used
+        /// to retrieve product data. Cannot be null.</param>
+        public SearchViewModel(ProductService service)
         {
-            this.productService = productService;
+            stateMachine = new StateMachine<SearchViewModel>(this);
+
+            stateMachine.ChangeState(new SearchViewModelIdleState());
+
+            productService = service;
         }
 
 
         // Methods responsible for setting the sort options.
+        [RelayCommand]
+        private void SetSortOption(ProductSortOption sortBy)
+        {
+            // Reset all sort options to false.
+            SortByNameAscending     = false;
+            SortByNameDescending    = false;
+            SortByPriceAscending    = false;
+            SortByPriceDescending   = false;
+
+            // Set the appropriate sort option based on the provided sortBy parameter.
+            switch (sortBy)
+            {
+                case ProductSortOption.NameAsc:
+                    SortByNameAscending = true;
+                    break;
+
+                case ProductSortOption.NameDesc:
+                    SortByNameDescending = true;
+                    break;
+
+                case ProductSortOption.PriceAsc:
+                    SortByPriceAscending = true;
+                    break;
+
+                case ProductSortOption.PriceDesc:
+                    SortByPriceDescending = true;
+                    break;
+
+                // If no valid sort option is provided, default to sorting by price ascending.
+                default:
+                    SortByPriceAscending = true;
+                    break;
+            }
+        }
+
         [RelayCommand]
         private void SetSortOptionAsNameAscending()
         {
@@ -187,127 +288,126 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         private void OnSortButton()
         {
-            Title = "Sort Options";
+            //Title = "Sort Options";
 
-            IsTitleLabelVisible = true;
+            //IsTitleLabelVisible     = true;
 
-            IsSortMenuActive = true;
-            IsFilterMenuActive = false;
+            //IsSortMenuActive        = true;
+            //IsFilterMenuActive      = false;
 
-            IsSortButtonActive = false;
-            IsFilterButtonActive = false;
+            //IsSortButtonActive      = false;
+            //IsFilterButtonActive    = false;
+
+            stateMachine.ChangeState(new SearchViewModelSortMenuState());
         }
 
+
+        //
         [RelayCommand]
         private void OnFilterButton()
         {
-            Title = "Filter Options";
+            //Title = "Filter Options";
 
-            IsTitleLabelVisible = true;
+            //IsTitleLabelVisible     = true;
 
-            IsSortMenuActive = false;
-            IsFilterMenuActive = true;
+            //IsSortMenuActive        = false;
+            //IsFilterMenuActive      = true;
 
-            IsSortButtonActive = false;
-            IsFilterButtonActive = false;
+            //IsSortButtonActive      = false;
+            //IsFilterButtonActive    = false;
+
+            stateMachine.ChangeState(new SearchViewModelFilterMenuState());
         }
 
 
         // Methods responsible for applying and canceling the sort and filter options.
         [RelayCommand]
-        private async Task OnApplySort()
+        private async Task ApplyQueryAsync()
         {
-            // Save the current query to the previous query before applying the new sort.
-            PreviousQuery = CurrentQuery;
+            // Save a deep copy of the current query before applying the new sort preferences.
+            PreviousQuery = new ProductQueryDto
+            {
+                Category            = CurrentQuery.Category,
+                Manufacturer        = CurrentQuery.Manufacturer,
+                Keyword             = CurrentQuery.Keyword,
+                MinPrice            = CurrentQuery.MinPrice,
+                MaxPrice            = CurrentQuery.MaxPrice,
+                SortBy              = CurrentQuery.SortBy
+            };
 
             // Trigger the product retrieval based on the current sort and filter options.
             await GetProductsAsync();
 
-            // Hide the menu label.
-            IsTitleLabelVisible = false;
-
-            // Deactivate and hide the sort and filter menus.
-            IsSortMenuActive = false;
-            IsFilterMenuActive = false;
-
-            // Reactivate and show the sort and filter buttons.
-            IsSortButtonActive = true;
-            IsFilterButtonActive = true;
+            stateMachine.ChangeState(new SearchViewModelIdleState());
         }
 
+
+        //
         [RelayCommand]
         private void OnCancelSort()
         {
             // Restore the sort option from the previous query.
-            // We must use the 'SetSortOptionAs...' methods to ensure the UI reflects the changes.
-            if (PreviousQuery.SortBy == ProductSortOption.NameAsc) SetSortOptionAsNameAscending();
-            else if (PreviousQuery.SortBy == ProductSortOption.NameDesc) SetSortOptionAsNameDescending();
-            else if (PreviousQuery.SortBy == ProductSortOption.PriceAsc) SetSortOptionAsPriceAscending();
-            else if (PreviousQuery.SortBy == ProductSortOption.PriceDesc) SetSortOptionAsPriceDescending();
+            RestoreQueryToUserInterface(PreviousQuery);
 
-            // Hide the menu label.
-            IsTitleLabelVisible = false;
-
-            // Deactivate and hide the sort and filter menus.
-            IsSortMenuActive = false;
-            IsFilterMenuActive = false;
-
-            // Reactivate and show the sort and filter buttons.
-            IsSortButtonActive = true;
-            IsFilterButtonActive = true;
+            stateMachine.ChangeState(new SearchViewModelIdleState());
         }
 
-        [RelayCommand]
-        private async Task OnApplyFilter()
-        {
-            // Save the current query to the previous query before applying the new filter.
-            PreviousQuery = CurrentQuery;
 
-            // Trigger the product retrieval based on the current sort and filter options.
-            await GetProductsAsync();
-
-            // Hide the menu label.
-            IsTitleLabelVisible = false;
-
-            // Deactivate and hide the sort and filter menus.
-            IsSortMenuActive = false;
-            IsFilterMenuActive = false;
-
-            // Reactivate and show the sort and filter buttons.
-            IsSortButtonActive = true;
-            IsFilterButtonActive = true;
-        }
-
-        [RelayCommand]
-        private void OnResetFilter()
-        {
-            Keyword = string.Empty;
-            Category = string.Empty;
-            Manufacturer = string.Empty;
-            MinimumPrice = string.Empty;
-            MaximumPrice = string.Empty;
-        }
-
+        //
         [RelayCommand]
         private void OnCancelFilter()
         {
             // Restore the previous query to the current query.
-            CurrentQuery.Category       = PreviousQuery.Category;
-            CurrentQuery.Manufacturer   = PreviousQuery.Manufacturer;
-            CurrentQuery.Keyword        = PreviousQuery.Keyword;
-            CurrentQuery.MinPrice       = PreviousQuery.MinPrice;
-            CurrentQuery.MaxPrice       = PreviousQuery.MaxPrice;
+            RestoreQueryToUserInterface(PreviousQuery);
 
-            // Hide the menu label.
-            IsTitleLabelVisible = false;
+            stateMachine.ChangeState(new SearchViewModelIdleState());
+        }
 
-            // Deactivate and hide the sort and filter menus.
-            IsSortMenuActive = false;
-            IsFilterMenuActive = false;
 
-            // Reactivate and show the sort and filter buttons.
-            IsSortButtonActive = true;
-            IsFilterButtonActive = true;
+        //
+        [RelayCommand]
+        private void OnResetFilter()
+        {
+            CurrentQuery.Keyword        = null;
+            CurrentQuery.Category       = null;
+            CurrentQuery.Manufacturer   = null;
+            CurrentQuery.MinPrice       = null;
+            CurrentQuery.MaxPrice       = null;
+
+            RestoreQueryToUserInterface(CurrentQuery);
+        }
+
+
+        //
+        //private void ResetMenus()
+        //{
+        //    // Hide the menu label.
+        //    IsTitleLabelVisible     = false;
+
+        //    // Deactivate and hide the sort and filter menus.
+        //    IsSortMenuActive        = false;
+        //    IsFilterMenuActive      = false;
+
+        //    // Reactivate and show the sort and filter buttons.
+        //    IsSortButtonActive      = true;
+        //    IsFilterButtonActive    = true;
+        //}
+
+
+        //
+        private void RestoreQueryToUserInterface(ProductQueryDto query)
+        {
+            // NOTE : Null checks are necessary to avoid NullReferenceException.
+            Keyword         = query.Keyword != null ? query.Keyword : string.Empty;
+            Category        = query.Category != null ? query.Category : string.Empty;
+            Manufacturer    = query.Manufacturer != null ? query.Manufacturer : string.Empty;
+
+            // NOTE : Null checks are unnecessary here, because ToString() will return an empty string if the value is null.
+            MinimumPrice    = query.MinPrice.ToString();
+            MaximumPrice    = query.MaxPrice.ToString();
+
+            // Set the sort options based on the query.
+            SetSortOption(query.SortBy);
         }
 
 
@@ -321,6 +421,8 @@ namespace SquoundApp.ViewModels
         {
             if (product is null)
                 return;
+
+            stateMachine.ChangeState(new SearchViewModelIdleState());
 
             await Shell.Current.GoToAsync($"{nameof(ProductListingPage)}", true,
                 new Dictionary<string, object>

@@ -79,7 +79,7 @@
             <!-- Bottom of Sort Menu : Apply and Cancel Buttons -->
             <Grid RowDefinitions="Auto" ColumnDefinitions="1*, 1*">
                 <Button Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent"
-                        Text="Apply" Command="{Binding ApplySortCommand}"/>
+                        Text="Apply" Command="{Binding ApplyQueryCommand}"/>
                 <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
                         Text="Cancel" Command="{Binding CancelSortCommand}"/>
             </Grid>
@@ -144,7 +144,7 @@
             <!-- Bottom of Filter Menu : Apply, Reset and Cancel Buttons -->
             <Grid RowDefinitions="Auto" ColumnDefinitions="1*, 1*, 1*">
                 <Button Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent"
-                        Text="Apply" Command="{Binding ApplyFilterCommand}"/>
+                        Text="Apply" Command="{Binding ApplyQueryCommand}"/>
                 <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
                         Text="Reset" Command="{Binding ResetFilterCommand}"/>
                 <Button Grid.Row="0" Grid.Column="2" BackgroundColor="Transparent"

@@ -150,7 +150,7 @@ namespace SquoundApi.Controllers
                 // Sort by.
                 //if (query.SortBy is not null)
                 {
-                    Debug.WriteLine($"* * * Sorting by: {nameof(query.SortBy)} * * *");
+                    Debug.WriteLine($"* * * Sorting by: {query.SortBy.ToString()} * * *");
                     products = query.SortBy switch
                     {
                         ProductSortOption.PriceAsc => products.OrderBy(predicate => predicate.Price),
@@ -167,7 +167,7 @@ namespace SquoundApi.Controllers
                 // Pagination.
                 var skip = (query.PageNumber - 1) * query.PageSize;
                 var take = query.PageSize;
-                Debug.WriteLine($"* * * Paging: Skip {skip}, Take {take} * * *");
+                Debug.WriteLine($"* * * Paging: Skipping {skip}, Taking {take} * * *");
                 var pagedResult = await products.Skip(skip).Take(take).ToListAsync();
 
                 if (pagedResult.Count == 0)

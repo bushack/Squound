@@ -18,7 +18,6 @@
                         ItemsSource="{Binding ProductList}"
                         ItemsLayout="VerticalGrid, 2"
                         SelectionMode="None"
-                        EmptyView="No search results"
                         IsVisible="{Binding IsNotBusy}"
                         IsEnabled="{Binding IsNotBusy}">
 

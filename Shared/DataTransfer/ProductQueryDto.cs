@@ -48,13 +48,13 @@ namespace Shared.DataTransfer
         /// Gets or sets the minimum value for queries restricted by price range.
         /// </summary>
         [Range(0, PracticalMaximumPrice)]
-        public decimal MinPrice { get; set; } = 0;
+        public decimal? MinPrice { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the maximum value for queries restricted by price range.
         /// </summary>
         [Range(0, PracticalMaximumPrice)]
-        public decimal MaxPrice { get; set; } = (decimal)PracticalMaximumPrice;
+        public decimal? MaxPrice { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the current page number for pagination.
@@ -117,10 +117,10 @@ namespace Shared.DataTransfer
                 queryString += $"keyword={this.Keyword.ToLower()}&";
 
             // Append the MinPrice and MaxPrice if they are non-zero.
-            if (this.MinPrice > 0)
+            if (this.MinPrice is not null && this.MinPrice > 0)
                 queryString += $"minprice={this.MinPrice}&";
 
-            if (this.MaxPrice > 0)
+            if (this.MaxPrice is not null && this.MaxPrice > 0)
                 queryString += $"maxprice={this.MaxPrice}&";
 
             // Append the sorting and pagination parameters.
