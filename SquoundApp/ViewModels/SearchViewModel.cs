@@ -85,6 +85,22 @@ namespace SquoundApp.ViewModels
         private bool isFilterMenuActive = false;
 
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SearchViewModel"/> class
+        /// with the specified product service.
+        /// </summary>
+        /// <param name="service">The <see cref="ProductService"/> instance used
+        /// to retrieve product data. Cannot be null.</param>
+        public SearchViewModel(ProductService service)
+        {
+            StateMachine = new StateMachine<SearchViewModel>(this);
+
+            StateMachine.ChangeState(new IdleState());
+
+            ProductService = service;
+        }
+
+
         // Partial methods to handle changes in filter properties.
         partial void OnCategoryChanged(string value)
         {
@@ -187,22 +203,6 @@ namespace SquoundApp.ViewModels
         partial void OnSortByPriceDescendingChanged(bool value)
         {
             CurrentQuery.SortBy = value ? ProductSortOption.PriceDesc : CurrentQuery.SortBy;
-        }
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SearchViewModel"/> class
-        /// with the specified product service.
-        /// </summary>
-        /// <param name="service">The <see cref="ProductService"/> instance used
-        /// to retrieve product data. Cannot be null.</param>
-        public SearchViewModel(ProductService service)
-        {
-            StateMachine = new StateMachine<SearchViewModel>(this);
-
-            StateMachine.ChangeState(new IdleState());
-
-            ProductService = service;
         }
 
 
