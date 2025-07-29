@@ -4,16 +4,16 @@ namespace Shared.Interfaces
 {
     public interface IState<T>
     {
-        void Enter(T owner);
-        void Exit(T owner);
-        void Update(T owner);
+        Task Enter(T owner);
+        Task Exit(T owner);
+        Task Update(T owner);
     }
 
 
     public interface IStateMachine<T>
     {
-        void ChangeState(IState<T> newState);
-        void Update();
+        Task ChangeState(IState<T> newState);
+        Task Update();
         IState<T> CurrentState { get; }
         IState<T> PreviousState { get; }
         bool IsInState(IState<T> state);

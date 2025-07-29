@@ -81,7 +81,7 @@
                 <Button Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent"
                         Text="Apply" Command="{Binding ApplyQueryCommand}"/>
                 <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
-                        Text="Cancel" Command="{Binding CancelSortCommand}"/>
+                        Text="Cancel" Command="{Binding CancelButtonCommand}"/>
             </Grid>
 
         </VerticalStackLayout>
@@ -146,9 +146,9 @@
                 <Button Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent"
                         Text="Apply" Command="{Binding ApplyQueryCommand}"/>
                 <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
-                        Text="Reset" Command="{Binding ResetFilterCommand}"/>
+                        Text="Reset" Command="{Binding ResetButtonCommand}"/>
                 <Button Grid.Row="0" Grid.Column="2" BackgroundColor="Transparent"
-                        Text="Cancel" Command="{Binding CancelFilterCommand}"/>
+                        Text="Cancel" Command="{Binding CancelButtonCommand}"/>
             </Grid>
             
         </VerticalStackLayout>

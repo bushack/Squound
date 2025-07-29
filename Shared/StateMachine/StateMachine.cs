@@ -33,18 +33,30 @@ namespace Shared.StateMachine
         /// </summary>
         /// <param name="newState"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public void ChangeState(IState<T> newState)
+        public async Task ChangeState(IState<T> newState)
         {
-            if (newState == null)
+            if (newState is null)
+            {
                 throw new ArgumentNullException(nameof(newState), "New state cannot be null.");
+            }
 
+            // Save the current state as previous state before changing.
             previousState = currentState;
 
-            currentState?.Exit(owner);
+            // Run the exit logic of the current state.
+            if (currentState is not null)
+            {
+                await currentState.Exit(owner);
+            }
 
+            // Change to the new state.
             currentState = newState;
 
-            currentState?.Enter(owner);
+            // Run the enter logic of the new state.
+            if (currentState is not null)
+            {
+                await currentState.Enter(owner);
+            }
         }
 
 
@@ -53,9 +65,13 @@ namespace Shared.StateMachine
         /// </summary>
         /// <remarks>This method delegates the update operation to the current state, if one is set.
         /// If <c>currentState</c> is <see langword="null"/>, the method performs no action.</remarks>
-        public void Update()
+        public async Task Update()
         {
-            currentState?.Update(owner);
+            // Run the update logic of the current state.
+            if (currentState is not null)
+            {
+                await currentState.Update(owner);
+            }
         }
 
 
@@ -87,7 +103,9 @@ namespace Shared.StateMachine
         public bool IsInState(IState<T> state)
         {
             if (state is null)
+            {
                 throw new ArgumentNullException(nameof(state), "State cannot be null.");
+            }
 
             return currentState == state;
         }
@@ -103,7 +121,9 @@ namespace Shared.StateMachine
         public bool WasInState(IState<T> state)
         {
             if (state is null)
+            {
                 throw new ArgumentNullException(nameof(state), "State cannot be null.");
+            }
 
             return previousState == state;
         }

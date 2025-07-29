@@ -22,15 +22,20 @@ public partial class SearchCategoriesView : ContentView
 
     private async void OnButtonClicked(Object sender, EventArgs e)
     {
-        if (Shell.Current.CurrentPage.Title.Equals(nameof(SearchPage)))
-            return;
+        // Prevent navigation if the current page is already SearchPage.
+        // if (Shell.Current.CurrentPage.Title.Equals(nameof(SearchPage)))
+        //    return;
 
         if (sender is Button button && button.CommandParameter is string category)
         {
-            var viewModel = (SearchViewModel)BindingContext;
-            viewModel.Category = category;
+            if (BindingContext is SearchViewModel viewModel)
+            {
+                // Set the Category property in the ViewModel to the chosen category.
+                viewModel.Category = category;
 
-            await Shell.Current.GoToAsync($"{nameof(SearchPage)}?category={Uri.EscapeDataString(category)}");
+                // Then navigate to the SearchPage.
+                await Shell.Current.GoToAsync(nameof(SearchPage));
+            }
         }
     }
 }

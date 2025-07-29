@@ -14,6 +14,7 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         async Task GoToAboutPageAsync()
         {
+            // Prevent navigation if the current page is already AboutPage.
             if (Shell.Current.CurrentPage.Title.Equals(nameof(AboutPage)))
                 return;
 
@@ -24,6 +25,7 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         async Task GoToSellPageAsync()
         {
+            // Prevent navigation if the current page is already SellPage.
             if (Shell.Current.CurrentPage.Title.Equals(nameof(SellPage)))
                 return;
 
