@@ -64,7 +64,7 @@ namespace SquoundApi.Controllers
                     return BadRequest(ErrorCode.Product_Data_Invalid.ToString());
                 }
 
-                bool productExists = productRepository.DoesProductExist(product.Id);
+                bool productExists = productRepository.DoesProductExist(product.ProductId);
 
                 // Product already exists with the same ID.
                 if (productExists)
@@ -96,7 +96,7 @@ namespace SquoundApi.Controllers
                 }
 
                 // No product exists with the given ID.
-                if (productRepository.Find(product.Id) == null)
+                if (productRepository.Find(product.ProductId) == null)
                 {
                     return NotFound(ErrorCode.Product_Does_Not_Exist.ToString());
                 }

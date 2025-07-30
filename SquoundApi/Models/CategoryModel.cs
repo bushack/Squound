@@ -15,7 +15,7 @@ namespace SquoundApi.Models
         /* Primary Key, Identifier */
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public long CategoryId { get; set; }
 
         [Required]
         public required string Name { get; set; }

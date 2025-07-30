@@ -20,7 +20,7 @@
         <Tab Title="Account"
              Icon="account.png">
             <ShellContent Title="Account"
-                          ContentTemplate="{DataTemplate local:MainPage}"
+                          ContentTemplate="{DataTemplate pages:HomePage}"
                           Route="MainPage" />
         </Tab>
         <Tab Title="Basket"
@@ -32,7 +32,7 @@
         <Tab Title="Settings"
              Icon="settings.png">
             <ShellContent Title="Settings"
-                          ContentTemplate="{DataTemplate local:MainPage}"
+                          ContentTemplate="{DataTemplate pages:HomePage}"
                           Route="MainPage" />
         </Tab>
     </TabBar>

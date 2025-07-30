@@ -12,7 +12,7 @@ namespace SquoundApp.States
     {
         public async Task Enter(SearchViewModel vm)
         {
-            // Check if the view model is already busy fetching data
+            // Check if the view model is already busy fetching data.
             // This prevents multiple simultaneous fetch operations which could
             // lead to performance issues or unexpected behavior.
             // This is a common pattern to avoid re-entrancy issues in async methods.
@@ -29,6 +29,8 @@ namespace SquoundApp.States
                 vm.IsBusy = true;
 
                 // Save a deep copy of the current query to the PreviousQuery property.
+                // This is useful for scenarios where you might want to revert to the
+                // previous query or to compare the current query with the previous one.
                 vm.PreviousQuery = new ProductQueryDto
                 {
                     Category        = vm.CurrentQuery.Category,

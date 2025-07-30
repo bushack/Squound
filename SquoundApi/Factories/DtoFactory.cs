@@ -1,4 +1,6 @@
-﻿using SquoundApi.Interfaces;
+﻿using System.Collections.ObjectModel;
+
+using SquoundApi.Interfaces;
 using SquoundApi.Models;
 
 using Shared.DataTransfer;
@@ -8,25 +10,31 @@ namespace SquoundApi.Factories
 {
     public class DtoFactory : IDtoFactory
     {
-        public ProductDto CreateProductDto(ProductModel model)
+        /// <summary>
+        /// Converts a ProductModel to a ProductDto.
+        /// The ProductModel is an interal data model that directly maps to the
+        /// Products table in the database.
+        /// The ProductDto is a Data Transfer Object (DTO) that is used to transfer
+        /// data between the server and the client application. As such, it contains
+        /// only the necessary data for the client application.
+        /// </summary>
+        /// <param name="product">The ProductModel to convert.</param>
+        /// <returns>New ProductDto object.</returns>
+        public ProductDto CreateProductDto(ProductModel product)
         {
-            var dto = new ProductDto();
+            return new ProductDto()
+            {
+                ProductId       = product.ProductId,
+                Name            = product.Name,
 
-            dto.Id              = model.Id;
-            dto.Name            = model.Name;
-            dto.Manufacturer    = model.Manufacturer;
-            dto.Description     = model.Description;
-            dto.Price           = model.Price;
-            dto.Quantity        = model.Quantity;
+                // Manufacturer is nullable in the database, so we default it to "Unknown" if it is null.
+                Manufacturer    = product.Manufacturer ?? "Unknown",
+                Description     = product.Description,
+                Price           = product.Price,
+                Quantity        = product.Quantity,
 
-            dto.Image0          = model.Image0;
-            dto.Image1          = model.Image1;
-            dto.Image2          = model.Image2;
-            dto.Image3          = model.Image3;
-            dto.Image4          = model.Image4;
-            dto.Image5          = model.Image5;
-
-            return dto;
+                Images          = new ObservableCollection<string>(product.Images.Select(image => image.ImageUrl))
+            };
         }
     }
 }

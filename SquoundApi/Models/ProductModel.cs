@@ -6,10 +6,12 @@ namespace SquoundApi.Models
 {
     public class ProductModel
     {
-        /* Primary Key, Identifier */
+        /// <summary>
+        /// ProductId is the primary key for the ProductModel.
+        /// </summary>
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public required long ProductId { get; set; }
 
         [Required]
         public required long CategoryId { get; set; }
@@ -17,8 +19,10 @@ namespace SquoundApi.Models
         [Required]
         public required string Name { get; set; }
 
-        [Required]
-        public required string Manufacturer { get; set; }
+        /// <summary>
+        /// Manufacturer may be unknown therefore it is a nullable string.
+        /// </summary>
+        public string? Manufacturer { get; set; } = null;
 
         [Required]
         public required string Description { get; set; }
@@ -30,24 +34,8 @@ namespace SquoundApi.Models
         [Column(TypeName = "decimal(18,2)")]
         public required decimal Price { get; set; }
 
-        public CategoryModel Category { get; set; }
+        public required CategoryModel Category { get; set; }
 
-        [Required]
-        public required string Image0 { get; set; }
-
-        [Required]
-        public required string Image1 { get; set; }
-
-        [Required]
-        public required string Image2 { get; set; }
-
-        [Required]
-        public required string Image3 { get; set; }
-
-        [Required]
-        public required string Image4 { get; set; }
-
-        [Required]
-        public required string Image5 { get; set; }
+        public required List<ProductImageModel> Images { get; set; } = [];
     }
 }

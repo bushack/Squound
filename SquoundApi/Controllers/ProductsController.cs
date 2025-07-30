@@ -111,12 +111,15 @@ namespace SquoundApi.Controllers
 
                 this.Sanitize(query);
 
-                var products = dbContext.Products.Include(predicate => predicate.Category).AsQueryable();
+                var products = dbContext.Products
+                    .Include(predicate => predicate.Category)   // Include the Category for each product.
+                    .Include(predicate => predicate.Images)     // Include the Images for each product.
+                    .AsQueryable();
 
-                if (query.Id is not null)
+                if (query.ProductId is not null)
                 {
-                    Debug.WriteLine($"* * * Filtering by Id: {query.Id} * * *");
-                    products = products.Where(predicate => (predicate.Id == query.Id));
+                    Debug.WriteLine($"* * * Filtering by ProductId: {query.ProductId} * * *");
+                    products = products.Where(predicate => (predicate.ProductId == query.ProductId));
                 }
 
                 // Filter by category.
@@ -160,7 +163,7 @@ namespace SquoundApi.Controllers
                         ProductSortOption.NameDesc => products.OrderByDescending(predicate => predicate.Name),
 
                         // Default sort by id.
-                        _ => products.OrderBy(predicate => predicate.Id)
+                        _ => products.OrderBy(predicate => predicate.ProductId)
                     };
                 }
 
@@ -206,7 +209,7 @@ namespace SquoundApi.Controllers
         {
             var query = new ProductQueryDto();
 
-            query.Id = id;
+            query.ProductId = id;
 
             return await this.Search(query);
         }

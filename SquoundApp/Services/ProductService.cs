@@ -9,9 +9,9 @@ namespace SquoundApp.Services
 {
     public class ProductService
     {
-        private HttpService httpService;
+        private readonly HttpService httpService;
 
-        List<ProductDto> productList = new();
+        List<ProductDto> productList = [];
 
         public ProductService(HttpService httpService)
         {

@@ -55,7 +55,7 @@
                                         StrokeThickness="0"
                                         HorizontalOptions="Fill"
                                         VerticalOptions="Center">
-                                    <Image Source="{Binding Image0}"
+                                    <Image Source="{Binding PrimaryImageUrl}"
                                            Aspect="AspectFit"/>
                                 </Border>
 

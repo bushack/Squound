@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 using SquoundApp.Pages;
 using SquoundApp.Services;

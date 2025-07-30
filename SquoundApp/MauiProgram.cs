@@ -47,7 +47,7 @@ namespace SquoundApp
 
             // Pages
             builder.Services.AddTransient<AboutPage>();
-            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<HomePage>();
             builder.Services.AddTransient<ProductListingPage>();
             builder.Services.AddSingleton<SearchPage>();
             builder.Services.AddTransient<SellPage>();
