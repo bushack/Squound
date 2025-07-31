@@ -6,20 +6,15 @@ namespace SquoundApi.Models
 {
     public class CategoryModel
     {
-        /* Constructor */
-        public CategoryModel()
-        {
-            Products = new List<ProductModel>();
-        }
-
-        /* Primary Key, Identifier */
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long CategoryId { get; set; }
 
         [Required]
-        public required string Name { get; set; }
+        public required string Name { get; set; } = null!;
 
-        public ICollection<ProductModel> Products { get; set; }
+        public ICollection<ProductModel> Products { get; set; } = [];
+
+        public ICollection<SubcategoryModel> Subcategories { get; set; } = [];
     }
 }

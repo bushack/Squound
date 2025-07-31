@@ -32,26 +32,6 @@ namespace SquoundApi.Controllers
             Undefined_Error
         }
 
-        private void Sanitize(ProductQueryDto query)
-        {
-            if (query.MinPrice < 0)
-                query.MinPrice = 0;
-
-            if (query.MinPrice > query.MaxPrice)
-                query.MinPrice = query.MaxPrice;
-
-            if (query.MaxPrice < query.MinPrice)
-                query.MaxPrice = query.MinPrice;
-
-            if (query.PageNumber < 1)
-                query.PageNumber = 1;
-
-            if (query.PageSize < 10)
-                query.PageSize = 10;
-
-            if (query.PageSize > 100)
-                query.PageSize = 100;
-        }
 
         /// <summary>
         /// Retrieves all products from the database.
@@ -105,65 +85,74 @@ namespace SquoundApi.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery]ProductQueryDto query)
         {
+            if (ModelState.IsValid == false)
+            {
+                Debug.WriteLine($"* * * Invalid ModelState: {ModelState} * * *");
+                Debug.WriteLine($"* * * Aborting Database Query: {query} * * *");
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                Debug.WriteLine($"* * * Initiating Product Database Search... * * *");
+                Debug.WriteLine($"* * * Initiating Database Query... * * *");
 
-                this.Sanitize(query);
+                // Build the Linq query to fetch products from the database.
+                var linqQuery = dbContext.Products                  // Products table in the database.
+                    .Include(predicate => predicate.Category)       // Include the Category entity for each product.
+                    .Include(predicate => predicate.Subcategory)    // Include the Subcategory entity for each product.
+                    .Include(predicate => predicate.Images)         // Include the Images collection for each product.
+                    .AsQueryable();                                 // Convert to IQueryable for further filtering and sorting (below).
 
-                var products = dbContext.Products
-                    .Include(predicate => predicate.Category)   // Include the Category for each product.
-                    .Include(predicate => predicate.Images)     // Include the Images for each product.
-                    .AsQueryable();
-
+                // Allows filtering by product id.
                 if (query.ProductId is not null)
                 {
                     Debug.WriteLine($"* * * Filtering by ProductId: {query.ProductId} * * *");
-                    products = products.Where(predicate => (predicate.ProductId == query.ProductId));
+                    linqQuery = linqQuery.Where(predicate => (predicate.ProductId == query.ProductId));
                 }
 
                 // Filter by category.
                 if (string.IsNullOrEmpty(query.Category) == false)
                 {
                     Debug.WriteLine($"* * * Filtering by Category: {query.Category} * * *");
-                    products = products.Where(predicate => (predicate.Category.Name == query.Category));
+                    linqQuery = linqQuery.Where(predicate => (predicate.Category.Name == query.Category));
                 }
 
                 // Filter by manufacturer.
                 if (string.IsNullOrEmpty(query.Manufacturer) == false)
                 {
                     Debug.WriteLine($"* * * Filtering by Manufacturer: {query.Manufacturer} * * *");
-                    products = products.Where(predicate => (predicate.Manufacturer == query.Manufacturer));
+                    linqQuery = linqQuery.Where(predicate => (predicate.Manufacturer == query.Manufacturer));
                 }
 
                 // Exclude products below minimum price.
                 if ((query.MinPrice > 0) && (query.MinPrice <= (decimal)Shared.DataTransfer.ProductQueryDto.PracticalMaximumPrice))
                 {
-                    Debug.WriteLine($"* * * Filtering by MinPrice: {query.MinPrice} * * *");
-                    products = products.Where(predicate => (predicate.Price >= query.MinPrice));
+                    Debug.WriteLine($"* * * Applying minimum price filter: {query.MinPrice} * * *");
+                    linqQuery = linqQuery.Where(predicate => (predicate.Price >= query.MinPrice));
                 }
 
                 // Exclude products above maximum price.
                 if ((query.MaxPrice > 0) && (query.MaxPrice <= (decimal)Shared.DataTransfer.ProductQueryDto.PracticalMaximumPrice))
                 {
-                    Debug.WriteLine($"* * * Filtering by MaxPrice: {query.MaxPrice} * * *");
-                    products = products.Where(predicate => (predicate.Price <= query.MaxPrice));
+                    Debug.WriteLine($"* * * Applying maximum price filter: {query.MaxPrice} * * *");
+                    linqQuery = linqQuery.Where(predicate => (predicate.Price <= query.MaxPrice));
                 }
 
                 // Sort by.
                 //if (query.SortBy is not null)
                 {
                     Debug.WriteLine($"* * * Sorting by: {query.SortBy.ToString()} * * *");
-                    products = query.SortBy switch
-                    {
-                        ProductSortOption.PriceAsc => products.OrderBy(predicate => predicate.Price),
-                        ProductSortOption.PriceDesc => products.OrderByDescending(predicate => predicate.Price),
 
-                        ProductSortOption.NameAsc => products.OrderBy(predicate => predicate.Name),
-                        ProductSortOption.NameDesc => products.OrderByDescending(predicate => predicate.Name),
+                    linqQuery = query.SortBy switch
+                    {
+                        ProductSortOption.PriceAsc => linqQuery.OrderBy(predicate => predicate.Price),
+                        ProductSortOption.PriceDesc => linqQuery.OrderByDescending(predicate => predicate.Price),
+
+                        ProductSortOption.NameAsc => linqQuery.OrderBy(predicate => predicate.Name),
+                        ProductSortOption.NameDesc => linqQuery.OrderByDescending(predicate => predicate.Name),
 
                         // Default sort by id.
-                        _ => products.OrderBy(predicate => predicate.ProductId)
+                        _ => linqQuery.OrderBy(predicate => predicate.ProductId)
                     };
                 }
 
@@ -171,8 +160,11 @@ namespace SquoundApi.Controllers
                 var skip = (query.PageNumber - 1) * query.PageSize;
                 var take = query.PageSize;
                 Debug.WriteLine($"* * * Paging: Skipping {skip}, Taking {take} * * *");
-                var pagedResult = await products.Skip(skip).Take(take).ToListAsync();
 
+                // Execute the query and fetch the results.
+                var pagedResult = await linqQuery.Skip(skip).Take(take).ToListAsync();
+
+                // Check if any products were found.
                 if (pagedResult.Count == 0)
                 {
                     Debug.WriteLine("* * * No products found * * *");
@@ -199,7 +191,7 @@ namespace SquoundApi.Controllers
 
             finally
             {
-                Debug.WriteLine($"* * * Product Database Search Complete * * *");
+                Debug.WriteLine($"* * * Database Query Successfully Completed * * *");
             }
         }
 
@@ -207,9 +199,10 @@ namespace SquoundApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var query = new ProductQueryDto();
-
-            query.ProductId = id;
+            var query = new ProductQueryDto
+            {
+                ProductId = id
+            };
 
             return await this.Search(query);
         }

@@ -13,16 +13,17 @@
 
             <HorizontalStackLayout VerticalOptions="Center">
 
-                <Button Style="{StaticResource TextButton}" Text="Lounge" Clicked="OnButtonClicked" CommandParameter="Lounge"/>
-                <Button Style="{StaticResource TextButton}" Text="Dining" Clicked="OnButtonClicked" CommandParameter="Dining"/>
-                <Button Style="{StaticResource TextButton}" Text="Office" Clicked="OnButtonClicked" CommandParameter="Office"/>
-                <Button Style="{StaticResource TextButton}" Text="Bedroom" Clicked="OnButtonClicked" CommandParameter="Bedroom"/>
+                <Button Style="{StaticResource TextButton}" Text="Furniture" Clicked="OnButtonClicked" CommandParameter="Furniture"/>
                 <Button Style="{StaticResource TextButton}" Text="Lighting" Clicked="OnButtonClicked" CommandParameter="Lighting"/>
                 <Button Style="{StaticResource TextButton}" Text="Decor" Clicked="OnButtonClicked" CommandParameter="Decor"/>
-                <Button Style="{StaticResource TextButton}" Text="Accessories" Clicked="OnButtonClicked" CommandParameter="Accessories"/>
-                
-                <!-- Depreciated -->
-                <!--<Button Style="{StaticResource TextButton}" Text="Accessories" Command="{Binding GoToProductSearchCommand}" />-->
+                <Button Style="{StaticResource TextButton}" Text="Kitchenware" Clicked="OnButtonClicked" CommandParameter="Kitchenware"/>
+                <Button Style="{StaticResource TextButton}" Text="Tableware" Clicked="OnButtonClicked" CommandParameter="Tableware"/>
+                <Button Style="{StaticResource TextButton}" Text="Textiles" Clicked="OnButtonClicked" CommandParameter="Textiles"/>
+                <Button Style="{StaticResource TextButton}" Text="Storage" Clicked="OnButtonClicked" CommandParameter="Storage"/>
+                <Button Style="{StaticResource TextButton}" Text="Wall Art" Clicked="OnButtonClicked" CommandParameter="Wall Art"/>
+                <Button Style="{StaticResource TextButton}" Text="Clocks" Clicked="OnButtonClicked" CommandParameter="Clocks"/>
+                <Button Style="{StaticResource TextButton}" Text="Mirrors" Clicked="OnButtonClicked" CommandParameter="Mirrors"/>
+                <Button Style="{StaticResource TextButton}" Text="Miscellaneous" Clicked="OnButtonClicked" CommandParameter="Miscellaneous"/>
 
             </HorizontalStackLayout>
 
