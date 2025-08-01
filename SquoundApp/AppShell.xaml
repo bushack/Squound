@@ -26,8 +26,8 @@
         <Tab Title="Basket"
              Icon="shopping.png">
             <ShellContent Title="Basket"
-                          ContentTemplate="{DataTemplate pages:SearchPage}"
-                          Route="SearchPage" />
+                          ContentTemplate="{DataTemplate pages:CoarseSearchPage}"
+                          Route="CoarseSearchPage" />
         </Tab>
         <Tab Title="Settings"
              Icon="settings.png">

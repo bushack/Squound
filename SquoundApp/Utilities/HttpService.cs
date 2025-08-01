@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net.Http.Json;
 
+
 namespace SquoundApp.Utilities
 {
     public class HttpService
@@ -15,7 +16,9 @@ namespace SquoundApp.Utilities
             // This is useful if you are making multiple requests to the same base URL.
             // Ensure that the URL is valid and accessible.
             if (baseUrl is not null)
+            {
                 httpClient.BaseAddress = new Uri(baseUrl);
+            }
         }
 
         public async Task<T?> GetJsonAsync<T>(string url)
@@ -25,7 +28,9 @@ namespace SquoundApp.Utilities
                 var response = await httpClient.GetAsync(url);
 
                 if (response.IsSuccessStatusCode == false)
+                {
                     return default;
+                }
 
                 return await response.Content.ReadFromJsonAsync<T>();
             }

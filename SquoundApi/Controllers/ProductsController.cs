@@ -23,18 +23,21 @@ namespace SquoundApi.Controllers
 
         public enum ErrorCode
         {
+            Categories_Not_Found,
+
             Product_Data_Invalid,
             Product_Exists,
             Product_Does_Not_Exist,
             Product_Could_Not_Be_Created,
             Product_Could_Not_Be_Updated,
             Product_Could_Not_Be_Deleted,
+
             Undefined_Error
         }
 
 
         /// <summary>
-        /// Retrieves all products from the database.
+        /// Endpoint to retrieve all products from the database.
         /// </summary>
         /// <remarks>This method fetches all product records from the database and converts them into DTOs
         /// for client consumption. If no products are found, a 404 Not Found response is returned. If an error occurs
@@ -71,8 +74,61 @@ namespace SquoundApi.Controllers
             }
         }
 
+
+        // GET : api/products/categories
         /// <summary>
-        /// Searches for products based on the specified query parameters.
+        /// Endpoint to retrieve all categories and their subcategories.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            try
+            {
+                Debug.WriteLine($"* * * Querying categories... * * *");
+
+                var categoryDtos = await dbContext.Categories       // Read from the Categories table in the database.
+                    .Include(c => c.Subcategories)                  // Include the Subcategory entity for each Category.
+                    .Select(c => new CategoryDto                    // Create a new CategoryDto for each Category.
+                    {
+                        Name = c.Name,                              // Map the Category Name property.
+                        Subcategories = c.Subcategories             // Map the Subcategories property.
+                        .Select(s => new SubcategoyDto              // Create a new SubcategoyDto for each Subcategory.
+                        {
+                            Name = s.Name                           // Map the Subcategory Name property.
+                        })
+                        .ToList()                                   // Aggregate the SubcategoyDtos into a list.
+                    })
+                    .ToListAsync();                                 // Execute the query and convert the results to a list of CategoryDtos.
+
+
+                if (categoryDtos.Count == 0)
+                {
+                    Debug.WriteLine("* * * No categories found * * *");
+                    return NotFound(ErrorCode.Categories_Not_Found.ToString());
+                }
+
+                Debug.WriteLine($"* * * Returning {categoryDtos.Count} categories * * *");
+
+                return Ok(categoryDtos);
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"* * * Error fetching: {ex.Message} * * *");
+                return BadRequest(ErrorCode.Undefined_Error.ToString());
+            }
+
+            finally
+            {
+                Debug.WriteLine($"* * * Database query complete * * *");
+            }
+        }
+
+
+        // GET : api/products/search
+        /// <summary>
+        /// Endpoint to search for products based on various criteria.
         /// </summary>
         /// <remarks>This method supports filtering, sorting, and pagination of product results. Filters
         /// can be applied for id, category, manufacturer, minimum price, and maximum price. Sorting can be performed by
@@ -87,17 +143,17 @@ namespace SquoundApi.Controllers
         {
             if (ModelState.IsValid == false)
             {
-                Debug.WriteLine($"* * * Invalid ModelState: {ModelState} * * *");
-                Debug.WriteLine($"* * * Aborting Database Query: {query} * * *");
+                Debug.WriteLine($"* * * Invalid product model state: {ModelState} * * *");
+                Debug.WriteLine($"* * * Aborting products query: {query} * * *");
                 return BadRequest(ModelState);
             }
 
             try
             {
-                Debug.WriteLine($"* * * Initiating Database Query... * * *");
+                Debug.WriteLine($"* * * Querying products... * * *");
 
                 // Build the Linq query to fetch products from the database.
-                var linqQuery = dbContext.Products                  // Products table in the database.
+                var linqQuery = dbContext.Products                  // Read from the Products table in the database.
                     .Include(predicate => predicate.Category)       // Include the Category entity for each product.
                     .Include(predicate => predicate.Subcategory)    // Include the Subcategory entity for each product.
                     .Include(predicate => predicate.Images)         // Include the Images collection for each product.
@@ -106,21 +162,21 @@ namespace SquoundApi.Controllers
                 // Allows filtering by product id.
                 if (query.ProductId is not null)
                 {
-                    Debug.WriteLine($"* * * Filtering by ProductId: {query.ProductId} * * *");
+                    Debug.WriteLine($"* * * Filtering by Id: {query.ProductId} * * *");
                     linqQuery = linqQuery.Where(predicate => (predicate.ProductId == query.ProductId));
                 }
 
                 // Filter by category.
                 if (string.IsNullOrEmpty(query.Category) == false)
                 {
-                    Debug.WriteLine($"* * * Filtering by Category: {query.Category} * * *");
+                    Debug.WriteLine($"* * * Filtering by category: {query.Category} * * *");
                     linqQuery = linqQuery.Where(predicate => (predicate.Category.Name == query.Category));
                 }
 
                 // Filter by manufacturer.
                 if (string.IsNullOrEmpty(query.Manufacturer) == false)
                 {
-                    Debug.WriteLine($"* * * Filtering by Manufacturer: {query.Manufacturer} * * *");
+                    Debug.WriteLine($"* * * Filtering by manufacturer: {query.Manufacturer} * * *");
                     linqQuery = linqQuery.Where(predicate => (predicate.Manufacturer == query.Manufacturer));
                 }
 
@@ -159,7 +215,7 @@ namespace SquoundApi.Controllers
                 // Pagination.
                 var skip = (query.PageNumber - 1) * query.PageSize;
                 var take = query.PageSize;
-                Debug.WriteLine($"* * * Paging: Skipping {skip}, Taking {take} * * *");
+                Debug.WriteLine($"* * * Paging: skipping {skip}, taking {take} * * *");
 
                 // Execute the query and fetch the results.
                 var pagedResult = await linqQuery.Skip(skip).Take(take).ToListAsync();
@@ -185,17 +241,22 @@ namespace SquoundApi.Controllers
 
             catch (Exception ex)
             {
-                Debug.WriteLine($"* * * Error fetching products: {ex.Message} * * *");
+                Debug.WriteLine($"* * * Error fetching: {ex.Message} * * *");
                 return BadRequest(ErrorCode.Undefined_Error.ToString());
             }
 
             finally
             {
-                Debug.WriteLine($"* * * Database Query Successfully Completed * * *");
+                Debug.WriteLine($"* * * Database query complete * * *");
             }
         }
 
         // GET : api/products/123456
+        /// <summary>
+        /// Endpoint to retrieve a specific product by its ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
