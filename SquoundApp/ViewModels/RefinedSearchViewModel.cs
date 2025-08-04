@@ -13,15 +13,15 @@ using Shared.StateMachine;
 
 namespace SquoundApp.ViewModels
 {
-    public partial class SearchViewModel : BaseViewModel
+    public partial class RefinedSearchViewModel : BaseViewModel
     {
         /// <summary>
-        /// Represents the state machine used to manage the states and transitions of the <see cref="SearchViewModel"/>.
+        /// Represents the state machine used to manage the states and transitions of the <see cref="RefinedSearchViewModel"/>.
         /// </summary>
         /// <remarks>This state machine is responsible for controlling the behavior and lifecycle of the
-        /// <see cref="SearchViewModel"/>. It ensures that the view model transitions between states in a predictable
+        /// <see cref="RefinedSearchViewModel"/>. It ensures that the view model transitions between states in a predictable
         /// and controlled manner.</remarks>
-        internal readonly StateMachine<SearchViewModel> StateMachine;
+        internal readonly StateMachine<RefinedSearchViewModel> StateMachine;
 
         // Responsible for retrieving data from the REST API.
         internal readonly ProductService ProductService;
@@ -85,14 +85,14 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SearchViewModel"/> class
+        /// Initializes a new instance of the <see cref="RefinedSearchViewModel"/> class
         /// with the specified product service.
         /// </summary>
         /// <param name="service">The <see cref="ProductService"/> instance used
         /// to retrieve product data. Cannot be null.</param>
-        public SearchViewModel(ProductService service)
+        public RefinedSearchViewModel(ProductService service)
         {
-            StateMachine = new StateMachine<SearchViewModel>(this);
+            StateMachine = new StateMachine<RefinedSearchViewModel>(this);
 
             StateMachine.ChangeState(new IdleState());
 

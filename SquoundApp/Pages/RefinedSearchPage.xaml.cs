@@ -3,15 +3,13 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.Pages;
 
-public partial class SearchPage : ContentPage
+public partial class RefinedSearchPage : ContentPage
 {
-	public SearchPage(SearchViewModel viewModel)
+	public RefinedSearchPage(RefinedSearchViewModel viewModel)
 	{
 		InitializeComponent();
 
 		BindingContext = viewModel;
-
-        Title = nameof(SearchPage);
     }
 
     protected override void OnAppearing()
@@ -21,7 +19,7 @@ public partial class SearchPage : ContentPage
         // page is shown, such as refreshing data or starting animations.
         base.OnAppearing();
 
-        if (BindingContext is SearchViewModel viewModel)
+        if (BindingContext is RefinedSearchViewModel viewModel)
         {
             // Execute the existing query command to ensure the view model is ready.
             viewModel.ApplyQueryCommand.Execute(null);

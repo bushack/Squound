@@ -4,8 +4,8 @@
              xmlns:dtos="clr-namespace:Shared.DataTransfer;assembly=Shared"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
-             x:Class="SquoundApp.Pages.SearchPage"
-             x:DataType="viewmodels:SearchViewModel">
+             x:Class="SquoundApp.Pages.RefinedSearchPage"
+             x:DataType="viewmodels:RefinedSearchViewModel">
 
     <Grid RowDefinitions="Auto, *">
         
@@ -41,12 +41,12 @@
                             <Border.GestureRecognizers>
                                 <!-- TapGestureRecognizer is used to handle tap events on each item in the CollectionView -->
                                 <!-- The CommandParameter is set to the current Product item (.), allowing the command to access it -->
-                                <!-- The Command is bound to a command in the ProductSearchViewModel that retrieves the product details -->
+                                <!-- The Command is bound to a command in the RefinedSearchViewModel that retrieves the product details -->
                                 <!-- In this case, the program will walk up the stack of the binding chain, starting with the -->
-                                <!-- Product, until it finds a ProductSearchViewModel, inside which is the command (GetProduct) -->
+                                <!-- Product, until it finds a RefinedSearchViewModel, inside which is the command (GetProduct) -->
                                 <!-- that it should execute -->
                                 <TapGestureRecognizer CommandParameter="{Binding .}"
-                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SearchViewModel}}, x:DataType=viewmodels:SearchViewModel, Path=GoToProductListingCommand}"/>
+                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RefinedSearchViewModel}}, x:DataType=viewmodels:RefinedSearchViewModel, Path=GoToProductListingCommand}"/>
                             </Border.GestureRecognizers>
 
                             <!-- Main image with rounded corners -->

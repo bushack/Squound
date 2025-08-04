@@ -50,7 +50,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<HomePage>();
             builder.Services.AddTransient<ProductListingPage>();
             builder.Services.AddSingleton<CoarseSearchPage>();
-            builder.Services.AddSingleton<SearchPage>();
+            builder.Services.AddSingleton<RefinedSearchPage>();
             builder.Services.AddTransient<SellPage>();
 
             // Services
@@ -72,7 +72,7 @@ namespace SquoundApp
             builder.Services.AddTransient<AboutViewModel>();
             builder.Services.AddSingleton<FooterViewModel>();
             builder.Services.AddSingleton<CoarseSearchViewModel>();
-            builder.Services.AddSingleton<SearchViewModel>();
+            builder.Services.AddSingleton<RefinedSearchViewModel>();
             builder.Services.AddTransient<ProductListingViewModel>();
             builder.Services.AddTransient<SellViewModel>();
 

@@ -4,7 +4,7 @@
              xmlns:behaviours="clr-namespace:SquoundApp.Behaviours"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
              x:Class="SquoundApp.Views.SearchPreferencesView"
-             x:DataType="viewmodels:SearchViewModel"
+             x:DataType="viewmodels:RefinedSearchViewModel"
              
              Background="{StaticResource SquoundGradientBrush}">
 

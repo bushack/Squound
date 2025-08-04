@@ -1,8 +1,10 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
+using SquoundApp.Extensions;
 using SquoundApp.Pages;
 using SquoundApp.Services;
 
@@ -11,34 +13,121 @@ using Shared.DataTransfer;
 
 namespace SquoundApp.ViewModels
 {
-    public partial class CoarseSearchViewModel : BaseViewModel
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CoarseSearchViewModel"/> class
+    /// with the specified category service.
+    /// </summary>
+    /// <param name="service">The <see cref="CategoryService"/> instance used
+    /// to retrieve product category data. Cannot be null.</param>
+    public partial class CoarseSearchViewModel(CategoryService service) : BaseViewModel
     {
         // Respomsible for retrieving data from the REST API.
-        internal readonly CategoryService CategoryService;
+        // This service is injected into the view model and is used to fetch product categories.
+        private readonly CategoryService categoryService = service;
 
         // Collection of categories to display on the coarse search page.
-        public ObservableCollection<CategoryDto> CategoryList { get; } = [];
+        // This collection is populated by the ApplyQueryAsync method.
+        // As an ObservableProperty, we receive notifications when the collection is reassigned or modified,
+        // such as when new categories are fetched from the API.
+        // This collection is used only inside this class and therefore does not require ObservableCollection status.
+        [ObservableProperty]
+        private List<CategoryDto> categoryList = [];
+
+        // Dynamic collection of either categories or subcategories to display on the coarse search page.
+        // This collection is populated based on the user-selected category and can be bound to UI elements.
+        // As an ObservableProperty, we receive notifications when the collection is reassigned or modified,
+        // although we do not currently make use of this feature.
+        // This collection is bound to the UI and therefore must be an ObservableCollection so that the UI
+        // automatically updates when items are added or removed.
+        [ObservableProperty]
+        private ObservableCollection<object> itemList = [];
+
+        // The category or subcategory selected by the user.
+        // This property is used to track the user's selection and trigger either the loading of
+        // subcategories or navigation to the refined search page.
+        [ObservableProperty]
+        private object? selectedItem = null;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CoarseSearchViewModel"/> class
-        /// with the specified category service.
+        /// Populates the ItemList with categories when the CategoryList changes.
+        /// This typically happens only once when the CoarseSearchPage's OnAppearing method
+        /// is called for the first time.
         /// </summary>
-        /// <param name="service">The <see cref="CategoryService"/> instance used
-        /// to retrieve product category data. Cannot be null.</param>
-        public CoarseSearchViewModel(CategoryService service)
+        /// <param name="value"></param>
+        partial void OnCategoryListChanged(List<CategoryDto> value)
         {
-            CategoryService = service;
+            // When the CategoryList changes, we also want to update the ItemList
+            // to reflect the current categories available for selection.
+            // This ensures that the UI is always in sync with the data.
+            ItemList.Clear();
+
+            foreach (var category in value)
+                ItemList.Add(category);
+        }
+
+
+        /// <summary>
+        /// Updates the ItemList contents and Title when the SelectedCategory changes.
+        /// </summary>
+        /// <param name="value">The category or subcategory selected by the user.</param>
+        partial void OnSelectedItemChanged(object? value)
+        {
+            switch (value)
+            {
+                // If the selected item is a category, we want to load its subcategories into the ItemList.
+                case CategoryDto category:
+                {
+                    // Check if the selected category is null or if it has no subcategories.
+                    if (category.Subcategories is null || category.Subcategories.Count is 0)
+                        return;
+
+                    // If the selected category has subcategories, load them into the ItemList.
+                    ItemList.Clear();
+
+                    foreach (var subcategory in category.Subcategories)
+                        ItemList.Add(subcategory);
+
+                    // Update the UI to reflect the selected category and its subcategories.
+                    Title = category.Name;
+
+                    break;
+                }
+
+                // If the selected item is a subcategory, we want to navigate to the RefinedSearchPage.
+                case SubcategoryDto subcategory:
+                {
+                    // Clear the selected item and title in readiness for the next time the page is displayed.
+                    SelectedItem = null;
+                    Title = string.Empty;
+
+                    // If the selected item is a subcategory, navigate to the RefinedSearchPage.
+                    // This is where the user can perform a more detailed search based on the selected subcategory.
+                    GoToRefinedSearchPageAsync(subcategory).FireAndForget();
+                    break;
+                }
+
+                default:
+                    Debug.WriteLine("Selected item is not a category or subcategory.");
+                    break;
+            }
+            
         }
 
 
         /// <summary>
         /// Retrieves product categories from the category service and populates the CategoryList.
+        /// This method is called by the CoarseSearchPage's OnAppearing method.
         /// </summary>
         /// <returns></returns>
         [RelayCommand]
         private async Task ApplyQueryAsync()
         {
+            // If the CategoryList is already populated, we do not need to fetch data again.
+            // This will ensure that this method runs only once when the page is first displayed,
+            if (CategoryList.Count is not 0)
+                return;
+
             // Check if the view model is already busy fetching data.
             // This prevents multiple simultaneous fetch operations which could
             // lead to performance issues or unexpected behavior.
@@ -55,34 +144,17 @@ namespace SquoundApp.ViewModels
                 // and to prevent the user from initiating another fetch operation while one is already in progress.
                 IsBusy = true;
 
-                // Clear the existing products in the ObservableCollection.
-                // This ensures that the collection is updated with whatever is returned by the API.
-                // ObservableCollection is used here so that the UI can automatically update
-                // when items are added or removed, without needing to manually refresh the UI.
-                // This is a key feature of ObservableCollection, which is designed for data binding in UI frameworks.
-                CategoryList.Clear();
-
                 // Retrieve product categories from the category service.
                 // This method is expected to return a list of product categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var categoryList = await CategoryService.GetCategoriesRestApi();
+                var categories = await categoryService.GetCategoriesRestApi();
 
-                if (categoryList == null)
+                if (categories == null)
                     return;
 
-                // The CategoryList is an ObservableCollection, which means that any changes to it
-                // will automatically notify the UI to update, making it easy to display dynamic data.
-                // This is particularly useful in MVVM (Model-View-ViewModel) patterns where the ViewModel
-                // holds the data and the View binds to it.
-                //ProductList.Clear();
-                foreach (var category in categoryList)
-                {
-                    // The ObservableCollection is designed to notify the UI of changes,
-                    // so when we add items to it, the UI will automatically reflect those changes.
-                    // ObservableRangeCollection would be more efficient if you want to add multiple items at once,
-                    // and delay the UI update until all items are added.
-                    CategoryList.Add(category);
-                }
+                // By assigning the fetched categories to the CategoryList, a notification is triggered
+                // that the collection has changed and the OnCategoryListChanged method is called.
+                CategoryList = new List<CategoryDto>(categories);
             }
 
             catch (Exception ex)
@@ -107,19 +179,19 @@ namespace SquoundApp.ViewModels
         /// <summary>
         /// Asynchronously initiates a navigation to the RefinedSearchPage.
         /// </summary>
-        /// <param name="category"></param>
+        /// <param name="subcategory"></param>
         /// <returns></returns>
         [RelayCommand]
-        async Task GoToRefinedSearchPageAsync(CategoryDto category)
+        async Task GoToRefinedSearchPageAsync(SubcategoryDto subcategory)
         {
-            if (category is null)
+            if (subcategory is null)
                 return;
 
             // Navigate to the RefinedSearchPage and pass the selected category as a parameter.
-            await Shell.Current.GoToAsync($"{nameof(SearchPage)}", true,
+            await Shell.Current.GoToAsync($"{nameof(RefinedSearchPage)}", true,
                 new Dictionary<string, object>
                 {
-                    {"Category", category}
+                    {"Subcategory", subcategory}
                 });
         }
     }

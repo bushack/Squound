@@ -7,12 +7,12 @@ namespace Shared.DataTransfer
     {
         public string Name { get; set; } = string.Empty;
 
-        public List<SubcategoyDto> Subcategories { get; set; } = [];
+        public List<SubcategoryDto> Subcategories { get; set; } = [];
     }
 
 
-    // SubcategoyDto is used to transfer subcategory data within a category.
-    public class SubcategoyDto
+    // SubcategoryDto is used to transfer subcategory data within a category.
+    public class SubcategoryDto
     {
         public string Name { get; set; } = string.Empty;
     }

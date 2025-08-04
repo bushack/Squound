@@ -8,9 +8,9 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.States
 {
-    internal class LoadingState : IState<SearchViewModel>
+    internal class LoadingState : IState<RefinedSearchViewModel>
     {
-        public async Task Enter(SearchViewModel vm)
+        public async Task Enter(RefinedSearchViewModel vm)
         {
             // Check if the view model is already busy fetching data.
             // This prevents multiple simultaneous fetch operations which could
@@ -99,13 +99,13 @@ namespace SquoundApp.States
         }
 
 
-        public Task Update(SearchViewModel viewModel)
+        public Task Update(RefinedSearchViewModel viewModel)
         {
             return Task.CompletedTask;
         }
 
 
-        public Task Exit(SearchViewModel viewModel)
+        public Task Exit(RefinedSearchViewModel viewModel)
         {
             return Task.CompletedTask;
         }

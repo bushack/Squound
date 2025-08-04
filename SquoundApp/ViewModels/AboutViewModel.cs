@@ -33,6 +33,7 @@ namespace SquoundApp.ViewModels
                 // Fetch data only if the model is not already populated.
                 await FetchDataAsync();
             }
+
             else
             {
                 // If the model is already populated, we can skip fetching data.

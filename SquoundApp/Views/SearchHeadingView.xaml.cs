@@ -10,6 +10,6 @@ public partial class SearchHeadingView : ContentView
 	{
 		InitializeComponent();
 
-        BindingContext = ServiceLocator.GetService<SearchViewModel>();
+        BindingContext = ServiceLocator.GetService<RefinedSearchViewModel>();
     }
 }

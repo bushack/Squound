@@ -5,9 +5,9 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.States
 {
-    internal class CancelState : IState<SearchViewModel>
+    internal class CancelState : IState<RefinedSearchViewModel>
     {
-        public Task Enter(SearchViewModel vm)
+        public Task Enter(RefinedSearchViewModel vm)
         {
             vm.RestoreQueryToUserInterface(vm.PreviousQuery);
 
@@ -15,13 +15,13 @@ namespace SquoundApp.States
         }
 
 
-        public Task Update(SearchViewModel vm)
+        public Task Update(RefinedSearchViewModel vm)
         {
             return Task.CompletedTask;
         }
 
 
-        public Task Exit(SearchViewModel vm)
+        public Task Exit(RefinedSearchViewModel vm)
         {
             return Task.CompletedTask;
         }

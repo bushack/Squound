@@ -93,7 +93,7 @@ namespace SquoundApi.Controllers
                     {
                         Name = c.Name,                              // Map the Category Name property.
                         Subcategories = c.Subcategories             // Map the Subcategories property.
-                        .Select(s => new SubcategoyDto              // Create a new SubcategoyDto for each Subcategory.
+                        .Select(s => new SubcategoryDto             // Create a new SubcategoryDto for each Subcategory.
                         {
                             Name = s.Name                           // Map the Subcategory Name property.
                         })

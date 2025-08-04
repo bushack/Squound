@@ -2,10 +2,30 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:dtos="clr-namespace:Shared.DataTransfer;assembly=Shared"
+             xmlns:selectors="clr-namespace:SquoundApp.Selectors"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
              x:Class="SquoundApp.Pages.CoarseSearchPage"
              x:DataType="viewmodels:CoarseSearchViewModel">
+
+    <ContentPage.Resources>
+        <DataTemplate x:Key="CategoryTemplate" x:DataType="dtos:CategoryDto">
+            <Border Padding="10" BackgroundColor="LightBlue" Margin="5">
+                <Label Text="{Binding Name}" FontSize="20"/>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SubcategoryTemplate" x:DataType="dtos:SubcategoryDto">
+            <Border Padding="10" BackgroundColor="LightGreen" Margin="5">
+                <Label Text="{Binding Name}" FontSize="18"/>
+            </Border>
+        </DataTemplate>
+
+        <selectors:CategoryTemplateSelector 
+            x:Key="TemplateSelector"
+            CategoryTemplate="{StaticResource CategoryTemplate}"
+            SubcategoryTemplate="{StaticResource SubcategoryTemplate}"/>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto, *">
 
@@ -15,56 +35,19 @@
         <!-- Row 1 : Displays the vertically scrollable list of product categories -->
         <CollectionView Grid.Row="1"
                         BackgroundColor="Transparent"
-                        ItemsSource="{Binding CategoryList}"
-                        ItemsLayout="VerticalGrid, 1"
-                        SelectionMode="None"
+                        ItemsLayout="VerticalList"
+                        ItemsSource="{Binding ItemList}"
+                        ItemTemplate="{StaticResource TemplateSelector}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                         IsVisible="{Binding IsNotBusy}"
                         IsEnabled="{Binding IsNotBusy}">
 
             <!-- Entry to allow users to bypass the coarse search and directly search for products -->
             <CollectionView.Header>
-                <Entry Placeholder="Search Squound"
+                <Entry Placeholder="Search"
                        Margin="0, 0, 0, 10"/>
             </CollectionView.Header>
-
-            <!-- Defines the layout of a single item in the scrollable collection -->
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="dtos:CategoryDto">
-                    <Grid>
-                        <Border BackgroundColor="Transparent"
-                                Margin="10, 5"
-                                StrokeShape="RoundRectangle 15"
-                                StrokeThickness="0">
-                            <!-- The border defines a tappable area that allows the user to access a specific product -->
-                            <Border.GestureRecognizers>
-                                <!-- TapGestureRecognizer is used to handle tap events on each item in the CollectionView -->
-                                <!-- The CommandParameter is set to the current Product item (.), allowing the command to access it -->
-                                <!-- The Command is bound to a command in the ProductSearchViewModel that retrieves the product details -->
-                                <!-- In this case, the program will walk up the stack of the binding chain, starting with the -->
-                                <!-- Product, until it finds a ProductSearchViewModel, inside which is the command (GetProduct) -->
-                                <!-- that it should execute -->
-                                <TapGestureRecognizer CommandParameter="{Binding .}"
-                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CoarseSearchViewModel}}, x:DataType=viewmodels:CoarseSearchViewModel, Path=GoToRefinedSearchPageCommand}"/>
-                            </Border.GestureRecognizers>
-                            
-                            <HorizontalStackLayout>
-                                
-                                <!-- Category icon -->
-                                <Image Source="squound_logo.png"
-                                       Aspect="AspectFit"
-                                       HeightRequest="40"
-                                       WidthRequest="40"/>
-
-                                <!-- Category name -->
-                                <Label BackgroundColor="Transparent"
-                                       Text="{Binding Name}" Style="{StaticResource SmallBoldText}"
-                                       HorizontalOptions="Start" VerticalOptions="Center" Margin="10, 0"/>
-
-                            </HorizontalStackLayout>
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
 
             <CollectionView.Footer>
                 <views:FooterView Margin="0, 20, 0, 0"/>

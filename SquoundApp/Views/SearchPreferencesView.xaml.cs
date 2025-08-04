@@ -11,7 +11,7 @@ public partial class SearchPreferencesView : ContentView
 	{
 		InitializeComponent();
 
-        BindingContext = ServiceLocator.GetService<SearchViewModel>();
+        BindingContext = ServiceLocator.GetService<RefinedSearchViewModel>();
     }
 
     //private async void OnButtonClicked(Object sender, EventArgs e)
