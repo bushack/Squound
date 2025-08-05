@@ -17,7 +17,8 @@ public partial class SearchCategoriesView : ContentView
         // However, the actual instance of the ViewModel is provided by the ServiceLocator,
         // The instance is created in the file MauiProgram.cs with the line:
         // builder.Services.AddSingleton<CategoriesViewModel>();
-        BindingContext = ServiceLocator.GetService<RefinedSearchViewModel>();
+        BindingContext = ServiceLocator.GetService<SortAndFilterViewModel>()
+            ?? throw new ArgumentNullException(nameof(SortAndFilterViewModel));
     }
 
     private async void OnButtonClicked(Object sender, EventArgs e)
@@ -28,7 +29,7 @@ public partial class SearchCategoriesView : ContentView
 
         if (sender is Button button && button.CommandParameter is string category)
         {
-            if (BindingContext is RefinedSearchViewModel viewModel)
+            if (BindingContext is SortAndFilterViewModel viewModel)
             {
                 // Set the Category property in the ViewModel to the chosen category.
                 viewModel.Category = category;

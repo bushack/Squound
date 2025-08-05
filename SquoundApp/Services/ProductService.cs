@@ -7,16 +7,11 @@ using Shared.DataTransfer;
 
 namespace SquoundApp.Services
 {
-    public class ProductService
+    public class ProductService(HttpService httpService)
     {
-        private readonly HttpService httpService;
+        private readonly HttpService httpService = httpService;
 
         List<ProductDto> productList = [];
-
-        public ProductService(HttpService httpService)
-        {
-            this.httpService = httpService;
-        }
 
         /// <summary>
         /// Asynchronously retrieves a list of products from a REST API.

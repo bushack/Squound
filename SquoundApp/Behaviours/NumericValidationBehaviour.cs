@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SquoundApp.Behaviours
 {
-    public class NumericValidationBehaviour : Behavior<Entry>
+    public partial class NumericValidationBehaviour : Behavior<Entry>
     {
         protected override void OnAttachedTo(Entry bindable)
         {

@@ -4,16 +4,10 @@ using SquoundApp.Utilities;
 
 namespace SquoundApp.Services
 {
-    public class AboutService
+    public class AboutService(HttpService httpService)
     {
-        private HttpService httpService;
+        private readonly HttpService httpService = httpService;
 
-        readonly AboutModel model = new();
-
-        public AboutService(HttpService httpService)
-        {
-            this.httpService = httpService;
-        }
 
         public async Task<AboutModel> GetHTTP()
         {

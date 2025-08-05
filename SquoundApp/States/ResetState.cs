@@ -5,29 +5,29 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.States
 {
-    internal class ResetState : IState<RefinedSearchViewModel>
+    internal class ResetState : IState<SortAndFilterViewModel>
     {
-        public Task Enter(RefinedSearchViewModel vm)
+        public Task Enter(SortAndFilterViewModel viewModel)
         {
-            vm.CurrentQuery.Keyword         = null;
-            vm.CurrentQuery.Category        = null;
-            vm.CurrentQuery.Manufacturer    = null;
-            vm.CurrentQuery.MinPrice        = null;
-            vm.CurrentQuery.MaxPrice        = null;
+            viewModel.CurrentQuery.Keyword         = null;
+            viewModel.CurrentQuery.Category        = null;
+            viewModel.CurrentQuery.Manufacturer    = null;
+            viewModel.CurrentQuery.MinPrice        = null;
+            viewModel.CurrentQuery.MaxPrice        = null;
 
-            vm.RestoreQueryToUserInterface(vm.CurrentQuery);
+            viewModel.RestoreQueryToUserInterface(viewModel.CurrentQuery);
 
             return Task.CompletedTask;
         }
 
 
-        public Task Update(RefinedSearchViewModel vm)
+        public Task Update(SortAndFilterViewModel viewModel)
         {
             return Task.CompletedTask;
         }
 
 
-        public Task Exit(RefinedSearchViewModel vm)
+        public Task Exit(SortAndFilterViewModel viewModel)
         {
             return Task.CompletedTask;
         }

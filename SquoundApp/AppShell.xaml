@@ -17,6 +17,12 @@
                           ContentTemplate="{DataTemplate pages:HomePage}"
                           Route="HomePage" />
         </Tab>
+        <Tab Title="Search"
+             Icon="search.png">
+            <ShellContent Title="Search"
+                          ContentTemplate="{DataTemplate pages:CoarseSearchPage}"
+                          Route="CoarseSearchPage" />
+        </Tab>
         <Tab Title="Account"
              Icon="account.png">
             <ShellContent Title="Account"
@@ -26,14 +32,8 @@
         <Tab Title="Basket"
              Icon="shopping.png">
             <ShellContent Title="Basket"
-                          ContentTemplate="{DataTemplate pages:CoarseSearchPage}"
-                          Route="CoarseSearchPage" />
-        </Tab>
-        <Tab Title="Settings"
-             Icon="settings.png">
-            <ShellContent Title="Settings"
                           ContentTemplate="{DataTemplate pages:HomePage}"
-                          Route="MainPage" />
+                          Route="HomePage" />
         </Tab>
     </TabBar>
 </Shell>

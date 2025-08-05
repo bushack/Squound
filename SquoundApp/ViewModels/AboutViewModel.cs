@@ -11,7 +11,7 @@ namespace SquoundApp.ViewModels
     public partial class AboutViewModel : BaseViewModel
     {
         [ObservableProperty]
-        private AboutModel model;
+        private AboutModel model = new();
 
         private readonly AboutService service;
 

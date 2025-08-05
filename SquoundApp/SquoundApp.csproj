@@ -102,6 +102,7 @@
     <!-- TabBar Icons -->
     <MauiImage Update="Resources\Images\account.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\home.png" Resize="True" BaseSize="100,100" />
+    <MauiImage Update="Resources\Images\search.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\settings.png" Resize="True" BaseSize="100,100" />
     <MauiImage Update="Resources\Images\shopping.png" Resize="True" BaseSize="100,100" />
     
@@ -160,8 +161,8 @@
 	  <Compile Update="Views\SearchCategoriesView.xaml.cs">
 	    <DependentUpon>SearchCategoriesView.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\SearchPreferencesView.xaml.cs">
-	    <DependentUpon>SearchPreferencesView.xaml</DependentUpon>
+	  <Compile Update="Views\SortAndFilterView.xaml.cs">
+	    <DependentUpon>SortAndFilterView.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\SearchHeadingView.xaml.cs">
 	    <DependentUpon>SearchHeadingView.xaml</DependentUpon>
@@ -199,7 +200,7 @@
 	  <MauiXaml Update="Views\LoadingOverlayView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\SearchPreferencesView.xaml">
+	  <MauiXaml Update="Views\SortAndFilterView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SpacerView.xaml">

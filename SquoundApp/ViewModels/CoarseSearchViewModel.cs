@@ -15,15 +15,21 @@ namespace SquoundApp.ViewModels
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="CoarseSearchViewModel"/> class
-    /// with the specified category service.
+    /// with the specified <see cref="CategoryService"/> and <see cref="SearchService"/>.
     /// </summary>
-    /// <param name="service">The <see cref="CategoryService"/> instance used
+    /// <param name="cs">The <see cref="CategoryService"/> instance used
     /// to retrieve product category data. Cannot be null.</param>
-    public partial class CoarseSearchViewModel(CategoryService service) : BaseViewModel
+    /// <param name="ss">The <see cref="SearchService"/> instance used
+    /// to manage the user's current search selection. Cannot be null.</param>
+    public partial class CoarseSearchViewModel(CategoryService cs, SearchService ss) : BaseViewModel
     {
-        // Respomsible for retrieving data from the REST API.
-        // This service is injected into the view model and is used to fetch product categories.
-        private readonly CategoryService categoryService = service;
+        // Responsible for managing the current search criteria.
+        private readonly SearchService searchService = ss ?? throw new ArgumentNullException(nameof(ss));
+
+        // Responsible for retrieving product categories and subcategories from the REST API.
+        // This data is presented to the user on the CoarshSearchPage, where the user can select a category
+        // or subcategory before progressing to the RefinedSearchPage to further hone in on specific products.
+        private readonly CategoryService categoryService = cs ?? throw new ArgumentNullException(nameof(cs));
 
         // Collection of categories to display on the coarse search page.
         // This collection is populated by the ApplyQueryAsync method.
@@ -86,7 +92,10 @@ namespace SquoundApp.ViewModels
                     ItemList.Clear();
 
                     foreach (var subcategory in category.Subcategories)
-                        ItemList.Add(subcategory);
+                    ItemList.Add(subcategory);
+
+                    // Write the selected category to the current search.
+                    searchService.CurrentQuery.Category = category.Name;
 
                     // Update the UI to reflect the selected category and its subcategories.
                     Title = category.Name;
@@ -98,12 +107,15 @@ namespace SquoundApp.ViewModels
                 case SubcategoryDto subcategory:
                 {
                     // Clear the selected item and title in readiness for the next time the page is displayed.
-                    SelectedItem = null;
-                    Title = string.Empty;
+                    //SelectedItem = null;
+                    //Title = string.Empty;
+
+                    // Write the selected subcategory to the current search.
+                    searchService.CurrentQuery.Subcategory = subcategory.Name;
 
                     // If the selected item is a subcategory, navigate to the RefinedSearchPage.
                     // This is where the user can perform a more detailed search based on the selected subcategory.
-                    GoToRefinedSearchPageAsync(subcategory).FireAndForget();
+                    GoToRefinedSearchPageAsync().FireAndForget();
                     break;
                 }
 
@@ -111,7 +123,6 @@ namespace SquoundApp.ViewModels
                     Debug.WriteLine("Selected item is not a category or subcategory.");
                     break;
             }
-            
         }
 
 
@@ -123,11 +134,6 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         private async Task ApplyQueryAsync()
         {
-            // If the CategoryList is already populated, we do not need to fetch data again.
-            // This will ensure that this method runs only once when the page is first displayed,
-            if (CategoryList.Count is not 0)
-                return;
-
             // Check if the view model is already busy fetching data.
             // This prevents multiple simultaneous fetch operations which could
             // lead to performance issues or unexpected behavior.
@@ -179,20 +185,12 @@ namespace SquoundApp.ViewModels
         /// <summary>
         /// Asynchronously initiates a navigation to the RefinedSearchPage.
         /// </summary>
-        /// <param name="subcategory"></param>
         /// <returns></returns>
         [RelayCommand]
-        async Task GoToRefinedSearchPageAsync(SubcategoryDto subcategory)
+        async Task GoToRefinedSearchPageAsync()
         {
-            if (subcategory is null)
-                return;
-
             // Navigate to the RefinedSearchPage and pass the selected category as a parameter.
-            await Shell.Current.GoToAsync($"{nameof(RefinedSearchPage)}", true,
-                new Dictionary<string, object>
-                {
-                    {"Subcategory", subcategory}
-                });
+            await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
         }
     }
 }

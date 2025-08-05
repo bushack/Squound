@@ -9,21 +9,16 @@ public partial class CoarseSearchPage : ContentPage
 	{
 		InitializeComponent();
 
-		BindingContext = viewModel;
-
-        Title = nameof(CoarseSearchPage);
+		BindingContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
     }
 
     protected override void OnAppearing()
     {
-        // This method is called when the page appears.
-        // It is a good place to start any tasks that need to be done when the
-        // page is shown, such as refreshing data or starting animations.
         base.OnAppearing();
 
         if (BindingContext is CoarseSearchViewModel viewModel)
         {
-            // Execute the existing query command to ensure the view model is ready.
+            // Every time the page appears we fetch the product categories from the REST API.
             viewModel.ApplyQueryCommand.Execute(null);
         }
     }

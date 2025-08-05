@@ -8,9 +8,7 @@ public partial class SellPage : ContentPage
     {
         InitializeComponent();
 
-        BindingContext = viewModel;
-
-        Title = nameof(SellPage);
+        BindingContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
         _ = viewModel.InitializeAsync();
     }

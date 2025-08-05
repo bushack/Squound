@@ -1,12 +1,12 @@
 using SquoundApp.Utilities;
 using SquoundApp.ViewModels;
 
-
 namespace SquoundApp.Views;
 
-public partial class SearchHeadingView : ContentView
+
+public partial class SortAndFilterView : ContentView
 {
-	public SearchHeadingView()
+	public SortAndFilterView()
 	{
 		InitializeComponent();
 

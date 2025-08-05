@@ -5,31 +5,31 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.States
 {
-    internal class SortState : IState<RefinedSearchViewModel>
+    internal class SortState : IState<SortAndFilterViewModel>
     {
-        public Task Enter(RefinedSearchViewModel vm)
+        public Task Enter(SortAndFilterViewModel viewModel)
         {
-            vm.Title = "Sort Options";
+            viewModel.Title = "Sort Options";
 
-            vm.IsTitleLabelVisible = true;
+            viewModel.IsTitleLabelVisible = true;
 
-            vm.IsFilterButtonActive = false;
-            vm.IsSortButtonActive = false;
+            viewModel.IsFilterButtonActive = false;
+            viewModel.IsSortButtonActive = false;
 
-            vm.IsFilterMenuActive = false;
-            vm.IsSortMenuActive = true;
+            viewModel.IsFilterMenuActive = false;
+            viewModel.IsSortMenuActive = true;
 
             return Task.CompletedTask;
         }
 
 
-        public Task Update(RefinedSearchViewModel viewModel)
+        public Task Update(SortAndFilterViewModel viewModel)
         {
             return Task.CompletedTask;
         }
 
 
-        public Task Exit(RefinedSearchViewModel viewModel)
+        public Task Exit(SortAndFilterViewModel viewModel)
         {
             return Task.CompletedTask;
         }

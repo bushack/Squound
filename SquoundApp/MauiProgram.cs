@@ -58,6 +58,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<CategoryService>();
             builder.Services.AddSingleton<HttpService>();
             builder.Services.AddSingleton<ProductService>();
+            builder.Services.AddSingleton<SearchService>();
             builder.Services.AddSingleton<SellService>();
 
             // Views
@@ -66,7 +67,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<FooterView>();
             builder.Services.AddSingleton<SearchHeadingView>();
             builder.Services.AddSingleton<SearchCategoriesView>();
-            builder.Services.AddSingleton<SearchPreferencesView>();
+            builder.Services.AddSingleton<SortAndFilterView>();
 
             // View Models
             builder.Services.AddTransient<AboutViewModel>();
@@ -75,6 +76,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<RefinedSearchViewModel>();
             builder.Services.AddTransient<ProductListingViewModel>();
             builder.Services.AddTransient<SellViewModel>();
+            builder.Services.AddSingleton<SortAndFilterViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();

@@ -1,362 +1,124 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.States;
 
 using Shared.DataTransfer;
-using Shared.StateMachine;
 
 
 namespace SquoundApp.ViewModels
 {
-    public partial class RefinedSearchViewModel : BaseViewModel
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RefinedSearchViewModel"/> class
+    /// with the specified <see cref="ProductService"/> and <see cref="SearchService"/>.
+    /// </summary>
+    /// <param name="ps">The <see cref="ProductService"/> instance used
+    /// to retrieve product data. Cannot be null.</param>
+    /// <param name="ss">The <see cref="SearchService"/> instance used
+    /// to manage the user's current search selection. Cannot be null.</param>
+    public partial class RefinedSearchViewModel(ProductService ps, SearchService ss) : BaseViewModel
     {
-        /// <summary>
-        /// Represents the state machine used to manage the states and transitions of the <see cref="RefinedSearchViewModel"/>.
-        /// </summary>
-        /// <remarks>This state machine is responsible for controlling the behavior and lifecycle of the
-        /// <see cref="RefinedSearchViewModel"/>. It ensures that the view model transitions between states in a predictable
-        /// and controlled manner.</remarks>
-        internal readonly StateMachine<RefinedSearchViewModel> StateMachine;
+        // Responsible for retrieving products from the REST API.
+        // This data is presented to the user on the RefinedSearchPage, where the user can select a specific
+        // product before progressing to the ProductListingPage to study the product in detail.
+        private readonly ProductService productService = ps ?? throw new ArgumentNullException(nameof(ps));
 
-        // Responsible for retrieving data from the REST API.
-        internal readonly ProductService ProductService;
+        // Responsible for managing the current search criteria.
+        private readonly SearchService searchService = ss ?? throw new ArgumentNullException(nameof(ss));
 
-        // Collection of products matching the search criteria.
+        // Collection of products retrieved from the REST API based on the current search criteria.
         public ObservableCollection<ProductDto> ProductList { get; } = [];
 
-        // Query DTO that holds the most recently applied search criteria.
-        public ProductQueryDto PreviousQuery { get; internal set; } = new();
-
-        // Query DTO that holds the current but not yet applied search criteria.
-        public ProductQueryDto CurrentQuery { get; private set; } = new();
-
-
-        // Variables responsible for adjusting the sort options.
-        [ObservableProperty]
-        private bool sortByNameAscending = false;
-
-        [ObservableProperty]
-        private bool sortByNameDescending = false;
-
-        [ObservableProperty]
-        private bool sortByPriceAscending = true;
-
-        [ObservableProperty]
-        private bool sortByPriceDescending = false;
-
-
-        // Variables responsible for adjusting the filter options.
-        [ObservableProperty]
-        private string category = string.Empty;
-
-        [ObservableProperty]
-        private string manufacturer = string.Empty;
-
-        [ObservableProperty]
-        private string keyword = string.Empty;
-
-        [ObservableProperty]
-        private string minimumPrice = string.Empty;
-
-        [ObservableProperty]
-        private string maximumPrice = string.Empty;
-
-
-        // Variables responsible for showing and hiding the sort and filter menus.
-        [ObservableProperty]
-        private bool isTitleLabelVisible = true;
-
-        [ObservableProperty]
-        private bool isSortButtonActive = true;
-
-        [ObservableProperty]
-        private bool isFilterButtonActive = true;
-
-        [ObservableProperty]
-        private bool isSortMenuActive = false;
-
-        [ObservableProperty]
-        private bool isFilterMenuActive = false;
-
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RefinedSearchViewModel"/> class
-        /// with the specified product service.
-        /// </summary>
-        /// <param name="service">The <see cref="ProductService"/> instance used
-        /// to retrieve product data. Cannot be null.</param>
-        public RefinedSearchViewModel(ProductService service)
-        {
-            StateMachine = new StateMachine<RefinedSearchViewModel>(this);
-
-            StateMachine.ChangeState(new IdleState());
-
-            ProductService = service;
-        }
-
-
-        // Partial methods to handle changes in filter properties.
-        partial void OnCategoryChanged(string value)
-        {
-            CurrentQuery.Category = value;
-        }
-        partial void OnManufacturerChanged(string value)
-        {
-            CurrentQuery.Manufacturer = value;
-        }
-        partial void OnKeywordChanged(string value)
-        {
-            CurrentQuery.Keyword = value;
-        }
-        partial void OnMinimumPriceChanged(string value)
-        {
-            // Extract only the digits from the string.
-            var digits = new string(value.Where(char.IsDigit).ToArray());
-
-            // Try to parse the digits to a decimal.
-            if (decimal.TryParse(digits, out decimal price))
-            {
-                // If the parsed price is out of the valid range.
-                if (price < 0 || price > (decimal)ProductQueryDto.PracticalMaximumPrice)
-                {
-                    CurrentQuery.MinPrice = null;
-                }
-
-                // If the parsed price is greater than the maximum price.
-                // Set both minimum and maximum prices to the parsed price.
-                else if (price > CurrentQuery.MaxPrice)
-                {
-                    CurrentQuery.MinPrice = price;
-                    CurrentQuery.MaxPrice = price;
-
-                    RestoreQueryToUserInterface(CurrentQuery);
-                }
-
-                // If the parsed price is valid and within the range.
-                else
-                {
-                    CurrentQuery.MinPrice = price;
-                }
-            }
-
-            else
-            {
-                // If parsing fails.
-                CurrentQuery.MinPrice = null;
-            }
-        }
-        partial void OnMaximumPriceChanged(string value)
-        {
-            // Extract only the digits from the string.
-            var digits = new string(value.Where(char.IsDigit).ToArray());
-
-            // Try to parse the digits to a decimal.
-            if (decimal.TryParse(digits, out decimal price))
-            {
-                // If the parsed price is out of the valid range.
-                if (price < 0 || price > (decimal)ProductQueryDto.PracticalMaximumPrice)
-                {
-                    CurrentQuery.MaxPrice = null;
-                }
-
-                // If the parsed price is less than the minimum price.
-                // Set both minimum and maximum prices to the parsed price.
-                else if (price < CurrentQuery.MinPrice)
-                {
-                    CurrentQuery.MinPrice = price;
-                    CurrentQuery.MaxPrice = price;
-
-                    RestoreQueryToUserInterface(CurrentQuery);
-                }
-
-                // If the parsed price is valid and within the range.
-                else
-                {
-                    CurrentQuery.MaxPrice = price;
-                }
-            }
-
-            else
-            {
-                // If parsing fails.
-                CurrentQuery.MaxPrice = null;
-            }
-        }
-        partial void OnSortByNameAscendingChanged(bool value)
-        {
-            CurrentQuery.SortBy = value ? ProductSortOption.NameAsc : CurrentQuery.SortBy;
-        }
-        partial void OnSortByNameDescendingChanged(bool value)
-        {
-            CurrentQuery.SortBy = value ? ProductSortOption.NameDesc : CurrentQuery.SortBy;
-        }
-        partial void OnSortByPriceAscendingChanged(bool value)
-        {
-            CurrentQuery.SortBy = value ? ProductSortOption.PriceAsc : CurrentQuery.SortBy;
-        }
-        partial void OnSortByPriceDescendingChanged(bool value)
-        {
-            CurrentQuery.SortBy = value ? ProductSortOption.PriceDesc : CurrentQuery.SortBy;
-        }
-
-
-        // Methods responsible for setting the sort options.
-        [RelayCommand]
-        private void SetSortOption(ProductSortOption sortBy)
-        {
-            // Reset all sort options to false.
-            SortByNameAscending     = false;
-            SortByNameDescending    = false;
-            SortByPriceAscending    = false;
-            SortByPriceDescending   = false;
-
-            // Set the appropriate sort option based on the provided sortBy parameter.
-            switch (sortBy)
-            {
-                case ProductSortOption.NameAsc:
-                    SortByNameAscending = true;
-                    break;
-
-                case ProductSortOption.NameDesc:
-                    SortByNameDescending = true;
-                    break;
-
-                case ProductSortOption.PriceAsc:
-                    SortByPriceAscending = true;
-                    break;
-
-                case ProductSortOption.PriceDesc:
-                    SortByPriceDescending = true;
-                    break;
-
-                // If no valid sort option is provided, default to sorting by price ascending.
-                default:
-                    SortByPriceAscending = true;
-                    break;
-            }
-        }
-
-        [RelayCommand]
-        private void SetSortOptionAsNameAscending()
-        {
-            SortByNameAscending = true;
-            SortByNameDescending = false;
-            SortByPriceAscending = false;
-            SortByPriceDescending = false;
-        }
-
-        [RelayCommand]
-        private void SetSortOptionAsNameDescending()
-        {
-            SortByNameAscending = false;
-            SortByNameDescending = true;
-            SortByPriceAscending = false;
-            SortByPriceDescending = false;
-        }
-
-        [RelayCommand]
-        private void SetSortOptionAsPriceAscending()
-        {
-            SortByNameAscending = false;
-            SortByNameDescending = false;
-            SortByPriceAscending = true;
-            SortByPriceDescending = false;
-        }
-
-        [RelayCommand]
-        private void SetSortOptionAsPriceDescending()
-        {
-            SortByNameAscending = false;
-            SortByNameDescending = false;
-            SortByPriceAscending = false;
-            SortByPriceDescending = true;
-        }
-
-
-        /// <summary>
-        /// Handles the sort button click event.
-        /// </summary>
-        /// <returns></returns>
-        [RelayCommand]
-        private async Task OnSortButton()
-        {
-            // Activate the sort menu.
-            await StateMachine.ChangeState(new SortState());
-        }
-
-
-        /// <summary>
-        /// Handles the filter button click event.
-        /// </summary>
-        /// <returns></returns>
-        [RelayCommand]
-        private async Task OnFilterButton()
-        {
-            // Activate the filter menu.
-            await StateMachine.ChangeState(new FilterState());
-        }
-
-
-        /// <summary>
-        /// Handles the apply sort and apply filter button click events.
+        /// Query command that is executed whenever the RefinedSearchPage appears.
+        /// This command is responsible for fetching products based on the current search criteria.
+        /// If the search criteria changes the application should re-navigate to the RefinedSearchPage
+        /// and this command will automatically execute a fetch of the latest products.
         /// </summary>
         /// <returns></returns>
         [RelayCommand]
         private async Task ApplyQueryAsync()
         {
-            // Trigger the product retrieval based on the current sort and filter options.
-            await StateMachine.ChangeState(new LoadingState());
+            // Check if the view model is already busy fetching data.
+            // This prevents multiple simultaneous fetch operations which could
+            // lead to performance issues or unexpected behavior.
+            // This is a common pattern to avoid re-entrancy issues in async methods.
+            if (IsBusy)
+                return;
 
-            // Return to the idle state after applying the query.
-            await StateMachine.ChangeState(new IdleState());
-        }
+            try
+            {
+                // Set IsBusy to true to indicate that a fetch operation is in progress.
+                // This will typically disable UI elements that should not be interacted with
+                // while the data is being fetched, providing a better user experience.
+                // This is important to ensure that the UI reflects that data is being loaded,
+                // and to prevent the user from initiating another fetch operation while one is already in progress.
+                IsBusy = true;
 
+                // Save a deep copy of the current query to the PreviousQuery property.
+                // This is useful for scenarios where you might want to revert to the
+                // previous query or to compare the current query with the previous one.
+                searchService.SaveCurrentSearch();
 
-        /// <summary>
-        /// Handles the cancel sort and cancel filter button click events.
-        /// </summary>
-        /// <returns></returns>
-        [RelayCommand]
-        private async Task OnCancelButton()
-        {
-            await StateMachine.ChangeState(new CancelState());
+                // Clear the existing products in the ObservableCollection.
+                // This ensures that the collection is updated with whatever is returned by the API.
+                // ObservableCollection is used here so that the UI can automatically update
+                // when items are added or removed, without needing to manually refresh the UI.
+                // This is a key feature of ObservableCollection, which is designed for data binding in UI frameworks.
+                ProductList.Clear();
 
-            await StateMachine.ChangeState(new IdleState());
-        }
+                // Retrieve products from the product service.
+                // This method is expected to return a list of products asynchronously.
+                // The retrieved products will be added to the productList collection.
+                // To retrieve products from a remote JSON file, use:
+                // var productList = await productService.GetProductsRemoteJson
+                // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json");
+                // To retrieve products from an embedded JSON file instead, use:
+                // var productList = await productService.GetProductsEmbeddedJson();
+                var productList = await productService.GetProductsRestApi(searchService.CurrentQuery);
 
+                if (productList == null)
+                    return;
 
-        /// <summary>
-        /// Handles the reset button click event.
-        /// </summary>
-        /// <returns></returns>
-        [RelayCommand]
-        private async Task OnResetButton()
-        {
-            await StateMachine.ChangeState(new ResetState());
+                // The foreach loop iterates over the fetched products and adds each one to the Products collection.
+                // This ensures that the UI reflects the latest data.
+                // The Products collection is an ObservableCollection, which means that any changes to it
+                // will automatically notify the UI to update, making it easy to display dynamic data.
+                // This is particularly useful in MVVM (Model-View-ViewModel) patterns where the ViewModel
+                // holds the data and the View binds to it.
+                //ProductList.Clear();
+                foreach (var product in productList)
+                {
+                    // Add each product to the ObservableCollection.
+                    // This will trigger the UI to update and display the new products.
+                    // The ObservableCollection is designed to notify the UI of changes,
+                    // so when we add items to it, the UI will automatically reflect those changes.
+                    // ObservableRangeCollection would be more efficient if you want to add multiple items at once,
+                    // and delay the UI update until all items are added.
+                    ProductList.Add(product);
+                }
+            }
 
-            await StateMachine.ChangeState(StateMachine.PreviousState);
-        }
+            catch (Exception ex)
+            {
+                // Handle exceptions, e.g., log them.
+                Debug.WriteLine($"Search error while attempting to fetch data: {ex.Message}");
 
+                // Display an alert to the user indicating that an error occurred while fetching data.
+                await Shell.Current.DisplayAlert(
+                    "Search Error",
+                    "An undefined error occurred while attempting to fetch data",
+                    "OK");
+            }
 
-        //
-        internal void RestoreQueryToUserInterface(ProductQueryDto query)
-        {
-            // NOTE : Null checks are necessary to avoid NullReferenceException.
-            Keyword         = query.Keyword ?? string.Empty;
-            Category        = query.Category ?? string.Empty;
-            Manufacturer    = query.Manufacturer ?? string.Empty;
-
-            // NOTE : Null checks are unnecessary because ToString() will return an empty string if the value is null.
-            MinimumPrice    = query.MinPrice.ToString();
-            MaximumPrice    = query.MaxPrice.ToString();
-
-            // Set the sort options based on the query.
-            SetSortOption(query.SortBy);
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
 
@@ -370,9 +132,6 @@ namespace SquoundApp.ViewModels
         {
             if (product is null)
                 return;
-
-            // Close the sort and filter menus if they are active.
-            await StateMachine.ChangeState(new IdleState());
 
             // Navigate to the ProductListingPage and pass the selected product as a parameter.
             await Shell.Current.GoToAsync($"{nameof(ProductListingPage)}", true,

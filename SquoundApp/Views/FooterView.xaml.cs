@@ -16,6 +16,7 @@ public partial class FooterView : ContentView
         // However, the actual instance of the ViewModel is provided by the ServiceLocator,
         // The instance is created in the file MauiProgram.cs with the line:
         // builder.Services.AddSingleton<FooterViewModel>();
-        BindingContext = ServiceLocator.GetService<FooterViewModel>();
+        BindingContext = ServiceLocator.GetService<FooterViewModel>()
+            ?? throw new ArgumentNullException(nameof(FooterViewModel));
     }
 }

@@ -14,7 +14,7 @@
         <views:SearchCategoriesView/>
 
         <!-- Displays the sort and filter buttons and their menus -->
-        <views:SearchPreferencesView/>
+        <views:SortAndFilterView/>
 
         <!-- Whitespace spacer to push the content down -->
         <views:SpacerView/>

@@ -166,8 +166,15 @@ namespace SquoundApi.Controllers
                     linqQuery = linqQuery.Where(predicate => (predicate.ProductId == query.ProductId));
                 }
 
-                // Filter by category.
-                if (string.IsNullOrEmpty(query.Category) == false)
+                // Filter by subcategory.
+                if (string.IsNullOrEmpty(query.Subcategory) == false)
+                {
+                    Debug.WriteLine($"* * * Filtering by subcategory: {query.Subcategory} * * *");
+                    linqQuery = linqQuery.Where(predicate => (predicate.Subcategory.Name == query.Subcategory));
+                }
+
+                // Filter by category if no subcategory is specified.
+                else if (string.IsNullOrEmpty(query.Category) == false)
                 {
                     Debug.WriteLine($"* * * Filtering by category: {query.Category} * * *");
                     linqQuery = linqQuery.Where(predicate => (predicate.Category.Name == query.Category));

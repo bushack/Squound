@@ -8,9 +8,7 @@ public partial class ProductListingPage : ContentPage
 	{
 		InitializeComponent();
 
-		BindingContext = viewModel;
-
-		Title = nameof(ProductListingPage);
+		BindingContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
     }
 
 	protected override void OnNavigatedTo(NavigatedToEventArgs args)

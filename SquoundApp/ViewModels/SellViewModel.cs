@@ -9,7 +9,7 @@ namespace SquoundApp.ViewModels
     public partial class SellViewModel : BaseViewModel
     {
         [ObservableProperty]
-        private SellModel model;
+        private SellModel model = new();
 
         private readonly SellService service;
 
