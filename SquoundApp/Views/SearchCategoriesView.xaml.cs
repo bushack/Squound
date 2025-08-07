@@ -7,9 +7,13 @@ namespace SquoundApp.Views;
 
 public partial class SearchCategoriesView : ContentView
 {
-	public SearchCategoriesView()
+    private bool hasLoaded = false;
+
+    public SearchCategoriesView()
 	{
 		InitializeComponent();
+
+        this.Loaded += OnLoaded;
 
         // The ViewModel is the decision maker working in the background for the View.
         // Therefore the DataType in the file SearchCategoriesView.xaml is set to SearchCategoriesView,
@@ -17,9 +21,31 @@ public partial class SearchCategoriesView : ContentView
         // However, the actual instance of the ViewModel is provided by the ServiceLocator,
         // The instance is created in the file MauiProgram.cs with the line:
         // builder.Services.AddSingleton<CategoriesViewModel>();
-        BindingContext = ServiceLocator.GetService<SortAndFilterViewModel>()
-            ?? throw new ArgumentNullException(nameof(SortAndFilterViewModel));
+        BindingContext = ServiceLocator.GetService<SearchCategoriesViewModel>()
+            ?? throw new ArgumentNullException(nameof(SearchCategoriesViewModel));
     }
+
+
+    //
+    private async void OnLoaded(object? sender, EventArgs e)
+    {
+        // Unsubscribe from the Loaded event to ensure that the data is only loaded one time
+        // when the view is first displayed. This also has the benefit of preventing memory leaks
+        this.Loaded -= OnLoaded;
+
+        // Prevent multiple reloads of the data.
+        // We only want to load the data once when the view is first displayed.
+        if (hasLoaded)
+            return;
+
+        hasLoaded = true;
+
+        if (BindingContext is SearchCategoriesViewModel viewModel)
+        {
+            await viewModel.InitAsync();
+        }
+    }
+
 
     private async void OnButtonClicked(Object sender, EventArgs e)
     {
@@ -29,10 +55,10 @@ public partial class SearchCategoriesView : ContentView
 
         if (sender is Button button && button.CommandParameter is string category)
         {
-            if (BindingContext is SortAndFilterViewModel viewModel)
+            if (BindingContext is SearchCategoriesViewModel viewModel)
             {
                 // Set the Category property in the ViewModel to the chosen category.
-                viewModel.Category = category;
+                //viewModel.Category = category;
 
                 // Then navigate to the RefinedSearchPage.
                 await Shell.Current.GoToAsync(nameof(RefinedSearchPage));

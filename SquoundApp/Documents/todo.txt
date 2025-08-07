@@ -1,12 +1,27 @@
 ﻿
+rename
+	- ProductQueryDto to ApiQueryDto
+	- PagedResultDto to ApiResponseDto
+	- "Product" to "Item" throughout solution
 
+general
+	- does each api request need it's own service (productService, categoryService, etc)
+	- better to have single "RestApiService" capable of performing multiple requests/fetches
+	- ask!
 
-also categoriesview needs to be updated to make use of the category service
-that is also used by the coarse search page, this will allow us to 
-ensure that both display the same categories without having to manually 
-hardwire them in both places
+pagination
+	- add string to RefinedSearchViewModel that will toggle between item/items when singular or multiple products found
 
-following this we need to hook up the keyword search facility and then amend
-the product listing page to fetch the selected product by Id along with all
-product images of various sizes. Then we can apapt the page to allow the user
-to scroll and zoom in on the product images etc
+logging
+	- both dubug and release?
+	- ask!
+
+search
+	- incorporate keyword search facility and then amend
+	- add functionality to CoarseSearchPage user search entry
+
+product listing page
+	- rename to ProductDetailPage
+	- fetch chosen product by id OnAppearing()
+	- fetch images of assorted sizes
+	- allow user to tap to zoom and scroll all images

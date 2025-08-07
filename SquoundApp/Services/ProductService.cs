@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 
 using SquoundApp.Utilities;
 
@@ -18,7 +19,7 @@ namespace SquoundApp.Services
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public async Task<List<ProductDto>?> GetProductsRestApi(ProductQueryDto dto)
+        public async Task<PagedResultDto<ProductDto>> GetProductsRestApi(ProductQueryDto query)
         {
             // For the release version of the project we will set the base address for the HttpService
             // This is useful if you are making multiple requests to the same base URL.
@@ -29,26 +30,40 @@ namespace SquoundApp.Services
             string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "192.168.1.114" : "localhost";
             string Scheme = DeviceInfo.Platform == DevicePlatform.Android ? "http" : "https";
             string Port = DeviceInfo.Platform == DevicePlatform.Android ? "5050" : "7184";
-            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?{dto.ToQueryString()}";
+            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?{query.ToQueryString()}";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category=None&manufacturer=Austinsuite&sortby=PriceDesc&pagenumber=1&pagesize=10";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/search?category=Lighting&sortby=PriceAsc&pagenumber=1&pagesize=10";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/12";
             //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/all";
 
-            // Always clear the internal list prior to initiating a new fetch.
-            productList.Clear();
-
-            // Fetch the products from the REST API using the provided ProductQueryDto.
-            var response = await httpService.GetJsonAsync<List<ProductDto>>(RestUrl);
-
-            // If the response is not null, assign it to the internal list.
-            if (response is not null)
+            try
             {
-                productList = response;
+                // Always clear the internal list prior to initiating a new fetch.
+                productList.Clear();
+
+                // Fetch the products from the REST API using the provided ProductQueryDto.
+                var response = await httpService.GetJsonAsync<PagedResultDto<ProductDto>>(RestUrl);
+
+                // If the response is not null, assign it's payload to the internal list.
+                if (response is not null)
+                {
+                    productList = response.Items;
+                }
+
+                // Return the response with it's payload of products
+                // if not null, else a default empty result.
+                return response ?? new PagedResultDto<ProductDto>();
             }
 
-            // Return the internal list of products.
-            return productList;
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching products: {ex.Message}");
+
+                await Shell.Current.DisplayAlert("Error", "Unable to fetch products from the server", "OK");
+
+                // Return a default empty result on exception.
+                return new PagedResultDto<ProductDto>();
+            }
         }
 
         /// <summary>

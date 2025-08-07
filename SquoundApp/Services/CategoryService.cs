@@ -1,27 +1,56 @@
-﻿using SquoundApp.Utilities;
+﻿using Microsoft.Extensions.Logging;
+
+using SquoundApp.Interfaces;
+using SquoundApp.Utilities;
 
 using Shared.DataTransfer;
 
 
 namespace SquoundApp.Services
 {
-    public class CategoryService
+    public class CategoryService(HttpService httpService) : IService<CategoryDto>
     {
-        private readonly HttpService httpService;
+        private readonly HttpService httpService = httpService ?? throw new ArgumentNullException(nameof(httpService));
 
-        List<CategoryDto> categoryList = [];
+        private List<CategoryDto>? categoryList = null;
 
-        public CategoryService(HttpService httpService)
-        {
-            this.httpService = httpService;
-        }
+        private Task<List<CategoryDto>>? loadTask = null;
+
+        /// <summary>
+        /// Exposes the list of categories.
+        /// </summary>
+        public IReadOnlyList<CategoryDto> CategoryList => categoryList ?? [];
+
+        /// <summary>
+        /// Queries whether the list of categories has been loaded.
+        /// </summary>
+        public bool IsLoaded => categoryList is not null;
 
 
         /// <summary>
         /// Asynchronously retrieves a list of product categories from a REST API.
         /// </summary>
         /// <returns></returns>
-        public async Task<List<CategoryDto>?> GetCategoriesRestApi()
+        public async Task<List<CategoryDto>> GetDataAsync()
+        {
+            if (categoryList is not null)
+                return categoryList;
+
+            loadTask ??= LoadDataAsync();
+
+            var result = await loadTask;
+
+            categoryList ??= result;
+
+            return categoryList;
+        }
+
+
+        /// <summary>
+        /// Internal method that retrieves product categories from REST API.
+        /// </summary>
+        /// <returns></returns>
+        private async Task<List<CategoryDto>> LoadDataAsync()
         {
             // For the release version of the project we will set the base address for the HttpService
             // This is useful if you are making multiple requests to the same base URL.
@@ -34,19 +63,32 @@ namespace SquoundApp.Services
             string Port = DeviceInfo.Platform == DevicePlatform.Android ? "5050" : "7184";
             string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/categories";
 
-            // Fetch the categories from the REST API.
-            var response = await httpService.GetJsonAsync<List<CategoryDto>>(RestUrl);
-
-            if (response is not null)
+            try
             {
-                // Clear the internal list prior to repopulating it with new data.
-                categoryList.Clear();
+                // Fetch the categories from the REST API.
+                var categories = await httpService.GetJsonAsync<List<CategoryDto>>(RestUrl);
 
-                // Assign the fetched categories to the internal list.
-                categoryList = response;
+                return categories ?? new List<CategoryDto>();
             }
 
-            return categoryList;
+            catch (Exception ex)
+            {
+                // Display an alert to the user indicating that an error occurred while fetching data.
+                await Shell.Current.DisplayAlert(
+                    "Error",
+                    "An undefined error occurred while attempting to fetch data",
+                    "OK");
+
+                return new List<CategoryDto>();
+            }
+        }
+
+        public async Task RefreshDataAsync()
+        {
+            loadTask = null;
+            categoryList = null;
+
+            await GetDataAsync();
         }
     }
 }

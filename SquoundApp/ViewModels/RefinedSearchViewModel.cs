@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -31,6 +32,76 @@ namespace SquoundApp.ViewModels
 
         // Collection of products retrieved from the REST API based on the current search criteria.
         public ObservableCollection<ProductDto> ProductList { get; } = [];
+
+        // User interface variable to display current page number and total number of pages.
+        public string PaginationInfo => $"Page {CurrentPage} of {TotalPages}";
+        
+        //
+        public bool HasNextPage => CurrentPage < TotalPages;
+
+        //
+        public bool HasPrevPage => CurrentPage > 1;
+
+        // Total number of items returned by the product service.
+        [ObservableProperty]
+        private int totalItems = 0;
+
+        // Total number of pages required to display all items at the current page size.
+        [ObservableProperty]
+        private int totalPages = 0;
+
+        // Number of the page currently displayed by the user interface.
+        [ObservableProperty]
+        private int currentPage = 0;
+
+
+        /// <summary>
+        /// Invokes a property changed events for pagination variables.
+        /// This will ensure that the user interface is updated as soon as a value changes.
+        /// </summary>
+        /// <param name="value">New total pages value.</param>
+        partial void OnTotalPagesChanged(int value)
+        {
+            OnPropertyChanged(nameof(HasNextPage));
+            OnPropertyChanged(nameof(HasPrevPage));
+            OnPropertyChanged(nameof(PaginationInfo));
+        }
+
+        /// <summary>
+        /// Invokes a property changed events for pagination variables.
+        /// This will ensure that the user interface is updated as soon as a value changes.
+        /// </summary>
+        /// <param name="value">New current page value.</param>
+        partial void OnCurrentPageChanged(int value)
+        {
+            OnPropertyChanged(nameof(HasNextPage));
+            OnPropertyChanged(nameof(HasPrevPage));
+            OnPropertyChanged(nameof(PaginationInfo));
+        }
+
+
+        //
+        [RelayCommand]
+        private async Task NextPageAsync()
+        {
+            if (HasNextPage)
+            {
+                searchService.CurrentQuery.PageNumber++;
+                await ApplyQueryAsync();
+            }
+        }
+
+
+        //
+        [RelayCommand]
+        private async Task PrevPageAsync()
+        {
+            if (HasPrevPage)
+            {
+                searchService.CurrentQuery.PageNumber--;
+                await ApplyQueryAsync();
+            }
+        }
 
 
         /// <summary>
@@ -79,10 +150,24 @@ namespace SquoundApp.ViewModels
                 // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json");
                 // To retrieve products from an embedded JSON file instead, use:
                 // var productList = await productService.GetProductsEmbeddedJson();
-                var productList = await productService.GetProductsRestApi(searchService.CurrentQuery);
+                var pagedResponse = await productService.GetProductsRestApi(searchService.CurrentQuery);
 
-                if (productList == null)
+                if (pagedResponse is null)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Unable to fatch data from the server", "OK");
                     return;
+                }
+
+                if (pagedResponse.Items is null || pagedResponse.Items.Count == 0)
+                {
+                    await Shell.Current.DisplayAlert("Sorry", "No products matched the search criteria", "OK");
+                    return;
+                }
+
+                // Prepare pagination metadata for user.
+                TotalItems  = pagedResponse.TotalItems;
+                TotalPages  = pagedResponse.TotalPages;
+                CurrentPage = pagedResponse.CurrentPage;
 
                 // The foreach loop iterates over the fetched products and adds each one to the Products collection.
                 // This ensures that the UI reflects the latest data.
@@ -91,7 +176,7 @@ namespace SquoundApp.ViewModels
                 // This is particularly useful in MVVM (Model-View-ViewModel) patterns where the ViewModel
                 // holds the data and the View binds to it.
                 //ProductList.Clear();
-                foreach (var product in productList)
+                foreach (var product in pagedResponse.Items)
                 {
                     // Add each product to the ObservableCollection.
                     // This will trigger the UI to update and display the new products.
@@ -110,8 +195,8 @@ namespace SquoundApp.ViewModels
 
                 // Display an alert to the user indicating that an error occurred while fetching data.
                 await Shell.Current.DisplayAlert(
-                    "Search Error",
-                    "An undefined error occurred while attempting to fetch data",
+                    "Error",
+                    "An undefined error occurred while fetching data from the server",
                     "OK");
             }
 

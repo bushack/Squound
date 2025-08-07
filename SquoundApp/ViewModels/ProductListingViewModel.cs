@@ -17,7 +17,7 @@ namespace SquoundApp.ViewModels
         // See SquoundApp/Pages/ProductSearchPage.xaml.cs for the navigation logic which can be
         // found in the TapGestureRecognizer command handler for the product item.
         [ObservableProperty]
-        ProductDto product = new();
+        private ProductDto product = new();
 
         public ProductListingViewModel()
         {

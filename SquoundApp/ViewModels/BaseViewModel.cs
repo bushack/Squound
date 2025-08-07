@@ -12,7 +12,7 @@ namespace SquoundApp.ViewModels
         private bool isBusy = false;
 
         [ObservableProperty]
-        private string title = "";
+        private string title = string.Empty;
 
         public BaseViewModel()
         {

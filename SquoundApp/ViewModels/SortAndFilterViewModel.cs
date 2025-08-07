@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 
 using SquoundApp.Services;
-using SquoundApp.States;
 
 using Shared.DataTransfer;
 using Shared.StateMachine;
@@ -13,9 +12,6 @@ namespace SquoundApp.ViewModels
 {
     public partial class SortAndFilterViewModel : BaseViewModel
     {
-        // State machine managing the state transitions for sorting and filtering operations.
-        private readonly StateMachine<SortAndFilterViewModel> stateMachine;
-
         // Singleton service managing the user's current search selection.
         // This service can be accessed from anywhere in the application to retrieve or reset the current search criteria.
         private readonly SearchService searchService;
@@ -86,9 +82,6 @@ namespace SquoundApp.ViewModels
         public SortAndFilterViewModel(SearchService searchService)
         {
             this.searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
-
-            this.stateMachine = new(this);
-            this.stateMachine.ChangeState(new IdleState());
         }
 
 
@@ -275,26 +268,67 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
+        /// Shows and activates the sort menu, allowing users to choose how they want to sort the products.
+        /// </summary>
+        private void ShowSortMenu()
+        {
+            Title = "Sort Options";
+
+            IsTitleLabelVisible     = true;
+            IsFilterButtonActive    = false;
+            IsSortButtonActive      = false;
+            IsFilterMenuActive      = false;
+            IsSortMenuActive        = true;
+        }
+
+
+        /// <summary>
+        /// Shows and activates the filter menu, allowing users to refine their search criteria.
+        /// </summary>
+        private void ShowFilterMenu()
+        {
+            Title = "Filter Options";
+
+            IsTitleLabelVisible     = true;
+            IsFilterButtonActive    = false;
+            IsSortButtonActive      = false;
+            IsFilterMenuActive      = true;
+            IsSortMenuActive        = false;
+        }
+
+
+        /// <summary>
+        /// Hides and disables the sort and filter menus, resetting the user interface to its default state.
+        /// </summary>
+        private void HideMenus()
+        {
+            Title = string.Empty;
+
+            IsTitleLabelVisible     = false;
+            IsFilterButtonActive    = true;
+            IsSortButtonActive      = true;
+            IsFilterMenuActive      = false;
+            IsSortMenuActive        = false;
+        }
+
+
+        /// <summary>
         /// Handles the sort button click event.
         /// </summary>
-        /// <returns></returns>
         [RelayCommand]
-        private async Task OnSortButton()
+        private void OnSortButton()
         {
-            // Activate the sort menu.
-            await stateMachine.ChangeState(new SortState());
+            ShowSortMenu();
         }
 
 
         /// <summary>
         /// Handles the filter button click event.
         /// </summary>
-        /// <returns></returns>
         [RelayCommand]
-        private async Task OnFilterButton()
+        private void OnFilterButton()
         {
-            // Activate the filter menu.
-            await stateMachine.ChangeState(new FilterState());
+            ShowFilterMenu();
         }
 
 
@@ -305,11 +339,7 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         private async Task ApplyQueryAsync()
         {
-            // Trigger the product retrieval based on the current sort and filter options.
-            //await stateMachine.ChangeState(new LoadingState());
-
-            // Return to the idle state after applying the query.
-            await stateMachine.ChangeState(new IdleState());
+            HideMenus();
 
             // Navigate to the ProductListingPage and pass the selected product as a parameter.
             await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
@@ -321,11 +351,11 @@ namespace SquoundApp.ViewModels
         /// </summary>
         /// <returns></returns>
         [RelayCommand]
-        private async Task OnCancelButton()
+        private void OnCancelButton()
         {
-            await stateMachine.ChangeState(new CancelState());
+            RestoreQueryToUserInterface(PreviousQuery);
 
-            await stateMachine.ChangeState(new IdleState());
+            HideMenus();
         }
 
 
@@ -334,16 +364,20 @@ namespace SquoundApp.ViewModels
         /// </summary>
         /// <returns></returns>
         [RelayCommand]
-        private async Task OnResetButton()
+        private void OnResetButton()
         {
-            await stateMachine.ChangeState(new ResetState());
+            searchService.ResetSearch();
 
-            await stateMachine.ChangeState(stateMachine.PreviousState);
+            RestoreQueryToUserInterface(CurrentQuery);
         }
 
 
-        //
-        internal void RestoreQueryToUserInterface(ProductQueryDto query)
+        /// <summary>
+        /// Updates the user interface with the provided <see cref="ProductQueryDto"/>.
+        /// This ensures that the user interface reflects the given search criteria.
+        /// </summary>
+        /// <param name="query">The <see cref="ProductQueryDto"/> containing the search criteria to restore.</param>
+        private void RestoreQueryToUserInterface(ProductQueryDto query)
         {
             // NOTE : Null checks are necessary to avoid NullReferenceException.
             this.Keyword        = query.Keyword ?? string.Empty;

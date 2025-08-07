@@ -8,10 +8,10 @@
              x:DataType="viewmodels:RefinedSearchViewModel">
 
     <Grid RowDefinitions="Auto, *">
-        
+
         <!-- Row 0 : Displays the page title, category search bar and the sort and filter buttons -->
         <views:AdvancedHeaderView Grid.Row="0"/>
-        
+
         <!-- Row 1 : Displays the vertically scrollable collection of products -->
         <CollectionView Grid.Row="1"
                         BackgroundColor="Transparent"
@@ -21,12 +21,15 @@
                         IsVisible="{Binding IsNotBusy}"
                         IsEnabled="{Binding IsNotBusy}">
 
-            <!-- Displays the number of products returned by the search -->
+            <!-- Page header -->
             <CollectionView.Header>
-                <Label Text="{Binding ProductList.Count, StringFormat='{0} Items'}"
+
+                <!-- Displays the number of products returned by the search -->
+                <Label Text="{Binding TotalItems, StringFormat='{0} items found'}"
                        TextColor="Black" Margin="0, 8, 0, 2"
                        Style="{StaticResource SmallText}"
                        HorizontalOptions="Center" VerticalOptions="Center"/>
+
             </CollectionView.Header>
 
             <!-- Defines the layout of a single item in the scrollable collection -->
@@ -37,6 +40,7 @@
                                 Margin="10"
                                 StrokeShape="RoundRectangle 15"
                                 StrokeThickness="0">
+
                             <!-- The border defines a tappable area that allows the user to access a specific product -->
                             <Border.GestureRecognizers>
                                 <!-- TapGestureRecognizer is used to handle tap events on each item in the CollectionView -->
@@ -72,8 +76,44 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
+            <!-- Page footer -->
             <CollectionView.Footer>
-                <views:FooterView/>
+                <VerticalStackLayout>
+
+                    <!-- Pagination section -->
+                    <Grid ColumnDefinitions="*, *, *"
+                          ColumnSpacing="20"
+                          Padding="20, 10">
+
+                        <!-- Previous page button -->
+                        <Button Grid.Column="0"
+                                Text="Previous"
+                                Style="{StaticResource ThemeSensitiveTextButton}"
+                                Command="{Binding PrevPageCommand}"
+                                IsEnabled="{Binding HasPrevPage}"
+                                IsVisible="{Binding HasPrevPage}"/>
+
+                        <!-- Label displaying current page number, eg. "Page 1 of 10" -->
+                        <Label Grid.Column="0"
+                               Grid.ColumnSpan="3"
+                               Text="{Binding PaginationInfo}"
+                               Style="{StaticResource SmallText}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+
+                        <!-- Next page button -->
+                        <Button Grid.Column="2"
+                                Text="Next"
+                                Style="{StaticResource ThemeSensitiveTextButton}"
+                                Command="{Binding NextPageCommand}"
+                                IsEnabled="{Binding HasNextPage}"
+                                IsVisible="{Binding HasNextPage}"/>
+                    </Grid>
+
+                    <!-- Squound footer -->
+                    <views:FooterView/>
+
+                </VerticalStackLayout>
             </CollectionView.Footer>
         </CollectionView>
 
@@ -82,5 +122,4 @@
         <views:LoadingOverlayView Grid.Row="0" Grid.RowSpan="2" x:DataType="{Binding .}"/>
 
     </Grid>
-    
 </ContentPage>

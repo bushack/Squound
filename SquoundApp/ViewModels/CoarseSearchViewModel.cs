@@ -126,13 +126,7 @@ namespace SquoundApp.ViewModels
         }
 
 
-        /// <summary>
-        /// Retrieves product categories from the category service and populates the CategoryList.
-        /// This method is called by the CoarseSearchPage's OnAppearing method.
-        /// </summary>
-        /// <returns></returns>
-        [RelayCommand]
-        private async Task ApplyQueryAsync()
+        public async Task GetDataAsync()
         {
             // Check if the view model is already busy fetching data.
             // This prevents multiple simultaneous fetch operations which could
@@ -153,7 +147,7 @@ namespace SquoundApp.ViewModels
                 // Retrieve product categories from the category service.
                 // This method is expected to return a list of product categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var categories = await categoryService.GetCategoriesRestApi();
+                var categories = await categoryService.GetDataAsync();
 
                 if (categories == null)
                     return;
@@ -186,8 +180,7 @@ namespace SquoundApp.ViewModels
         /// Asynchronously initiates a navigation to the RefinedSearchPage.
         /// </summary>
         /// <returns></returns>
-        [RelayCommand]
-        async Task GoToRefinedSearchPageAsync()
+        private async Task GoToRefinedSearchPageAsync()
         {
             // Navigate to the RefinedSearchPage and pass the selected category as a parameter.
             await Shell.Current.GoToAsync(nameof(RefinedSearchPage));

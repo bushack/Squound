@@ -71,10 +71,11 @@ namespace SquoundApp
 
             // View Models
             builder.Services.AddTransient<AboutViewModel>();
-            builder.Services.AddSingleton<FooterViewModel>();
             builder.Services.AddSingleton<CoarseSearchViewModel>();
-            builder.Services.AddSingleton<RefinedSearchViewModel>();
+            builder.Services.AddSingleton<FooterViewModel>();
             builder.Services.AddTransient<ProductListingViewModel>();
+            builder.Services.AddSingleton<RefinedSearchViewModel>();
+            builder.Services.AddSingleton<SearchCategoriesViewModel>();
             builder.Services.AddTransient<SellViewModel>();
             builder.Services.AddSingleton<SortAndFilterViewModel>();
 

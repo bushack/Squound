@@ -1,33 +1,37 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:dtos="clr-namespace:Shared.DataTransfer;assembly=Shared"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
              x:Class="SquoundApp.Views.SearchCategoriesView"
-             x:DataType="viewmodels:SortAndFilterViewModel">
+             x:DataType="viewmodels:SearchCategoriesViewModel">
+
+    <ContentView.Resources>
+        <DataTemplate x:Key="CategoryTemplate" x:DataType="dtos:CategoryDto">
+            <Label Text="{Binding Name}"
+                   TextColor="White"
+                   BackgroundColor="Transparent"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontSize="14"
+                   FontFamily="RegularFont"
+                   Padding="15"/>
+        </DataTemplate>
+    </ContentView.Resources>
 
     <VerticalStackLayout>
         
-        <ScrollView HorizontalOptions="Fill"
-                    Style="{StaticResource HorizontalScrollView}">
+        
 
-            <HorizontalStackLayout VerticalOptions="Center">
-
-                <Button Style="{StaticResource TextButton}" Text="Furniture" Clicked="OnButtonClicked" CommandParameter="Furniture"/>
-                <Button Style="{StaticResource TextButton}" Text="Lighting" Clicked="OnButtonClicked" CommandParameter="Lighting"/>
-                <Button Style="{StaticResource TextButton}" Text="Decor" Clicked="OnButtonClicked" CommandParameter="Decor"/>
-                <Button Style="{StaticResource TextButton}" Text="Kitchenware" Clicked="OnButtonClicked" CommandParameter="Kitchenware"/>
-                <Button Style="{StaticResource TextButton}" Text="Tableware" Clicked="OnButtonClicked" CommandParameter="Tableware"/>
-                <Button Style="{StaticResource TextButton}" Text="Textiles" Clicked="OnButtonClicked" CommandParameter="Textiles"/>
-                <Button Style="{StaticResource TextButton}" Text="Storage" Clicked="OnButtonClicked" CommandParameter="Storage"/>
-                <Button Style="{StaticResource TextButton}" Text="Wall Art" Clicked="OnButtonClicked" CommandParameter="Wall Art"/>
-                <Button Style="{StaticResource TextButton}" Text="Clocks" Clicked="OnButtonClicked" CommandParameter="Clocks"/>
-                <Button Style="{StaticResource TextButton}" Text="Mirrors" Clicked="OnButtonClicked" CommandParameter="Mirrors"/>
-                <Button Style="{StaticResource TextButton}" Text="Miscellaneous" Clicked="OnButtonClicked" CommandParameter="Miscellaneous"/>
-
-            </HorizontalStackLayout>
-
-        </ScrollView>
+        <CollectionView ItemsLayout="HorizontalList"
+                        ItemsSource="{Binding CategoryList}"
+                        ItemTemplate="{StaticResource CategoryTemplate}"
+                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                        SelectionMode="Single"
+                        IsEnabled="True"
+                        IsVisible="True"
+                        Background="{StaticResource SquoundGradientBrush}"/>
 
     </VerticalStackLayout>
 

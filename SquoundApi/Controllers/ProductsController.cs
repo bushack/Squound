@@ -220,30 +220,39 @@ namespace SquoundApi.Controllers
                 }
 
                 // Pagination.
-                var skip = (query.PageNumber - 1) * query.PageSize;
-                var take = query.PageSize;
-                Debug.WriteLine($"* * * Paging: skipping {skip}, taking {take} * * *");
+                var totalItems = await linqQuery.CountAsync();
 
                 // Execute the query and fetch the results.
+                var skip = (query.PageNumber - 1) * query.PageSize;
+                var take = query.PageSize;
                 var pagedResult = await linqQuery.Skip(skip).Take(take).ToListAsync();
+                Debug.WriteLine($"* * * Paging: skipping {skip}, taking {take} * * *");
 
                 // Check if any products were found.
                 if (pagedResult.Count == 0)
                 {
                     Debug.WriteLine("* * * No products found * * *");
-                    return NotFound(ErrorCode.Product_Does_Not_Exist.ToString());
+                    return Ok(new PagedResultDto<ProductDto>());
                 }
 
-                // Convert to DTOs.
+                // Convert each item to ProductDTO.
                 var productDtos = new List<Shared.DataTransfer.ProductDto>();
-
-                foreach (var model in pagedResult)
+                foreach (var item in pagedResult)
                 {
-                    productDtos.Add(dtoFactory.CreateProductDto(model));
+                    productDtos.Add(dtoFactory.CreateProductDto(item));
                 }
+
+                // Write metadata to response along with ProductDTOs.
+                var response = new PagedResultDto<ProductDto>
+                {
+                    TotalItems = totalItems,
+                    PageSize = query.PageSize,
+                    CurrentPage = query.PageNumber,
+                    Items = productDtos
+                };
 
                 Debug.WriteLine($"* * * Returning {productDtos.Count} products * * *");
-                return Ok(productDtos);
+                return Ok(response);
             }
 
             catch (Exception ex)

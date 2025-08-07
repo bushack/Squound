@@ -12,14 +12,13 @@ public partial class CoarseSearchPage : ContentPage
 		BindingContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
 
         if (BindingContext is CoarseSearchViewModel viewModel)
         {
-            // Every time the page appears we fetch the product categories from the REST API.
-            viewModel.ApplyQueryCommand.Execute(null);
+            await viewModel.GetDataAsync();
         }
     }
 }

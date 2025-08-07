@@ -34,6 +34,17 @@
         <Setter Property="FontAttributes" Value="Bold"/>
     </Style>
 
+    
+    <Style TargetType="Button" x:Key="ThemeSensitiveTextButton">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="RegularFont"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+    </Style>
+
     <!-- LogoAndTextButton -->
     <Style TargetType="Button" x:Key="LogoAndTextButton">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}"/>

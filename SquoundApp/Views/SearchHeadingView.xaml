@@ -7,7 +7,7 @@
     
     <VerticalStackLayout>
         
-        <Label Text="{Binding Category}"
+        <Label Text="{Binding }"
                Style="{StaticResource SmallText}"
                BackgroundColor="Transparent"
                VerticalOptions="Center" 
