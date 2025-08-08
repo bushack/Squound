@@ -1,27 +1,21 @@
 ﻿
-rename
-	- ProductQueryDto to ApiQueryDto
-	- PagedResultDto to ApiResponseDto
-	- "Product" to "Item" throughout solution
-
 general
 	- does each api request need it's own service (productService, categoryService, etc)
 	- better to have single "RestApiService" capable of performing multiple requests/fetches
 	- ask!
 
 pagination
-	- add string to RefinedSearchViewModel that will toggle between item/items when singular or multiple products found
+	- check functionality of Previous Page and Next Page when more items added to database
 
 logging
 	- both dubug and release?
 	- ask!
 
 search
-	- incorporate keyword search facility and then amend
+	- incorporate keyword search
 	- add functionality to CoarseSearchPage user search entry
 
-product listing page
-	- rename to ProductDetailPage
+item page
 	- fetch chosen product by id OnAppearing()
 	- fetch images of assorted sizes
 	- allow user to tap to zoom and scroll all images

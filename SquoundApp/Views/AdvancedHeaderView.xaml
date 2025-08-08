@@ -4,13 +4,13 @@
              xmlns:views="clr-namespace:SquoundApp.Views"
              x:Class="SquoundApp.Views.AdvancedHeaderView">
 
-    <!-- The AdvancedHeaderView is a ContentView that contains the header for the ProductSearchPage -->
+    <!-- The AdvancedHeaderView is a ContentView that contains the header for the RefinedSearchPage -->
     <VerticalStackLayout BackgroundColor="Transparent">
 
         <!-- Displays the current search category. eg. "Lighting" -->
         <views:SearchHeadingView Margin="0, 10, 0, 10"/>
 
-        <!-- Horizontal scrollbar of product categories -->
+        <!-- Horizontal scrollbar of item categories -->
         <views:SearchCategoriesView/>
 
         <!-- Displays the sort and filter buttons and their menus -->

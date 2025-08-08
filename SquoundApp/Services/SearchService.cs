@@ -5,8 +5,8 @@ namespace SquoundApp.Services
 {
     public class SearchService
     {
-        public ProductQueryDto CurrentQuery { get; private set; } = new ProductQueryDto();
-        public ProductQueryDto PreviousQuery { get; private set; } = new ProductQueryDto();
+        public SearchQueryDto CurrentQuery { get; private set; } = new SearchQueryDto();
+        public SearchQueryDto PreviousQuery { get; private set; } = new SearchQueryDto();
 
 
         /// <summary>
@@ -14,7 +14,7 @@ namespace SquoundApp.Services
         /// </summary>
         public void ResetSearch()
         {
-            CurrentQuery = new ProductQueryDto();
+            CurrentQuery = new SearchQueryDto();
         }
 
 
@@ -23,7 +23,7 @@ namespace SquoundApp.Services
         /// </summary>
         public void RestorePreviousSearch()
         {
-            CurrentQuery = new ProductQueryDto
+            CurrentQuery = new SearchQueryDto
             {
                 Keyword         = PreviousQuery.Keyword,
                 Category        = PreviousQuery.Category,
@@ -43,7 +43,7 @@ namespace SquoundApp.Services
         /// </summary>
         public void SaveCurrentSearch()
         {
-            PreviousQuery = new ProductQueryDto
+            PreviousQuery = new SearchQueryDto
             {
                 Keyword         = CurrentQuery.Keyword,
                 Category        = CurrentQuery.Category,

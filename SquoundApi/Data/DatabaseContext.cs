@@ -9,8 +9,8 @@ namespace SquoundApi.Data
     {
         // Map the internal data models to the database tables.
 
-        public DbSet<ProductModel> Products { get; set; }
-        public DbSet<ProductImageModel> ProductImages { get; set; }
+        public DbSet<ItemModel> Items { get; set; }
+        public DbSet<ItemImageModel> ItemImages { get; set; }
         public DbSet<CategoryModel> Categories { get; set; }
         public DbSet<SubcategoryModel> Subcategories { get; set; }
     }

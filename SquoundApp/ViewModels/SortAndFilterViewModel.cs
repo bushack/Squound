@@ -17,10 +17,10 @@ namespace SquoundApp.ViewModels
         private readonly SearchService searchService;
 
         // Reference to the user's current search criteria.
-        public ProductQueryDto CurrentQuery => searchService.CurrentQuery;
+        public SearchQueryDto CurrentQuery => searchService.CurrentQuery;
 
         // Reference to the user's previous search criteria.
-        public ProductQueryDto PreviousQuery => searchService.PreviousQuery;
+        public SearchQueryDto PreviousQuery => searchService.PreviousQuery;
 
 
         // Variables responsible for adjusting the sort options.
@@ -111,7 +111,7 @@ namespace SquoundApp.ViewModels
             if (decimal.TryParse(digits, out decimal price))
             {
                 // If the parsed price is out of the valid range.
-                if (price < 0 || price > (decimal)ProductQueryDto.PracticalMaximumPrice)
+                if (price < 0 || price > (decimal)SearchQueryDto.PracticalMaximumPrice)
                 {
                     CurrentQuery.MinPrice = null;
                 }
@@ -148,7 +148,7 @@ namespace SquoundApp.ViewModels
             if (decimal.TryParse(digits, out decimal price))
             {
                 // If the parsed price is out of the valid range.
-                if (price < 0 || price > (decimal)ProductQueryDto.PracticalMaximumPrice)
+                if (price < 0 || price > (decimal)SearchQueryDto.PracticalMaximumPrice)
                 {
                     CurrentQuery.MaxPrice = null;
                 }
@@ -178,25 +178,25 @@ namespace SquoundApp.ViewModels
         }
         partial void OnSortByNameAscendingChanged(bool value)
         {
-            CurrentQuery.SortBy = value ? ProductSortOption.NameAsc : CurrentQuery.SortBy;
+            CurrentQuery.SortBy = value ? ItemSortOption.NameAsc : CurrentQuery.SortBy;
         }
         partial void OnSortByNameDescendingChanged(bool value)
         {
-            CurrentQuery.SortBy = value ? ProductSortOption.NameDesc : CurrentQuery.SortBy;
+            CurrentQuery.SortBy = value ? ItemSortOption.NameDesc : CurrentQuery.SortBy;
         }
         partial void OnSortByPriceAscendingChanged(bool value)
         {
-            CurrentQuery.SortBy = value ? ProductSortOption.PriceAsc : CurrentQuery.SortBy;
+            CurrentQuery.SortBy = value ? ItemSortOption.PriceAsc : CurrentQuery.SortBy;
         }
         partial void OnSortByPriceDescendingChanged(bool value)
         {
-            CurrentQuery.SortBy = value ? ProductSortOption.PriceDesc : CurrentQuery.SortBy;
+            CurrentQuery.SortBy = value ? ItemSortOption.PriceDesc : CurrentQuery.SortBy;
         }
 
 
         // Methods responsible for setting the sort options.
         [RelayCommand]
-        private void SetSortOption(ProductSortOption sortBy)
+        private void SetSortOption(ItemSortOption sortBy)
         {
             // Reset all sort options to false.
             SortByNameAscending = false;
@@ -207,19 +207,19 @@ namespace SquoundApp.ViewModels
             // Set the appropriate sort option based on the provided sortBy parameter.
             switch (sortBy)
             {
-                case ProductSortOption.NameAsc:
+                case ItemSortOption.NameAsc:
                     SortByNameAscending = true;
                     break;
 
-                case ProductSortOption.NameDesc:
+                case ItemSortOption.NameDesc:
                     SortByNameDescending = true;
                     break;
 
-                case ProductSortOption.PriceAsc:
+                case ItemSortOption.PriceAsc:
                     SortByPriceAscending = true;
                     break;
 
-                case ProductSortOption.PriceDesc:
+                case ItemSortOption.PriceDesc:
                     SortByPriceDescending = true;
                     break;
 
@@ -268,7 +268,7 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Shows and activates the sort menu, allowing users to choose how they want to sort the products.
+        /// Shows and activates the sort menu, allowing users to choose how they want to sort the items.
         /// </summary>
         private void ShowSortMenu()
         {
@@ -341,7 +341,6 @@ namespace SquoundApp.ViewModels
         {
             HideMenus();
 
-            // Navigate to the ProductListingPage and pass the selected product as a parameter.
             await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
         }
 
@@ -373,11 +372,11 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Updates the user interface with the provided <see cref="ProductQueryDto"/>.
+        /// Updates the user interface with the provided <see cref="SearchQueryDto"/>.
         /// This ensures that the user interface reflects the given search criteria.
         /// </summary>
-        /// <param name="query">The <see cref="ProductQueryDto"/> containing the search criteria to restore.</param>
-        private void RestoreQueryToUserInterface(ProductQueryDto query)
+        /// <param name="query">The <see cref="SearchQueryDto"/> containing the search criteria to restore.</param>
+        private void RestoreQueryToUserInterface(SearchQueryDto query)
         {
             // NOTE : Null checks are necessary to avoid NullReferenceException.
             this.Keyword        = query.Keyword ?? string.Empty;

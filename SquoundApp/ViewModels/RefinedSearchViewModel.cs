@@ -14,35 +14,41 @@ namespace SquoundApp.ViewModels
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="RefinedSearchViewModel"/> class
-    /// with the specified <see cref="ProductService"/> and <see cref="SearchService"/>.
+    /// with the specified <see cref="ItemService"/> and <see cref="SearchService"/>.
     /// </summary>
-    /// <param name="ps">The <see cref="ProductService"/> instance used
-    /// to retrieve product data. Cannot be null.</param>
-    /// <param name="ss">The <see cref="SearchService"/> instance used
+    /// <param name="itemService">The <see cref="ItemService"/> instance used
+    /// to retrieve item data. Cannot be null.</param>
+    /// <param name="searchService">The <see cref="SearchService"/> instance used
     /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class RefinedSearchViewModel(ProductService ps, SearchService ss) : BaseViewModel
+    public partial class RefinedSearchViewModel(ItemService itemService, SearchService searchService) : BaseViewModel
     {
-        // Responsible for retrieving products from the REST API.
+        // Responsible for retrieving items from the REST API.
         // This data is presented to the user on the RefinedSearchPage, where the user can select a specific
-        // product before progressing to the ProductListingPage to study the product in detail.
-        private readonly ProductService productService = ps ?? throw new ArgumentNullException(nameof(ps));
+        // item before progressing to the ItemPage to study the item in detail.
+        private readonly ItemService itemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchService searchService = ss ?? throw new ArgumentNullException(nameof(ss));
+        private readonly SearchService searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
 
-        // Collection of products retrieved from the REST API based on the current search criteria.
-        public ObservableCollection<ProductDto> ProductList { get; } = [];
+        // Collection of items retrieved from the REST API based on the current search criteria.
+        public ObservableCollection<ItemDto> ItemList { get; } = [];
 
-        // User interface variable to display current page number and total number of pages.
-        public string PaginationInfo => $"Page {CurrentPage} of {TotalPages}";
+        // For UI to display number of items found by most recent database search.
+        public string ItemsFound => TotalItems == 1 ? $"{TotalItems} Item" : $"{TotalItems} Items";
+
+        // For UI to display current page number and total number of pages.
+        public string PageNumber => $"Page {CurrentPage} of {TotalPages}";
+
+        //For UI on/off toggling of PageNumber label.
+        public bool HasAnyItems => TotalItems > 0;
         
-        //
+        // For UI on/off toggling of Next Page button.
         public bool HasNextPage => CurrentPage < TotalPages;
 
-        //
+        // For UI on/off toggling of Previous Page button.
         public bool HasPrevPage => CurrentPage > 1;
 
-        // Total number of items returned by the product service.
+        // Total number of items returned by the item service.
         [ObservableProperty]
         private int totalItems = 0;
 
@@ -56,7 +62,19 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Invokes a property changed events for pagination variables.
+        /// Invokes a property changed event for search response information variables.
+        /// This will ensure that the user interface is updated as soon as a value changes.
+        /// </summary>
+        /// <param name="value">New total items value.</param>
+        partial void OnTotalItemsChanged(int value)
+        {
+            OnPropertyChanged(nameof(HasAnyItems));
+            OnPropertyChanged(nameof(ItemsFound));
+        }
+
+
+        /// <summary>
+        /// Invokes a property changed event for pagination variables.
         /// This will ensure that the user interface is updated as soon as a value changes.
         /// </summary>
         /// <param name="value">New total pages value.</param>
@@ -64,11 +82,12 @@ namespace SquoundApp.ViewModels
         {
             OnPropertyChanged(nameof(HasNextPage));
             OnPropertyChanged(nameof(HasPrevPage));
-            OnPropertyChanged(nameof(PaginationInfo));
+            OnPropertyChanged(nameof(PageNumber));
         }
 
+
         /// <summary>
-        /// Invokes a property changed events for pagination variables.
+        /// Invokes a property changed event for pagination variables.
         /// This will ensure that the user interface is updated as soon as a value changes.
         /// </summary>
         /// <param name="value">New current page value.</param>
@@ -76,7 +95,7 @@ namespace SquoundApp.ViewModels
         {
             OnPropertyChanged(nameof(HasNextPage));
             OnPropertyChanged(nameof(HasPrevPage));
-            OnPropertyChanged(nameof(PaginationInfo));
+            OnPropertyChanged(nameof(PageNumber));
         }
 
 
@@ -106,9 +125,9 @@ namespace SquoundApp.ViewModels
 
         /// <summary>
         /// Query command that is executed whenever the RefinedSearchPage appears.
-        /// This command is responsible for fetching products based on the current search criteria.
+        /// This command is responsible for fetching items based on the current search criteria.
         /// If the search criteria changes the application should re-navigate to the RefinedSearchPage
-        /// and this command will automatically execute a fetch of the latest products.
+        /// and this command will automatically execute a fetch of the latest items.
         /// </summary>
         /// <returns></returns>
         [RelayCommand]
@@ -116,8 +135,8 @@ namespace SquoundApp.ViewModels
         {
             // Check if the view model is already busy fetching data.
             // This prevents multiple simultaneous fetch operations which could
-            // lead to performance issues or unexpected behavior.
-            // This is a common pattern to avoid re-entrancy issues in async methods.
+            // lead to performance issues or unexpected behaviour.
+            // This is a common pattern to avoid re-entrance issues in async methods.
             if (IsBusy)
                 return;
 
@@ -135,56 +154,69 @@ namespace SquoundApp.ViewModels
                 // previous query or to compare the current query with the previous one.
                 searchService.SaveCurrentSearch();
 
-                // Clear the existing products in the ObservableCollection.
+                // Clear the existing items in the ObservableCollection.
                 // This ensures that the collection is updated with whatever is returned by the API.
                 // ObservableCollection is used here so that the UI can automatically update
                 // when items are added or removed, without needing to manually refresh the UI.
                 // This is a key feature of ObservableCollection, which is designed for data binding in UI frameworks.
-                ProductList.Clear();
+                ItemList.Clear();
 
-                // Retrieve products from the product service.
-                // This method is expected to return a list of products asynchronously.
-                // The retrieved products will be added to the productList collection.
-                // To retrieve products from a remote JSON file, use:
-                // var productList = await productService.GetProductsRemoteJson
-                // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/products.json");
-                // To retrieve products from an embedded JSON file instead, use:
-                // var productList = await productService.GetProductsEmbeddedJson();
-                var pagedResponse = await productService.GetProductsRestApi(searchService.CurrentQuery);
+                // Reset pagination metadata for user.
+                TotalItems = 0;
+                TotalPages = 0;
+                CurrentPage = 0;
 
+                // Prepare page title.
+                Title = searchService.CurrentQuery.Keyword ??
+                        searchService.CurrentQuery.Subcategory ??
+                        searchService.CurrentQuery.Category ??
+                        "Search";
+
+                // Retrieve items from the item service.
+                // This method is expected to return a list of items asynchronously.
+                // The retrieved items will be added to the itemList collection.
+                // To retrieve items from a remote JSON file, use:
+                // var itemList = await itemService.GetItemsRemoteJson
+                // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json");
+                // To retrieve items from an embedded JSON file instead, use:
+                // var itemList = await itemService.GetItemsEmbeddedJson();
+                var pagedResponse = await itemService.GetItemsRestApi(searchService.CurrentQuery);
+
+                // Null response from API.
                 if (pagedResponse is null)
                 {
-                    await Shell.Current.DisplayAlert("Error", "Unable to fatch data from the server", "OK");
+                    await Shell.Current.DisplayAlert("Error", "Unable to fetch data from the server", "OK");
                     return;
                 }
 
+                // Null or empty item list from API.
                 if (pagedResponse.Items is null || pagedResponse.Items.Count == 0)
                 {
-                    await Shell.Current.DisplayAlert("Sorry", "No products matched the search criteria", "OK");
+                    await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
                     return;
                 }
 
-                // Prepare pagination metadata for user.
+                // Prepare new pagination metadata for user.
                 TotalItems  = pagedResponse.TotalItems;
                 TotalPages  = pagedResponse.TotalPages;
                 CurrentPage = pagedResponse.CurrentPage;
 
-                // The foreach loop iterates over the fetched products and adds each one to the Products collection.
+                // The foreach loop iterates over the fetched items and adds each one to the Items collection.
                 // This ensures that the UI reflects the latest data.
-                // The Products collection is an ObservableCollection, which means that any changes to it
+                // The Items collection is an ObservableCollection, which means that any changes to it
                 // will automatically notify the UI to update, making it easy to display dynamic data.
                 // This is particularly useful in MVVM (Model-View-ViewModel) patterns where the ViewModel
                 // holds the data and the View binds to it.
-                //ProductList.Clear();
-                foreach (var product in pagedResponse.Items)
+                //ItemList.Clear();
+                foreach (var item in pagedResponse.Items)
                 {
-                    // Add each product to the ObservableCollection.
-                    // This will trigger the UI to update and display the new products.
+                    // Add each item to the ObservableCollection.
+                    // This will trigger the UI to update and display the new items.
                     // The ObservableCollection is designed to notify the UI of changes,
                     // so when we add items to it, the UI will automatically reflect those changes.
                     // ObservableRangeCollection would be more efficient if you want to add multiple items at once,
                     // and delay the UI update until all items are added.
-                    ProductList.Add(product);
+                    ItemList.Add(item);
                 }
             }
 
@@ -208,21 +240,21 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Asynchronously initiates a navigation to the ProductListingPage of parameter 'product'.
+        /// Asynchronously initiates a navigation to the ItemPage of parameter 'item'.
         /// </summary>
-        /// <param name="product">Data transfer object of the product to be displayed.</param>
+        /// <param name="item">Data transfer object of the item to be displayed.</param>
         /// <returns></returns>
         [RelayCommand]
-        async Task GoToProductListingAsync(ProductDto product)
+        async Task GoToItemPageAsync(ItemDto item)
         {
-            if (product is null)
+            if (item is null)
                 return;
 
-            // Navigate to the ProductListingPage and pass the selected product as a parameter.
-            await Shell.Current.GoToAsync($"{nameof(ProductListingPage)}", true,
+            // Navigate to the ItemPage and pass the selected item as a parameter.
+            await Shell.Current.GoToAsync($"{nameof(ItemPage)}", true,
                 new Dictionary<string, object>
                 {
-                    {"Product", product}
+                    {"Item", item}
                 });
         }
     }

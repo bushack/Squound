@@ -16,7 +16,7 @@ namespace SquoundApi.Controllers
     // Route to access the controller.
     // Token [controller] is replaced with the name of the class without the "Controller" suffix.
     [Route("api/[controller]")]
-    public class ProductsController(DatabaseContext dbContext, IDtoFactory dtoFactory) : ControllerBase
+    public class ItemsController(DatabaseContext dbContext, IDtoFactory dtoFactory) : ControllerBase
     {
         private readonly DatabaseContext dbContext = dbContext;
         private readonly IDtoFactory dtoFactory = dtoFactory;
@@ -25,57 +25,57 @@ namespace SquoundApi.Controllers
         {
             Categories_Not_Found,
 
-            Product_Data_Invalid,
-            Product_Exists,
-            Product_Does_Not_Exist,
-            Product_Could_Not_Be_Created,
-            Product_Could_Not_Be_Updated,
-            Product_Could_Not_Be_Deleted,
+            Item_Data_Invalid,
+            Item_Exists,
+            Item_Does_Not_Exist,
+            Item_Could_Not_Be_Created,
+            Item_Could_Not_Be_Updated,
+            Item_Could_Not_Be_Deleted,
 
             Undefined_Error
         }
 
 
         /// <summary>
-        /// Endpoint to retrieve all products from the database.
+        /// Endpoint to retrieve all items from the database.
         /// </summary>
-        /// <remarks>This method fetches all product records from the database and converts them into DTOs
-        /// for client consumption. If no products are found, a 404 Not Found response is returned. If an error occurs
+        /// <remarks>This method fetches all item records from the database and converts them into DTOs
+        /// for client consumption. If no items are found, a 404 Not Found response is returned. If an error occurs
         /// during processing, a 400 Bad Request response is returned.</remarks>
-        /// <returns>An <see cref="IActionResult"/> containing a list of product DTOs if products exist, a 404 Not Found
-        /// response if no products are found, or a 400 Bad Request response in case of an error.</returns>
+        /// <returns>An <see cref="IActionResult"/> containing a list of item DTOs if items exist, a 404 Not Found
+        /// response if no items are found, or a 400 Bad Request response in case of an error.</returns>
         [HttpGet("all")]
         public async Task<IActionResult> All()
         {
             try
             {
-                var productModels = await dbContext.Products.ToListAsync();
+                var itemModels = await dbContext.Items.ToListAsync();
 
-                if (productModels.Count == 0)
+                if (itemModels.Count == 0)
                 {
-                    return NotFound(ErrorCode.Product_Does_Not_Exist.ToString());
+                    return NotFound(ErrorCode.Item_Does_Not_Exist.ToString());
                 }
 
-                var productDtos = new List<Shared.DataTransfer.ProductDto>();
+                var itemDtos = new List<Shared.DataTransfer.ItemDto>();
 
-                foreach (var model in productModels)
+                foreach (var model in itemModels)
                 {
-                    productDtos.Add(dtoFactory.CreateProductDto(model));
+                    itemDtos.Add(dtoFactory.CreateItemDto(model));
                 }
 
-                return Ok(productDtos);
+                return Ok(itemDtos);
             }
 
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching products : {ex.Message}");
+                Debug.WriteLine($"Error fetching items : {ex.Message}");
 
                 return BadRequest(ErrorCode.Undefined_Error.ToString());
             }
         }
 
 
-        // GET : api/products/categories
+        // GET : api/items/categories
         /// <summary>
         /// Endpoint to retrieve all categories and their subcategories.
         /// </summary>
@@ -97,7 +97,7 @@ namespace SquoundApi.Controllers
                         {
                             Name = s.Name                           // Map the Subcategory Name property.
                         })
-                        .ToList()                                   // Aggregate the SubcategoyDtos into a list.
+                        .ToList()                                   // Aggregate the SubcategoryDtos into a list.
                     })
                     .ToListAsync();                                 // Execute the query and convert the results to a list of CategoryDtos.
 
@@ -126,44 +126,44 @@ namespace SquoundApi.Controllers
         }
 
 
-        // GET : api/products/search
+        // GET : api/items/search
         /// <summary>
-        /// Endpoint to search for products based on various criteria.
+        /// Endpoint to search for items based on various criteria.
         /// </summary>
-        /// <remarks>This method supports filtering, sorting, and pagination of product results. Filters
+        /// <remarks>This method supports filtering, sorting, and pagination of item results. Filters
         /// can be applied for id, category, manufacturer, minimum price, and maximum price. Sorting can be performed by
         /// price, name, or ID in ascending or descending order. Pagination is controlled using the page number and page
         /// size parameters.</remarks>
-        /// <param name="query">The query parameters used to filter, sort, and paginate the product search results.</param>
-        /// <returns>An <see cref="IActionResult"/> containing a list of products matching the query parameters. Returns a 404
-        /// status code if no products match the criteria. Returns a 400 status code if an error occurs during
+        /// <param name="query">The query parameters used to filter, sort, and paginate the item search results.</param>
+        /// <returns>An <see cref="IActionResult"/> containing a list of items matching the query parameters. Returns a 404
+        /// status code if no items match the criteria. Returns a 400 status code if an error occurs during
         /// processing.</returns>
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery]ProductQueryDto query)
+        public async Task<IActionResult> Search([FromQuery]SearchQueryDto query)
         {
             if (ModelState.IsValid == false)
             {
-                Debug.WriteLine($"* * * Invalid product model state: {ModelState} * * *");
-                Debug.WriteLine($"* * * Aborting products query: {query} * * *");
+                Debug.WriteLine($"* * * Invalid search query state: {ModelState} * * *");
+                Debug.WriteLine($"* * * Aborting search query: {query} * * *");
                 return BadRequest(ModelState);
             }
 
             try
             {
-                Debug.WriteLine($"* * * Querying products... * * *");
+                Debug.WriteLine($"* * * Querying items... * * *");
 
-                // Build the Linq query to fetch products from the database.
-                var linqQuery = dbContext.Products                  // Read from the Products table in the database.
-                    .Include(predicate => predicate.Category)       // Include the Category entity for each product.
-                    .Include(predicate => predicate.Subcategory)    // Include the Subcategory entity for each product.
-                    .Include(predicate => predicate.Images)         // Include the Images collection for each product.
+                // Build the Linq query to fetch items from the database.
+                var linqQuery = dbContext.Items                     // Read from the Items table in the database.
+                    .Include(predicate => predicate.Category)       // Include the Category entity for each item.
+                    .Include(predicate => predicate.Subcategory)    // Include the Subcategory entity for each item.
+                    .Include(predicate => predicate.Images)         // Include the Images collection for each item.
                     .AsQueryable();                                 // Convert to IQueryable for further filtering and sorting (below).
 
-                // Allows filtering by product id.
-                if (query.ProductId is not null)
+                // Allows filtering by item id.
+                if (query.ItemId is not null)
                 {
-                    Debug.WriteLine($"* * * Filtering by Id: {query.ProductId} * * *");
-                    linqQuery = linqQuery.Where(predicate => (predicate.ProductId == query.ProductId));
+                    Debug.WriteLine($"* * * Filtering by Id: {query.ItemId} * * *");
+                    linqQuery = linqQuery.Where(predicate => (predicate.ItemId == query.ItemId));
                 }
 
                 // Filter by subcategory.
@@ -187,15 +187,15 @@ namespace SquoundApi.Controllers
                     linqQuery = linqQuery.Where(predicate => (predicate.Manufacturer == query.Manufacturer));
                 }
 
-                // Exclude products below minimum price.
-                if ((query.MinPrice > 0) && (query.MinPrice <= (decimal)Shared.DataTransfer.ProductQueryDto.PracticalMaximumPrice))
+                // Exclude items below minimum price.
+                if ((query.MinPrice > 0) && (query.MinPrice <= (decimal)Shared.DataTransfer.SearchQueryDto.PracticalMaximumPrice))
                 {
                     Debug.WriteLine($"* * * Applying minimum price filter: {query.MinPrice} * * *");
                     linqQuery = linqQuery.Where(predicate => (predicate.Price >= query.MinPrice));
                 }
 
-                // Exclude products above maximum price.
-                if ((query.MaxPrice > 0) && (query.MaxPrice <= (decimal)Shared.DataTransfer.ProductQueryDto.PracticalMaximumPrice))
+                // Exclude items above maximum price.
+                if ((query.MaxPrice > 0) && (query.MaxPrice <= (decimal)Shared.DataTransfer.SearchQueryDto.PracticalMaximumPrice))
                 {
                     Debug.WriteLine($"* * * Applying maximum price filter: {query.MaxPrice} * * *");
                     linqQuery = linqQuery.Where(predicate => (predicate.Price <= query.MaxPrice));
@@ -208,14 +208,14 @@ namespace SquoundApi.Controllers
 
                     linqQuery = query.SortBy switch
                     {
-                        ProductSortOption.PriceAsc => linqQuery.OrderBy(predicate => predicate.Price),
-                        ProductSortOption.PriceDesc => linqQuery.OrderByDescending(predicate => predicate.Price),
+                        ItemSortOption.PriceAsc => linqQuery.OrderBy(predicate => predicate.Price),
+                        ItemSortOption.PriceDesc => linqQuery.OrderByDescending(predicate => predicate.Price),
 
-                        ProductSortOption.NameAsc => linqQuery.OrderBy(predicate => predicate.Name),
-                        ProductSortOption.NameDesc => linqQuery.OrderByDescending(predicate => predicate.Name),
+                        ItemSortOption.NameAsc => linqQuery.OrderBy(predicate => predicate.Name),
+                        ItemSortOption.NameDesc => linqQuery.OrderByDescending(predicate => predicate.Name),
 
                         // Default sort by id.
-                        _ => linqQuery.OrderBy(predicate => predicate.ProductId)
+                        _ => linqQuery.OrderBy(predicate => predicate.ItemId)
                     };
                 }
 
@@ -228,30 +228,30 @@ namespace SquoundApi.Controllers
                 var pagedResult = await linqQuery.Skip(skip).Take(take).ToListAsync();
                 Debug.WriteLine($"* * * Paging: skipping {skip}, taking {take} * * *");
 
-                // Check if any products were found.
+                // Check if any items were found.
                 if (pagedResult.Count == 0)
                 {
-                    Debug.WriteLine("* * * No products found * * *");
-                    return Ok(new PagedResultDto<ProductDto>());
+                    Debug.WriteLine("* * * No items found * * *");
+                    return Ok(new SearchResponseDto<ItemDto>());
                 }
 
-                // Convert each item to ProductDTO.
-                var productDtos = new List<Shared.DataTransfer.ProductDto>();
+                // Convert each item to ItemDto.
+                var itemDtos = new List<Shared.DataTransfer.ItemDto>();
                 foreach (var item in pagedResult)
                 {
-                    productDtos.Add(dtoFactory.CreateProductDto(item));
+                    itemDtos.Add(dtoFactory.CreateItemDto(item));
                 }
 
-                // Write metadata to response along with ProductDTOs.
-                var response = new PagedResultDto<ProductDto>
+                // Write metadata to response along with ItemDtos.
+                var response = new SearchResponseDto<ItemDto>
                 {
                     TotalItems = totalItems,
                     PageSize = query.PageSize,
                     CurrentPage = query.PageNumber,
-                    Items = productDtos
+                    Items = itemDtos
                 };
 
-                Debug.WriteLine($"* * * Returning {productDtos.Count} products * * *");
+                Debug.WriteLine($"* * * Returning {itemDtos.Count} items * * *");
                 return Ok(response);
             }
 
@@ -267,50 +267,50 @@ namespace SquoundApi.Controllers
             }
         }
 
-        // GET : api/products/123456
+        // GET : api/items/123456
         /// <summary>
-        /// Endpoint to retrieve a specific product by its ID.
+        /// Endpoint to retrieve a specific item by its ID.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var query = new ProductQueryDto
+            var query = new SearchQueryDto
             {
-                ProductId = id
+                ItemId = id
             };
 
             return await this.Search(query);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(ProductModel product)
+        public async Task<IActionResult> Add(ItemModel item)
         {
             try
             {
-                if ((product == null) || (ModelState.IsValid == false))
+                if ((item == null) || (ModelState.IsValid == false))
                 {
-                    return BadRequest(ErrorCode.Product_Data_Invalid.ToString());
+                    return BadRequest(ErrorCode.Item_Data_Invalid.ToString());
                 }
 
-                // TODO : Check if product already exists?
+                // TODO : Check if item already exists?
 
-                dbContext.Products.Add(product);
+                dbContext.Items.Add(item);
 
                 var result = await dbContext.SaveChangesAsync();
 
                 if (result.Equals(false))
                 {
-                    return BadRequest(ErrorCode.Product_Could_Not_Be_Created.ToString());
+                    return BadRequest(ErrorCode.Item_Could_Not_Be_Created.ToString());
                 }
 
-                return Ok(product);
+                return Ok(item);
             }
 
             catch(Exception ex)
             {
-                Debug.WriteLine($"Error adding product : {ex.Message}");
+                Debug.WriteLine($"Error adding item : {ex.Message}");
 
                 return BadRequest(ErrorCode.Undefined_Error.ToString());
             }

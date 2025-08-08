@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SquoundApi.Models
 {
-    public class ProductModel
+    public class ItemModel
     {
         /// <summary>
-        /// ProductId is the primary key for the ProductModel.
+        /// ItemId is the primary key for the ItemModel.
         /// </summary>
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public required long ProductId { get; set; }
+        public required long ItemId { get; set; }
 
         [Required]
         public required long CategoryId { get; set; }
@@ -43,6 +43,6 @@ namespace SquoundApi.Models
         [ForeignKey("SubcategoryId")]
         public required SubcategoryModel Subcategory { get; set; }
 
-        public required List<ProductImageModel> Images { get; set; } = [];
+        public required List<ItemImageModel> Images { get; set; } = [];
     }
 }

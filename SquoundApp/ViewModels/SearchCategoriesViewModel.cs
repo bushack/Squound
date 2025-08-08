@@ -17,7 +17,7 @@ namespace SquoundApp.ViewModels
     /// 
     /// </summary>
     /// <param name="cs">The <see cref="CategoryService"/> instance used
-    /// to retrieve product category data. Cannot be null.</param>
+    /// to retrieve item category data. Cannot be null.</param>
     /// <param name="ss">The <see cref="SearchService"/> instance used
     /// to manage the user's current search selection. Cannot be null.</param>
     public partial class SearchCategoriesViewModel(CategoryService cs, SearchService ss) : BaseViewModel
@@ -25,7 +25,7 @@ namespace SquoundApp.ViewModels
         // Responsible for managing the current search criteria.
         private readonly SearchService searchService = ss ?? throw new ArgumentNullException(nameof(ss));
 
-        // Responsible for retrieving product categories from the REST API.
+        // Responsible for retrieving item categories from the REST API.
         private readonly CategoryService categoryService = cs ?? throw new ArgumentNullException(nameof(cs));
 
         //
@@ -55,7 +55,7 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Retrieves product categories from the category service and populates the CategoryList.
+        /// Retrieves item categories from the category service and populates the CategoryList.
         /// This method is called by the CoarseSearchPage's OnAppearing method.
         /// </summary>
         /// <returns></returns>
@@ -63,8 +63,8 @@ namespace SquoundApp.ViewModels
         {
             // Check if the view model is already busy fetching data.
             // This prevents multiple simultaneous fetch operations which could
-            // lead to performance issues or unexpected behavior.
-            // This is a common pattern to avoid re-entrancy issues in async methods.
+            // lead to performance issues or unexpected behaviour.
+            // This is a common pattern to avoid re-entry issues in async methods.
             if (IsBusy)
                 return;
 
@@ -81,8 +81,8 @@ namespace SquoundApp.ViewModels
                 // and to prevent the user from initiating another fetch operation while one is already in progress.
                 IsBusy = true;
 
-                // Retrieve product categories from the category service.
-                // This method is expected to return a list of product categories asynchronously.
+                // Retrieve item categories from the category service.
+                // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
                 var categories = await categoryService.GetDataAsync();
 

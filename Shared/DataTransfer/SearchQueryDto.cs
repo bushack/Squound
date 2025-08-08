@@ -3,7 +3,7 @@
 
 namespace Shared.DataTransfer
 {
-    public enum ProductSortOption
+    public enum ItemSortOption
     {
         //Relevance = 0, : TODO
         PriceAsc = 1,
@@ -12,7 +12,7 @@ namespace Shared.DataTransfer
         NameDesc = 4,
     }
 
-    public class ProductQueryDto : IValidatableObject
+    public class SearchQueryDto : IValidatableObject
     {
         // Limits for string properties.
         public const int MinimumStringLength = 3;
@@ -43,30 +43,30 @@ namespace Shared.DataTransfer
         /// <summary>
         /// Gets or sets the the method used for sorting operations.
         /// </summary>
-        public ProductSortOption SortBy { get; set; } = ProductSortOption.PriceAsc;
+        public ItemSortOption SortBy { get; set; } = ItemSortOption.PriceAsc;
 
         /// <summary>
-        /// Gets or sets the unique identifier for the product.
+        /// Gets or sets the unique identifier for the item.
         /// </summary>
-        [Range(1, long.MaxValue, ErrorMessage = nameof(ProductId) + RangeErrorMessage)]
-        public long? ProductId { get; set; } = null;
+        [Range(1, long.MaxValue, ErrorMessage = nameof(ItemId) + RangeErrorMessage)]
+        public long? ItemId { get; set; } = null;
 
         /// <summary>
-        /// Gets or sets the name of the product category.
+        /// Gets or sets the name of the item category.
         /// </summary>
         [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Category) + StringLengthErrorMessage)]
         [RegularExpression(AlphabeticRegex, ErrorMessage = AlphabeticRegexErrorMessage)]
         public string? Category { get; set; } = null;
 
         /// <summary>
-        /// Gets or sets the name of the product subcategory.
+        /// Gets or sets the name of the item subcategory.
         /// </summary>
         [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Subcategory) + StringLengthErrorMessage)]
         [RegularExpression(AlphabeticRegex, ErrorMessage = AlphabeticRegexErrorMessage)]
         public string? Subcategory { get; set; } = null;
 
         /// <summary>
-        /// Gets or sets the name of the product manufacturer.
+        /// Gets or sets the name of the item manufacturer.
         /// </summary>
         [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Manufacturer) + StringLengthErrorMessage)]
         [RegularExpression(AlphanumericRegex, ErrorMessage = AlphanumericRegexErrorMessage)]
@@ -98,7 +98,7 @@ namespace Shared.DataTransfer
         public int PageNumber { get; set; } = 1;
 
         /// <summary>
-        /// Gets or sets the maximum number of products to return per page.
+        /// Gets or sets the maximum number of items to return per page.
         /// </summary>
         [Range(MinimumPageSize, MaximumPageSize, ErrorMessage = nameof(PageSize) + RangeErrorMessage)]
         public int PageSize { get; set; } = 10;
@@ -112,9 +112,9 @@ namespace Shared.DataTransfer
             var queryString = string.Empty;
 
             // If the Id is provided, we are looking for one specific
-            // product and therefore all other filters are irrelevant.
-            if (this.ProductId is not null)
-                return queryString += $"productid={this.ProductId}";
+            // item and therefore all other filters are irrelevant.
+            if (this.ItemId is not null)
+                return queryString += $"itemid={this.ItemId}";
 
             // Append the category, manufacturer, keyword, and price filters if they are set.
             if (string.IsNullOrEmpty(this.Category) is false)

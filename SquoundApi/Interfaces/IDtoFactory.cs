@@ -7,6 +7,6 @@ namespace SquoundApi.Interfaces
 {
     public interface IDtoFactory
     {
-        public ProductDto CreateProductDto(ProductModel model);
+        public ItemDto CreateItemDto(ItemModel item);
     }
 }

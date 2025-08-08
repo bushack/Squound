@@ -18,7 +18,7 @@ public partial class RefinedSearchPage : ContentPage
 
         if (BindingContext is RefinedSearchViewModel viewModel)
         {
-            // Every time the page appears we fetch the products matching the current criteria from the REST API.
+            // Every time the page appears we fetch the items matching the current criteria from the REST API.
             viewModel.ApplyQueryCommand.Execute(null);
         }
     }

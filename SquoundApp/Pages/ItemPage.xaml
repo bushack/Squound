@@ -5,15 +5,15 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
-             x:Class="SquoundApp.Pages.ProductListingPage"
-             x:DataType="viewmodels:ProductListingViewModel">
+             x:Class="SquoundApp.Pages.ItemPage"
+             x:DataType="viewmodels:ItemViewModel">
 
     <ScrollView>
         <VerticalStackLayout>
             <views:BasicHeaderView/>
 
             <!-- Carousel of images -->
-            <CarouselView ItemsSource="{Binding Product.Images}"
+            <CarouselView ItemsSource="{Binding Item.Images}"
                           IndicatorView="Indicator"
                           HeightRequest="500"
                           Margin="0, 0, 0, 10"
@@ -46,14 +46,14 @@
                 <!-- Stack Name + Manufacturer (Left Column) -->
                 <VerticalStackLayout Grid.Column="0">
                     <Label Style="{StaticResource Headline}"
-                           Text="{Binding Product.Name}"/>
+                           Text="{Binding Item.Name}"/>
                     <Label Style="{StaticResource SubHeadline}"
-                           Text="{Binding Product.Manufacturer}"/>
+                           Text="{Binding Item.Manufacturer}"/>
                 </VerticalStackLayout>
 
                 <!-- Price Label (Right Column) -->
                 <Label Style="{StaticResource Headline}"
-                           Text="{Binding Product.Price, StringFormat='{0:C}'}"
+                           Text="{Binding Item.Price, StringFormat='{0:C}'}"
                            HorizontalOptions="End"
                            HorizontalTextAlignment="End"
                            Margin="20, 0, 20, 5"
@@ -62,7 +62,7 @@
 
             <!-- Description Below -->
             <Label Style="{StaticResource MediumText}"
-                   Text="{Binding Product.Description}"
+                   Text="{Binding Item.Description}"
                    BackgroundColor="Transparent"/>
 
             <Label Style="{StaticResource MediumText}"

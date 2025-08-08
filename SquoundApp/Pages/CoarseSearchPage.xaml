@@ -32,7 +32,7 @@
         <!-- Row 0 : Displays the page title, category search bar and the sort and filter buttons -->
         <views:AdvancedHeaderView Grid.Row="0"/>
 
-        <!-- Row 1 : Displays the vertically scrollable list of product categories -->
+        <!-- Row 1 : Displays the vertically scrollable list of item categories -->
         <CollectionView Grid.Row="1"
                         BackgroundColor="Transparent"
                         ItemsLayout="VerticalList"
@@ -43,7 +43,7 @@
                         IsVisible="{Binding IsNotBusy}"
                         IsEnabled="{Binding IsNotBusy}">
 
-            <!-- Entry to allow users to bypass the coarse search and directly search for products -->
+            <!-- Entry to allow users to bypass the coarse search and directly search for items -->
             <CollectionView.Header>
                 <Entry Placeholder="Search"
                        Margin="0, 0, 0, 10"/>

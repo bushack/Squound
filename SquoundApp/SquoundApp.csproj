@@ -149,8 +149,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Pages\ProductListingPage.xaml.cs">
-	    <DependentUpon>ProductListingPage.xaml</DependentUpon>
+	  <Compile Update="Pages\ItemPage.xaml.cs">
+	    <DependentUpon>ItemPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\RefinedSearchPage.xaml.cs">
 	    <DependentUpon>RefinedSearchPage.xaml</DependentUpon>

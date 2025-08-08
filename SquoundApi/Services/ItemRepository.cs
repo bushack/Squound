@@ -4,61 +4,61 @@ using SquoundApi.Models;
 
 namespace SquoundApi.Services
 {
-    public class ProductRepository : IProductRepository
+    public class ItemRepository : IItemRepository
     {
-        private readonly List<ProductModel> productList = new();
+        private readonly List<ItemModel> itemList = [];
 
-        public ProductRepository()
+        public ItemRepository()
         {
             //InitializeData();
         }
 
-        public bool DoesProductExist(long id)
+        public bool DoesItemExist(long id)
         {
-            return productList.Any(product => product.ProductId == id);
+            return itemList.Any(item => item.ItemId == id);
         }
 
-        public IEnumerable<ProductModel> All
+        public IEnumerable<ItemModel> All
         {
             get
             {
-                return productList;
+                return itemList;
             }
         }
-        public IEnumerable<ProductModel> Get(long id)
+        public IEnumerable<ItemModel> Get(long id)
         {
-            var product = this.Find(id);
+            var item = this.Find(id);
 
-            if (product == null)
+            if (item == null)
             {
-                // If no product is found, return an empty enumerable.
-                return Enumerable.Empty<ProductModel>();
+                // If no item is found, return an empty enumerable.
+                return Enumerable.Empty<ItemModel>();
             }
 
-            // Return a list containing the single found product.
-            return new List<ProductModel> { product };
+            // Return a list containing the single found item.
+            return new List<ItemModel> { item };
         }
 
-        public ProductModel? Find(long id)
+        public ItemModel? Find(long id)
         {
-            return productList.FirstOrDefault(product => product.ProductId == id);
+            return itemList.FirstOrDefault(item => item.ItemId == id);
         }
 
-        public void Insert(ProductModel product)
+        public void Insert(ItemModel item)
         {
-            productList.Add(product);
+            itemList.Add(item);
         }
 
-        public void Update(ProductModel product)
+        public void Update(ItemModel item)
         {
-            var productToUpdate = this.Find(product.ProductId);
+            var itemToUpdate = this.Find(item.ItemId);
 
-            if (productToUpdate != null)
+            if (itemToUpdate != null)
             {
-                var index = productList.IndexOf(productToUpdate);
+                var index = itemList.IndexOf(itemToUpdate);
 
-                productList.RemoveAt(index);
-                productList.Insert(index, product);
+                itemList.RemoveAt(index);
+                itemList.Insert(index, item);
             }
         }
 
@@ -68,7 +68,7 @@ namespace SquoundApi.Services
 
             if (productToDelete != null)
             {
-                productList.Remove(productToDelete);
+                itemList.Remove(productToDelete);
             }
         }
 

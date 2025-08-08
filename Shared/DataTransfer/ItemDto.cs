@@ -3,14 +3,14 @@
 
 namespace Shared.DataTransfer
 {
-    public class ProductDto
+    public class ItemDto
     {
         public ObservableCollection<string> Images { get; set; } = [];
 
         /// <summary>
-        /// ProductId is the primary key for the ProductDto.
+        /// ItemId is the primary key for the ItemDto.
         /// </summary>
-        public long ProductId { get; set; } = -1;
+        public long ItemId { get; set; } = -1;
 
         public string Name { get; set; } = string.Empty;
 
@@ -23,7 +23,7 @@ namespace Shared.DataTransfer
         public int Quantity { get; set; } = 0;
 
         /// <summary>
-        /// Returns the URL of the product's primary image or a default image if none are available.
+        /// Returns the URL of the item's primary image or a default image if none are available.
         /// </summary>
         public string PrimaryImageUrl { get => Images?.FirstOrDefault() ?? "default_product.png"; }
     }

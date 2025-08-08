@@ -21,7 +21,7 @@ builder.Services.AddDbContext<DatabaseContext>
     (options => options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Squound;Trusted_Connection=True;"));
 
 // Add services to the container.
-builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+builder.Services.AddSingleton<IItemRepository, ItemRepository>();
 builder.Services.AddSingleton<IDtoFactory, DtoFactory>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

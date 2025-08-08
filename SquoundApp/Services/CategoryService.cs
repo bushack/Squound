@@ -28,7 +28,7 @@ namespace SquoundApp.Services
 
 
         /// <summary>
-        /// Asynchronously retrieves a list of product categories from a REST API.
+        /// Asynchronously retrieves a list of item categories from a REST API.
         /// </summary>
         /// <returns></returns>
         public async Task<List<CategoryDto>> GetDataAsync()
@@ -47,21 +47,21 @@ namespace SquoundApp.Services
 
 
         /// <summary>
-        /// Internal method that retrieves product categories from REST API.
+        /// Internal method that retrieves item categories from REST API.
         /// </summary>
         /// <returns></returns>
         private async Task<List<CategoryDto>> LoadDataAsync()
         {
             // For the release version of the project we will set the base address for the HttpService
             // This is useful if you are making multiple requests to the same base URL.
-            // For example "https://squound.azure.net/api/products/";
+            // For example "https://squound.azure.net/api/items/";
 
             // URL of debug REST service (Android does not support https://localhost:5001)
             // This URL is used for debugging purposes on Android devices or emulators.
             string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "192.168.1.114" : "localhost";
             string Scheme = DeviceInfo.Platform == DevicePlatform.Android ? "http" : "https";
             string Port = DeviceInfo.Platform == DevicePlatform.Android ? "5050" : "7184";
-            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/products/categories";
+            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/categories";
 
             try
             {

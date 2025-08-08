@@ -18,7 +18,7 @@ namespace SquoundApp
         {
             // Set the default culture to en-GB (UK).
             // This ensures currencies will always be displayed as
-            // UK Pound Sterling (unless overridded elsewhere).
+            // UK Pound Sterling (unless overridden elsewhere).
             var culture = new CultureInfo("en-GB");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
@@ -38,17 +38,17 @@ namespace SquoundApp
             // Register services and view models
             // This is where you register your services and view models with the dependency injection container.
             // This allows you to inject them into your pages and view models.
-            // For example, ProductService is registered as a singleton service,
-            // which means there will be only one instance of ProductService throughout the app.
-            // ProductSearchViewModel is registered as a singleton view model,
-            // which means there will be only one instance of ProductSearchViewModel throughout the app.
-            // ProductListingViewModel is registered as a transient view model,
+            // For example, ItemService is registered as a singleton service,
+            // which means there will be only one instance of ItemService throughout the app.
+            // RefinedSearchViewModel is registered as a singleton view model,
+            // which means there will be only one instance of RefinedSearchViewModel throughout the app.
+            // ItemViewModel is registered as a transient view model,
             // which means a new instance will be created each time it is requested.
 
             // Pages
             builder.Services.AddTransient<AboutPage>();
             builder.Services.AddSingleton<HomePage>();
-            builder.Services.AddTransient<ProductListingPage>();
+            builder.Services.AddTransient<ItemPage>();
             builder.Services.AddSingleton<CoarseSearchPage>();
             builder.Services.AddSingleton<RefinedSearchPage>();
             builder.Services.AddTransient<SellPage>();
@@ -57,7 +57,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<AboutService>();
             builder.Services.AddSingleton<CategoryService>();
             builder.Services.AddSingleton<HttpService>();
-            builder.Services.AddSingleton<ProductService>();
+            builder.Services.AddSingleton<ItemService>();
             builder.Services.AddSingleton<SearchService>();
             builder.Services.AddSingleton<SellService>();
 
@@ -73,7 +73,7 @@ namespace SquoundApp
             builder.Services.AddTransient<AboutViewModel>();
             builder.Services.AddSingleton<CoarseSearchViewModel>();
             builder.Services.AddSingleton<FooterViewModel>();
-            builder.Services.AddTransient<ProductListingViewModel>();
+            builder.Services.AddTransient<ItemViewModel>();
             builder.Services.AddSingleton<RefinedSearchViewModel>();
             builder.Services.AddSingleton<SearchCategoriesViewModel>();
             builder.Services.AddTransient<SellViewModel>();

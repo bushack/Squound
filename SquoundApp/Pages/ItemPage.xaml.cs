@@ -2,9 +2,9 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.Pages;
 
-public partial class ProductListingPage : ContentPage
+public partial class ItemPage : ContentPage
 {
-	public ProductListingPage(ProductListingViewModel viewModel)
+	public ItemPage(ItemViewModel viewModel)
 	{
 		InitializeComponent();
 
@@ -15,12 +15,12 @@ public partial class ProductListingPage : ContentPage
     {
         // This method is called when the page is navigated to.
         // You can use it to perform any actions that need to be done when the page is displayed.
-        // For example, you can update the title of the page based on the product name.
+        // For example, you can update the title of the page based on the Item name.
         base.OnNavigatedTo(args);
 
-		if (BindingContext is ProductListingViewModel viewModel && viewModel.Product != null)
+		if (BindingContext is ItemViewModel viewModel && viewModel.Item != null)
 		{
-			Title = viewModel.Product.Name;
+			Title = viewModel.Item.Name;
 		}
     }
 
@@ -28,10 +28,10 @@ public partial class ProductListingPage : ContentPage
 	{
 		base.OnAppearing();
 
-		if (BindingContext is ProductListingViewModel viewModel && viewModel.Product != null)
+		if (BindingContext is ItemViewModel viewModel && viewModel.Item != null)
 		{
             // Default text to be used as Email subject and/or WhatsApp message.
-            var message = $"I%20am%20interested%20in%20the%20{viewModel.Product.Name}";
+            var message = $"I%20am%20interested%20in%20the%20{viewModel.Item.Name}";
 
             EmailButton.Url = $"mailto:squoundstuff@gmail.com" +
 				$"?subject={message}" +		// Email subject.

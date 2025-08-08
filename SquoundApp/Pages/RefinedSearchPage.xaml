@@ -7,15 +7,23 @@
              x:Class="SquoundApp.Pages.RefinedSearchPage"
              x:DataType="viewmodels:RefinedSearchViewModel">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, Auto, *">
 
         <!-- Row 0 : Displays the page title, category search bar and the sort and filter buttons -->
-        <views:AdvancedHeaderView Grid.Row="0"/>
+        <Label Grid.Row="0"
+               Text="{Binding Title}"
+               Style="{StaticResource SmallText}"
+               BackgroundColor="Transparent"
+               VerticalOptions="Center" 
+               HorizontalOptions="Center"
+               Margin="15"/>
 
-        <!-- Row 1 : Displays the vertically scrollable collection of products -->
-        <CollectionView Grid.Row="1"
+        <views:SortAndFilterView Grid.Row="1"/>
+
+        <!-- Row 1 : Displays the vertically scrollable collection of items -->
+        <CollectionView Grid.Row="2"
                         BackgroundColor="Transparent"
-                        ItemsSource="{Binding ProductList}"
+                        ItemsSource="{Binding ItemList}"
                         ItemsLayout="VerticalGrid, 2"
                         SelectionMode="None"
                         IsVisible="{Binding IsNotBusy}"
@@ -24,8 +32,8 @@
             <!-- Page header -->
             <CollectionView.Header>
 
-                <!-- Displays the number of products returned by the search -->
-                <Label Text="{Binding TotalItems, StringFormat='{0} items found'}"
+                <!-- Displays the number of items returned by the search -->
+                <Label Text="{Binding ItemsFound}"
                        TextColor="Black" Margin="0, 8, 0, 2"
                        Style="{StaticResource SmallText}"
                        HorizontalOptions="Center" VerticalOptions="Center"/>
@@ -34,23 +42,23 @@
 
             <!-- Defines the layout of a single item in the scrollable collection -->
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="dtos:ProductDto">
+                <DataTemplate x:DataType="dtos:ItemDto">
                     <Grid>
                         <Border BackgroundColor="Transparent"
                                 Margin="10"
                                 StrokeShape="RoundRectangle 15"
                                 StrokeThickness="0">
 
-                            <!-- The border defines a tappable area that allows the user to access a specific product -->
+                            <!-- The border defines a tappable area that allows the user to access a specific item -->
                             <Border.GestureRecognizers>
                                 <!-- TapGestureRecognizer is used to handle tap events on each item in the CollectionView -->
-                                <!-- The CommandParameter is set to the current Product item (.), allowing the command to access it -->
-                                <!-- The Command is bound to a command in the RefinedSearchViewModel that retrieves the product details -->
+                                <!-- The CommandParameter is set to the current item (.), allowing the command to access it -->
+                                <!-- The Command is bound to a command in the RefinedSearchViewModel that retrieves the item details -->
                                 <!-- In this case, the program will walk up the stack of the binding chain, starting with the -->
-                                <!-- Product, until it finds a RefinedSearchViewModel, inside which is the command (GetProduct) -->
+                                <!-- Item, until it finds a RefinedSearchViewModel, inside which is the command (GetItem) -->
                                 <!-- that it should execute -->
                                 <TapGestureRecognizer CommandParameter="{Binding .}"
-                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RefinedSearchViewModel}}, x:DataType=viewmodels:RefinedSearchViewModel, Path=GoToProductListingCommand}"/>
+                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RefinedSearchViewModel}}, x:DataType=viewmodels:RefinedSearchViewModel, Path=GoToItemPageCommand}"/>
                             </Border.GestureRecognizers>
 
                             <!-- Main image with rounded corners -->
@@ -83,7 +91,9 @@
                     <!-- Pagination section -->
                     <Grid ColumnDefinitions="*, *, *"
                           ColumnSpacing="20"
-                          Padding="20, 10">
+                          Padding="20, 10"
+                          IsEnabled="{Binding HasAnyItems}"
+                          IsVisible="{Binding HasAnyItems}">
 
                         <!-- Previous page button -->
                         <Button Grid.Column="0"
@@ -96,7 +106,7 @@
                         <!-- Label displaying current page number, eg. "Page 1 of 10" -->
                         <Label Grid.Column="0"
                                Grid.ColumnSpan="3"
-                               Text="{Binding PaginationInfo}"
+                               Text="{Binding PageNumber}"
                                Style="{StaticResource SmallText}"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"/>
@@ -117,7 +127,7 @@
             </CollectionView.Footer>
         </CollectionView>
 
-        <!-- Bind the page's DataType (ProductSearchViewModel) to the LoadingOverlayView -->
+        <!-- Bind the page's DataType (RefinedSearchViewModel) to the LoadingOverlayView -->
         <!-- This prompts the LoadingOverlayView to display itself when the ViewModel's IsBusy property is true -->
         <views:LoadingOverlayView Grid.Row="0" Grid.RowSpan="2" x:DataType="{Binding .}"/>
 
