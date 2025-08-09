@@ -1,9 +1,4 @@
 ﻿
-general
-	- does each api request need it's own service (productService, categoryService, etc)
-	- better to have single "RestApiService" capable of performing multiple requests/fetches
-	- ask!
-
 pagination
 	- check functionality of Previous Page and Next Page when more items added to database
 
@@ -11,11 +6,25 @@ logging
 	- both dubug and release?
 	- ask!
 
+navigation
+	- ask!
+
+images
+	- JPEG for photos of furniture — compress to ~70–80% quality for balance
+	- Strip metadata (EXIF) to save space
+	- ThumbnailUrl → 200×200px - 240x240px JPEG/WebP (~20 KB)
+	- MediumUrl → 800–1200 px for detail page (~100–300 KB)
+	- LargeUrl → full resolution for zoom (~500 KB–2 MB, loaded on demand only when zooming)
+
 search
-	- incorporate keyword search
+	- fetch thumbnail image(s) only
+	- incorporate keyword search? or remove in favour of below
 	- add functionality to CoarseSearchPage user search entry
+	- sort and filter menu
+		- sort by recommended
+		- filter by dimensions
+		- filter by material
 
 item page
-	- fetch chosen product by id OnAppearing()
 	- fetch images of assorted sizes
 	- allow user to tap to zoom and scroll all images

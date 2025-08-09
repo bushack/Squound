@@ -42,7 +42,7 @@
 
             <!-- Defines the layout of a single item in the scrollable collection -->
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="dtos:ItemDto">
+                <DataTemplate x:DataType="dtos:ItemSummaryDto">
                     <Grid>
                         <Border BackgroundColor="Transparent"
                                 Margin="10"
@@ -67,7 +67,7 @@
                                         StrokeThickness="0"
                                         HorizontalOptions="Fill"
                                         VerticalOptions="Center">
-                                    <Image Source="{Binding PrimaryImageUrl}"
+                                    <Image Source="{Binding PrimaryThumbnailUrl}"
                                            Aspect="AspectFit"/>
                                 </Border>
 

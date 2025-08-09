@@ -12,37 +12,40 @@ namespace SquoundApp.Services
     {
         private readonly HttpService httpService = httpService;
 
-        List<ItemDto> itemList = [];
+        List<ItemSummaryDto> itemList = [];
+
+        // For the release version of the project we will set the base address for the HttpService
+        // This is useful if you are making multiple requests to the same base URL.
+        // For example "https://squound.azure.net/api/items/";
+
+        // URL of debug REST service (Android does not support https://localhost:5001)
+        // This URL is used for debugging purposes on Android devices or emulators.
+        private readonly string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "192.168.1.114" : "localhost";
+        private readonly string Scheme = DeviceInfo.Platform == DevicePlatform.Android ? "http" : "https";
+        private readonly string Port = DeviceInfo.Platform == DevicePlatform.Android ? "5050" : "7184";
+        //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?category=None&manufacturer=Austinsuite&sortby=PriceDesc&pagenumber=1&pagesize=10";
+        //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?category=Lighting&sortby=PriceAsc&pagenumber=1&pagesize=10";
+        //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/12";
+        //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/all";
+
 
         /// <summary>
-        /// Asynchronously retrieves a list of items from a REST API.
+        /// Asynchronously retrieves a list of item summaries that match the query criteria from a REST API.
         /// </summary>
-        /// <param name="query"></param>
+        /// <param name="query">Search criteria to submit to the REST API.</param>
         /// <returns></returns>
-        public async Task<SearchResponseDto<ItemDto>> GetItemsRestApi(SearchQueryDto query)
+        public async Task<SearchResponseDto<ItemSummaryDto>> GetItemSummariesAsync(SearchQueryDto query)
         {
-            // For the release version of the project we will set the base address for the HttpService
-            // This is useful if you are making multiple requests to the same base URL.
-            // For example "https://squound.azure.net/api/items/";
-
-            // URL of debug REST service (Android does not support https://localhost:5001)
-            // This URL is used for debugging purposes on Android devices or emulators.
-            string LocalHostUrl = DeviceInfo.Platform == DevicePlatform.Android ? "192.168.1.114" : "localhost";
-            string Scheme = DeviceInfo.Platform == DevicePlatform.Android ? "http" : "https";
-            string Port = DeviceInfo.Platform == DevicePlatform.Android ? "5050" : "7184";
-            string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{query.ToQueryString()}";
-            //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?category=None&manufacturer=Austinsuite&sortby=PriceDesc&pagenumber=1&pagesize=10";
-            //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?category=Lighting&sortby=PriceAsc&pagenumber=1&pagesize=10";
-            //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/12";
-            //string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/all";
-
             try
             {
                 // Always clear the internal list prior to initiating a new fetch.
                 itemList.Clear();
 
+                // TODO : Want to set the base URL in the HttpService prior to release version.
+                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{query.ToQueryString()}";
+
                 // Fetch the items from the REST API using the provided SearchResponseDto.
-                var response = await httpService.GetJsonAsync<SearchResponseDto<ItemDto>>(RestUrl);
+                var response = await httpService.GetJsonAsync<SearchResponseDto<ItemSummaryDto>>(url);
 
                 // If the response is not null, assign it's payload to the internal list.
                 if (response is not null)
@@ -52,7 +55,7 @@ namespace SquoundApp.Services
 
                 // Return the response with it's payload of items
                 // if not null, else a default empty result.
-                return response ?? new SearchResponseDto<ItemDto>();
+                return response ?? new SearchResponseDto<ItemSummaryDto>();
             }
 
             catch (Exception ex)
@@ -62,7 +65,42 @@ namespace SquoundApp.Services
                 await Shell.Current.DisplayAlert("Error", "Unable to fetch items from the server", "OK");
 
                 // Return a default empty result on exception.
-                return new SearchResponseDto<ItemDto>();
+                return new SearchResponseDto<ItemSummaryDto>();
+            }
+        }
+
+
+        /// <summary>
+        /// Asynchronously retrieves a single ItemDetailDto that matches the itemId from a REST API.
+        /// </summary>
+        /// <param name="itemId">Identifier of the ItemDetailDto to retrieve.</param>
+        /// <returns></returns>
+        public async Task<ItemDetailDto> GetItemDetailAsync(long itemId)
+        {
+            try
+            {
+                // TODO : Want to set the base URL in the HttpService prior to release version.
+                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/{itemId}";
+
+                var response = await httpService.GetJsonAsync<ItemDetailDto>(url);
+
+                if (response is not null)
+                {
+                    return response;
+                }
+
+                // Return a default empty result if no item found.
+                else return new ItemDetailDto();
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching item: {ex.Message}");
+
+                await Shell.Current.DisplayAlert("Error", "Unable to fetch item from the server", "OK");
+
+                // Return a default empty result on exception.
+                return new ItemDetailDto();
             }
         }
 
@@ -72,12 +110,12 @@ namespace SquoundApp.Services
         /// <param name="url">URL of the file to read.
         /// Example: "https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json"</param>
         /// <returns></returns>
-        public async Task<List<ItemDto>?> GetItemsRemoteJson(string url)
+        public async Task<List<ItemSummaryDto>?> GetItemsRemoteJson(string url)
         {
             if (itemList?.Count > 0)
                 return itemList;
 
-            var response = await httpService.GetJsonAsync<List<ItemDto>>(url);
+            var response = await httpService.GetJsonAsync<List<ItemSummaryDto>>(url);
 
             if (response != null)
             {
@@ -93,7 +131,7 @@ namespace SquoundApp.Services
         /// <param name="filename">Relative filepath of the file to read.
         /// Example: "Resources/Raw/items.json"</param>
         /// <returns></returns>
-        public async Task<List<ItemDto>?> GetItemsEmbeddedJson(string filename)
+        public async Task<List<ItemSummaryDto>?> GetItemsEmbeddedJson(string filename)
         {
             if (itemList?.Count > 0)
                 return itemList;
@@ -103,7 +141,7 @@ namespace SquoundApp.Services
             using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
             using var reader = new StreamReader(stream);
             var contents = await reader.ReadToEndAsync();
-            var items = JsonSerializer.Deserialize<List<ItemDto>>(contents);
+            var items = JsonSerializer.Deserialize<List<ItemSummaryDto>>(contents);
 
             if (items != null)
             {

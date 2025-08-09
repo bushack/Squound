@@ -7,7 +7,7 @@ namespace SquoundApi.Data
 {
     public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbContext(options)
     {
-        // Map the internal data models to the database tables.
+        // Map the API data models to the SQL database tables.
 
         public DbSet<ItemModel> Items { get; set; }
         public DbSet<ItemImageModel> ItemImages { get; set; }

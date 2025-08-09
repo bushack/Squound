@@ -8,98 +8,129 @@
              x:Class="SquoundApp.Pages.ItemPage"
              x:DataType="viewmodels:ItemViewModel">
 
-    <ScrollView>
-        <VerticalStackLayout>
-            <views:BasicHeaderView/>
+    <Grid>
+        
+        <!-- Page content -->
+        <ScrollView IsEnabled="{Binding IsNotBusy}"
+                    IsVisible="{Binding IsNotBusy}">
+            
+            <VerticalStackLayout>
+                <views:BasicHeaderView/>
 
-            <!-- Carousel of images -->
-            <CarouselView ItemsSource="{Binding Item.Images}"
-                          IndicatorView="Indicator"
-                          HeightRequest="500"
-                          Margin="0, 0, 0, 10"
-                          PeekAreaInsets="0">
-                <CarouselView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Horizontal"
-                                               ItemSpacing="0"
-                                               SnapPointsType="MandatorySingle"
-                                               SnapPointsAlignment="Start"/>
-                </CarouselView.ItemsLayout>
-                <CarouselView.ItemTemplate>
-                    <DataTemplate x:DataType="x:String">
-                        <Image Source="{Binding .}"
-                                       Aspect="AspectFill"
-                                       HorizontalOptions="Fill"
-                                       VerticalOptions="Fill"/>
-                    </DataTemplate>
-                </CarouselView.ItemTemplate>
-            </CarouselView>
-            <IndicatorView x:Name="Indicator"
-                           IndicatorColor="{StaticResource Gray200}"
-                           SelectedIndicatorColor="{StaticResource SquoundTangerine}"
-                           HorizontalOptions="Center"
-                           Margin="0, 0, 0, 10"/>
+                <!-- Carousel of images -->
+                <CarouselView ItemsSource="{Binding Item.LargeImageUrls}"
+                              IndicatorView="Indicator"
+                              HeightRequest="500"
+                              Margin="0, 0, 0, 10"
+                              PeekAreaInsets="0">
+                    
+                    <CarouselView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal"
+                                            ItemSpacing="0"
+                                            SnapPointsType="MandatorySingle"
+                                            SnapPointsAlignment="Start"/>
+                    </CarouselView.ItemsLayout>
+                    
+                    <CarouselView.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Image Source="{Binding .}"
+                                    Aspect="AspectFill"
+                                    HorizontalOptions="Fill"
+                                    VerticalOptions="Fill"/>
+                        </DataTemplate>
+                    </CarouselView.ItemTemplate>
+                </CarouselView>
+                
+                <IndicatorView x:Name="Indicator"
+                               IndicatorColor="{StaticResource Gray200}"
+                               SelectedIndicatorColor="{StaticResource SquoundTangerine}"
+                               HorizontalOptions="Center"
+                               Margin="0, 0, 0, 10"/>
 
-            <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
-            <Grid ColumnDefinitions="*, Auto"
-                  RowDefinitions="Auto">
+                <!-- Grid for Name + Manufacturer (Left) and Price (Right) -->
+                <Grid ColumnDefinitions="*, Auto"
+                      RowDefinitions="Auto">
 
-                <!-- Stack Name + Manufacturer (Left Column) -->
-                <VerticalStackLayout Grid.Column="0">
+                    <!-- Name + Manufacturer (Left Column) -->
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Style="{StaticResource Headline}"
+                               Text="{Binding Item.Name}"/>
+                        <Label Style="{StaticResource SubHeadline}"
+                               Text="{Binding Item.Manufacturer}"/>
+                    </VerticalStackLayout>
+
+                    <!-- Price (Right Column) -->
                     <Label Style="{StaticResource Headline}"
-                           Text="{Binding Item.Name}"/>
-                    <Label Style="{StaticResource SubHeadline}"
-                           Text="{Binding Item.Manufacturer}"/>
-                </VerticalStackLayout>
+                            Text="{Binding Item.Price, StringFormat='{0:C}'}"
+                            HorizontalOptions="End"
+                            HorizontalTextAlignment="End"
+                            Margin="20, 0, 20, 5"
+                            Grid.Column="1"/>
+                </Grid>
 
-                <!-- Price Label (Right Column) -->
-                <Label Style="{StaticResource Headline}"
-                           Text="{Binding Item.Price, StringFormat='{0:C}'}"
-                           HorizontalOptions="End"
-                           HorizontalTextAlignment="End"
-                           Margin="20, 0, 20, 5"
-                           Grid.Column="1"/>
-            </Grid>
+                <!-- Description -->
+                <Label Style="{StaticResource MediumText}"
+                       Text="{Binding Item.Description}"
+                       BackgroundColor="Transparent"
+                       IsVisible="True"/>
 
-            <!-- Description Below -->
-            <Label Style="{StaticResource MediumText}"
-                   Text="{Binding Item.Description}"
-                   BackgroundColor="Transparent"/>
+                <!-- Material -->
+                <Label Style="{StaticResource MediumText}"
+                       Text="{Binding Material}"
+                       BackgroundColor="Transparent"
+                       IsVisible="{Binding HasMaterial}"/>
 
-            <Label Style="{StaticResource MediumText}"
+                <!-- Dimensions -->
+                <Label Style="{StaticResource MediumText}"
+                       Text="{Binding Dimensions}"
+                       BackgroundColor="Transparent"
+                       IsVisible="{Binding HasDimensions}"/>
+
+                <!-- Contact us -->
+                <Label Style="{StaticResource MediumText}"
                        Text="Contact us about this item"
                        BackgroundColor="Transparent"
                        HorizontalOptions="Center"
                        Margin="0, 0, 0, 5"/>
 
-            <FlexLayout HorizontalOptions="Fill"
+                <!-- Contact buttons -->
+                <FlexLayout HorizontalOptions="Fill"
                             VerticalOptions="Center"
                             JustifyContent="SpaceEvenly"
                             BackgroundColor="Transparent"
                             HeightRequest="50"
                             Margin="0, 0, 0, 10">
 
-                <custom:HyperlinkImageButton x:Name="CallButton" Source="call.png" Padding="10" CornerRadius="20">
-                    <custom:HyperlinkImageButton.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                    </custom:HyperlinkImageButton.Behaviors>
-                </custom:HyperlinkImageButton>
+                    <!-- Call -->
+                    <custom:HyperlinkImageButton x:Name="CallButton" Source="call.png" Padding="10" CornerRadius="20">
+                        <custom:HyperlinkImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                        </custom:HyperlinkImageButton.Behaviors>
+                    </custom:HyperlinkImageButton>
 
-                <custom:HyperlinkImageButton x:Name="EmailButton" Source="email.png" Padding="10" CornerRadius="20">
-                    <custom:HyperlinkImageButton.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                    </custom:HyperlinkImageButton.Behaviors>
-                </custom:HyperlinkImageButton>
+                    <!-- Email -->
+                    <custom:HyperlinkImageButton x:Name="EmailButton" Source="email.png" Padding="10" CornerRadius="20">
+                        <custom:HyperlinkImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                        </custom:HyperlinkImageButton.Behaviors>
+                    </custom:HyperlinkImageButton>
 
-                <custom:HyperlinkImageButton x:Name="WhatsAppButton" Source="whatsapp.png" Padding="10" CornerRadius="20">
-                    <custom:HyperlinkImageButton.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
-                    </custom:HyperlinkImageButton.Behaviors>
-                </custom:HyperlinkImageButton>
-            </FlexLayout>
+                    <!-- WhatsApp -->
+                    <custom:HyperlinkImageButton x:Name="WhatsAppButton" Source="whatsapp.png" Padding="10" CornerRadius="20">
+                        <custom:HyperlinkImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+                        </custom:HyperlinkImageButton.Behaviors>
+                    </custom:HyperlinkImageButton>
+                </FlexLayout>
 
-            <!-- Footer -->
-            <views:FooterView/>
+                <!-- Footer -->
+                <views:FooterView/>
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Loading indicator -->
+        <views:LoadingOverlayView x:DataType="{Binding .}"/>
+        
+    </Grid>
 </ContentPage>

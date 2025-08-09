@@ -31,7 +31,7 @@ namespace SquoundApp.ViewModels
         private readonly SearchService searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
 
         // Collection of items retrieved from the REST API based on the current search criteria.
-        public ObservableCollection<ItemDto> ItemList { get; } = [];
+        public ObservableCollection<ItemSummaryDto> ItemList { get; } = [];
 
         // For UI to display number of items found by most recent database search.
         public string ItemsFound => TotalItems == 1 ? $"{TotalItems} Item" : $"{TotalItems} Items";
@@ -180,26 +180,26 @@ namespace SquoundApp.ViewModels
                 // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json");
                 // To retrieve items from an embedded JSON file instead, use:
                 // var itemList = await itemService.GetItemsEmbeddedJson();
-                var pagedResponse = await itemService.GetItemsRestApi(searchService.CurrentQuery);
+                var response = await itemService.GetItemSummariesAsync(searchService.CurrentQuery);
 
                 // Null response from API.
-                if (pagedResponse is null)
+                if (response is null)
                 {
                     await Shell.Current.DisplayAlert("Error", "Unable to fetch data from the server", "OK");
                     return;
                 }
 
                 // Null or empty item list from API.
-                if (pagedResponse.Items is null || pagedResponse.Items.Count == 0)
+                if (response.Items is null || response.Items.Count == 0)
                 {
                     await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
                     return;
                 }
 
                 // Prepare new pagination metadata for user.
-                TotalItems  = pagedResponse.TotalItems;
-                TotalPages  = pagedResponse.TotalPages;
-                CurrentPage = pagedResponse.CurrentPage;
+                TotalItems  = response.TotalItems;
+                TotalPages  = response.TotalPages;
+                CurrentPage = response.CurrentPage;
 
                 // The foreach loop iterates over the fetched items and adds each one to the Items collection.
                 // This ensures that the UI reflects the latest data.
@@ -208,7 +208,7 @@ namespace SquoundApp.ViewModels
                 // This is particularly useful in MVVM (Model-View-ViewModel) patterns where the ViewModel
                 // holds the data and the View binds to it.
                 //ItemList.Clear();
-                foreach (var item in pagedResponse.Items)
+                foreach (var item in response.Items)
                 {
                     // Add each item to the ObservableCollection.
                     // This will trigger the UI to update and display the new items.
@@ -245,7 +245,7 @@ namespace SquoundApp.ViewModels
         /// <param name="item">Data transfer object of the item to be displayed.</param>
         /// <returns></returns>
         [RelayCommand]
-        async Task GoToItemPageAsync(ItemDto item)
+        async Task GoToItemPageAsync(ItemSummaryDto item)
         {
             if (item is null)
                 return;
@@ -254,7 +254,7 @@ namespace SquoundApp.ViewModels
             await Shell.Current.GoToAsync($"{nameof(ItemPage)}", true,
                 new Dictionary<string, object>
                 {
-                    {"Item", item}
+                    {"ItemId", item.ItemId}
                 });
         }
     }

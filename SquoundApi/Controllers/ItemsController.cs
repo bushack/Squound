@@ -1,13 +1,11 @@
-﻿using System.Diagnostics;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Shared.DataTransfer;
 using SquoundApi.Data;
 using SquoundApi.Interfaces;
 using SquoundApi.Models;
-
-using Shared.DataTransfer;
+using System.Diagnostics;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace SquoundApi.Controllers
@@ -56,11 +54,11 @@ namespace SquoundApi.Controllers
                     return NotFound(ErrorCode.Item_Does_Not_Exist.ToString());
                 }
 
-                var itemDtos = new List<Shared.DataTransfer.ItemDto>();
+                var itemDtos = new List<Shared.DataTransfer.ItemSummaryDto>();
 
                 foreach (var model in itemModels)
                 {
-                    itemDtos.Add(dtoFactory.CreateItemDto(model));
+                    itemDtos.Add(dtoFactory.CreateItemSummaryDto(model));
                 }
 
                 return Ok(itemDtos);
@@ -159,13 +157,6 @@ namespace SquoundApi.Controllers
                     .Include(predicate => predicate.Images)         // Include the Images collection for each item.
                     .AsQueryable();                                 // Convert to IQueryable for further filtering and sorting (below).
 
-                // Allows filtering by item id.
-                if (query.ItemId is not null)
-                {
-                    Debug.WriteLine($"* * * Filtering by Id: {query.ItemId} * * *");
-                    linqQuery = linqQuery.Where(predicate => (predicate.ItemId == query.ItemId));
-                }
-
                 // Filter by subcategory.
                 if (string.IsNullOrEmpty(query.Subcategory) == false)
                 {
@@ -232,18 +223,18 @@ namespace SquoundApi.Controllers
                 if (pagedResult.Count == 0)
                 {
                     Debug.WriteLine("* * * No items found * * *");
-                    return Ok(new SearchResponseDto<ItemDto>());
+                    return Ok(new SearchResponseDto<ItemSummaryDto>());
                 }
 
                 // Convert each item to ItemDto.
-                var itemDtos = new List<Shared.DataTransfer.ItemDto>();
+                var itemDtos = new List<Shared.DataTransfer.ItemSummaryDto>();
                 foreach (var item in pagedResult)
                 {
-                    itemDtos.Add(dtoFactory.CreateItemDto(item));
+                    itemDtos.Add(dtoFactory.CreateItemSummaryDto(item));
                 }
 
                 // Write metadata to response along with ItemDtos.
-                var response = new SearchResponseDto<ItemDto>
+                var response = new SearchResponseDto<ItemSummaryDto>
                 {
                     TotalItems = totalItems,
                     PageSize = query.PageSize,
@@ -271,17 +262,43 @@ namespace SquoundApi.Controllers
         /// <summary>
         /// Endpoint to retrieve a specific item by its ID.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Identifier of the item to retrieve.</param>
         /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
-            var query = new SearchQueryDto
+            try
             {
-                ItemId = id
-            };
+                Debug.WriteLine($"* * * Retrieving item {id}... * * *");
 
-            return await this.Search(query);
+                // Attempt to fetch the item from the database.
+                var itemModel = await dbContext.Items           // Read from the Items table in the database.
+                    .Include(i => i.Category)                   // Include the Category entity for each item.
+                    .Include(i => i.Subcategory)                // Include the Subcategory entity for each item.
+                    .Include(i => i.Images)                     // Include the Images collection for each item.
+                    .FirstOrDefaultAsync(i => i.ItemId == id);
+
+                // Item not found.
+                if (itemModel is null)
+                {
+                    Debug.WriteLine($"* * * Item {id} not found * * *");
+                    return NotFound(ErrorCode.Item_Does_Not_Exist.ToString());
+                }
+
+                // Item found, convert to DTO and return.
+                return Ok(dtoFactory.CreateItemDetailDto(itemModel));
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"* * * Error fetching item detail: {ex.Message} * * *");
+                return BadRequest(ErrorCode.Undefined_Error.ToString());
+            }
+
+            finally
+            {
+                Debug.WriteLine($"* * * Database query complete * * *");
+            }
         }
 
         [HttpPost]
