@@ -10,6 +10,7 @@ navigation
 	- ask!
 
 images
+	- must have at least one default image if none are returned by API to avoid crash
 	- JPEG for photos of furniture — compress to ~70–80% quality for balance
 	- Strip metadata (EXIF) to save space
 	- ThumbnailUrl → 200×200px - 240x240px JPEG/WebP (~20 KB)
@@ -26,5 +27,6 @@ search
 		- filter by material
 
 item page
+	- must have at least one default image if none are returned by API to avoid crash
 	- fetch images of assorted sizes
 	- allow user to tap to zoom and scroll all images

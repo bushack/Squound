@@ -7,6 +7,7 @@ using System.Diagnostics;
 using SquoundApp.Extensions;
 using SquoundApp.Pages;
 using SquoundApp.Services;
+using SquoundApp.Utilities;
 
 using Shared.DataTransfer;
 
@@ -120,7 +121,10 @@ namespace SquoundApp.ViewModels
         private async Task GoToRefinedSearchPageAsync()
         {
             // Navigate to the RefinedSearchPage and pass the selected category as a parameter.
-            await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
+            //await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
+
+            var navService = ServiceLocator.GetService<NavigationService>();
+            await navService.GoToAsync(nameof(RefinedSearchPage));
         }
     }
 }

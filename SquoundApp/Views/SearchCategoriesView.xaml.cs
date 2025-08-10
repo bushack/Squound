@@ -1,9 +1,10 @@
 using SquoundApp.Pages;
+using SquoundApp.Services;
 using SquoundApp.ViewModels;
 using SquoundApp.Utilities;
 
-namespace SquoundApp.Views;
 
+namespace SquoundApp.Views;
 
 public partial class SearchCategoriesView : ContentView
 {
@@ -61,7 +62,10 @@ public partial class SearchCategoriesView : ContentView
                 //viewModel.Category = category;
 
                 // Then navigate to the RefinedSearchPage.
-                await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
+                //await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
+
+                //var navService = ServiceLocator.GetService<NavigationService>();
+                //await navService.GoToAsync(nameof(RefinedSearchPage));
             }
         }
     }

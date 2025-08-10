@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using SquoundApp.Models;
 using SquoundApp.Pages;
 using SquoundApp.Services;
+using SquoundApp.Utilities;
+
 
 namespace SquoundApp.ViewModels
 {
@@ -55,7 +58,10 @@ namespace SquoundApp.ViewModels
                 await FetchDataAsync();
 
             // This is the call that initiates the change of page.
-            await Shell.Current.GoToAsync(nameof(SellPage));
+            //await Shell.Current.GoToAsync(nameof(SellPage));
+
+            var navService = ServiceLocator.GetService<NavigationService>();
+            await navService.GoToAsync(nameof(SellPage));
         }
 
         /*

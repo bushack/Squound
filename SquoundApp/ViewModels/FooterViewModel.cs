@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+
 using SquoundApp.Pages;
+using SquoundApp.Services;
+using SquoundApp.Utilities;
 
 
 namespace SquoundApp.ViewModels
@@ -19,7 +22,10 @@ namespace SquoundApp.ViewModels
                 return;
 
             // This is the call that initiates the change of page.
-            await Shell.Current.GoToAsync(nameof(AboutPage));
+            //await Shell.Current.GoToAsync(nameof(AboutPage));
+
+            var navService = ServiceLocator.GetService<NavigationService>();
+            await navService.GoToAsync(nameof(AboutPage));
         }
 
         [RelayCommand]
@@ -30,7 +36,10 @@ namespace SquoundApp.ViewModels
                 return;
 
             // This is the call that initiates the change of page.
-            await Shell.Current.GoToAsync(nameof(SellPage));
+            //await Shell.Current.GoToAsync(nameof(SellPage));
+
+            var navService = ServiceLocator.GetService<NavigationService>();
+            await navService.GoToAsync(nameof(SellPage));
         }
     }
 }

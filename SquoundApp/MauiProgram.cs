@@ -58,6 +58,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<CategoryService>();
             builder.Services.AddSingleton<HttpService>();
             builder.Services.AddSingleton<ItemService>();
+            builder.Services.AddSingleton<NavigationService>();
             builder.Services.AddSingleton<SearchService>();
             builder.Services.AddSingleton<SellService>();
 

@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using SquoundApp.Pages;
 using SquoundApp.Services;
+using SquoundApp.Utilities;
 
 using Shared.DataTransfer;
 using Shared.StateMachine;
-using SquoundApp.Pages;
 
 
 namespace SquoundApp.ViewModels
@@ -341,7 +342,10 @@ namespace SquoundApp.ViewModels
         {
             HideMenus();
 
-            await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
+            //await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
+
+            var navService = ServiceLocator.GetService<NavigationService>();
+            await navService.GoToAsync(nameof(RefinedSearchPage));
         }
 
 

@@ -6,6 +6,7 @@ using System.Diagnostics;
 
 using SquoundApp.Pages;
 using SquoundApp.Services;
+using SquoundApp.Utilities;
 
 using Shared.DataTransfer;
 
@@ -251,10 +252,17 @@ namespace SquoundApp.ViewModels
                 return;
 
             // Navigate to the ItemPage and pass the selected item as a parameter.
-            await Shell.Current.GoToAsync($"{nameof(ItemPage)}", true,
+            //await Shell.Current.GoToAsync($"{nameof(ItemPage)}", true,
+            //    new Dictionary<string, object>
+            //    {
+            //        {"ItemId", item.ItemId}
+            //    });
+
+            var navService = ServiceLocator.GetService<NavigationService>();
+            await navService.GoToAsync(nameof(ItemPage), true,
                 new Dictionary<string, object>
                 {
-                    {"ItemId", item.ItemId}
+                    {"ItemId", item.ItemId }
                 });
         }
     }
