@@ -3,25 +3,18 @@ using CommunityToolkit.Mvvm.Input;
 
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.Utilities;
+using SquoundApp.States;
 
 using Shared.DataTransfer;
-using Shared.StateMachine;
 
 
 namespace SquoundApp.ViewModels
 {
     public partial class SortAndFilterViewModel : BaseViewModel
     {
-        // Singleton service managing the user's current search selection.
-        // This service can be accessed from anywhere in the application to retrieve or reset the current search criteria.
-        private readonly SearchService searchService;
-
-        // Reference to the user's current search criteria.
-        public SearchQueryDto CurrentQuery => searchService.CurrentQuery;
-
-        // Reference to the user's previous search criteria.
-        public SearchQueryDto PreviousQuery => searchService.PreviousQuery;
+        // Singleton state managing the current search parameters.
+        // This state can be accessed from anywhere in the application to retrieve or reset the current search parameters.
+        private readonly SearchState m_SearchState;
 
 
         // Variables responsible for adjusting the sort options.
@@ -78,30 +71,30 @@ namespace SquoundApp.ViewModels
         /// <summary>
         /// Constructor for the SortAndFilterViewModel class.
         /// </summary>
-        /// <param name="searchService">The <see cref="SearchService"/> instance used
-        /// to manage the user's current search selection. Cannot be null.</param>
-        public SortAndFilterViewModel(SearchService searchService)
+        /// <param name="searchState">The <see cref="SearchState"/> instance used
+        /// to manage the current search parameters. Cannot be null.</param>
+        public SortAndFilterViewModel(SearchState searchState)
         {
-            this.searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
+            m_SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
         }
 
 
         // Partial methods to handle changes in filter properties.
         partial void OnCategoryChanged(string value)
         {
-            CurrentQuery.Category = value;
+            m_SearchState.Category = value;
         }
         partial void OnSubcategoryChanged(string value)
         {
-            CurrentQuery.Subcategory = value;
+            m_SearchState.Subcategory = value;
         }
         partial void OnManufacturerChanged(string value)
         {
-            CurrentQuery.Manufacturer = value;
+            m_SearchState.Manufacturer = value;
         }
         partial void OnKeywordChanged(string value)
         {
-            CurrentQuery.Keyword = value;
+            m_SearchState.Keyword = value;
         }
         partial void OnMinimumPriceChanged(string value)
         {
@@ -114,30 +107,30 @@ namespace SquoundApp.ViewModels
                 // If the parsed price is out of the valid range.
                 if (price < 0 || price > (decimal)SearchQueryDto.PracticalMaximumPrice)
                 {
-                    CurrentQuery.MinPrice = null;
+                    m_SearchState.MinPrice = null;
                 }
 
                 // If the parsed price is greater than the maximum price.
                 // Set both minimum and maximum prices to the parsed price.
-                else if (price > CurrentQuery.MaxPrice)
+                else if (price > m_SearchState.MaxPrice)
                 {
-                    CurrentQuery.MinPrice = price;
-                    CurrentQuery.MaxPrice = price;
+                    m_SearchState.MinPrice = price;
+                    m_SearchState.MaxPrice = price;
 
-                    RestoreQueryToUserInterface(CurrentQuery);
+                    RestoreQueryToUserInterface(m_SearchState.CopyOfCurrentQuery);
                 }
 
                 // If the parsed price is valid and within the range.
                 else
                 {
-                    CurrentQuery.MinPrice = price;
+                    m_SearchState.MinPrice = price;
                 }
             }
 
             else
             {
                 // If parsing fails.
-                CurrentQuery.MinPrice = null;
+                m_SearchState.MinPrice = null;
             }
         }
         partial void OnMaximumPriceChanged(string value)
@@ -151,47 +144,47 @@ namespace SquoundApp.ViewModels
                 // If the parsed price is out of the valid range.
                 if (price < 0 || price > (decimal)SearchQueryDto.PracticalMaximumPrice)
                 {
-                    CurrentQuery.MaxPrice = null;
+                    m_SearchState.MaxPrice = null;
                 }
 
                 // If the parsed price is less than the minimum price.
                 // Set both minimum and maximum prices to the parsed price.
-                else if (price < CurrentQuery.MinPrice)
+                else if (price < m_SearchState.MinPrice)
                 {
-                    CurrentQuery.MinPrice = price;
-                    CurrentQuery.MaxPrice = price;
+                    m_SearchState.MinPrice = price;
+                    m_SearchState.MaxPrice = price;
 
-                    RestoreQueryToUserInterface(CurrentQuery);
+                    RestoreQueryToUserInterface(m_SearchState.CopyOfCurrentQuery);
                 }
 
                 // If the parsed price is valid and within the range.
                 else
                 {
-                    CurrentQuery.MaxPrice = price;
+                    m_SearchState.MaxPrice = price;
                 }
             }
 
             else
             {
                 // If parsing fails.
-                CurrentQuery.MaxPrice = null;
+                m_SearchState.MaxPrice = null;
             }
         }
         partial void OnSortByNameAscendingChanged(bool value)
         {
-            CurrentQuery.SortBy = value ? ItemSortOption.NameAsc : CurrentQuery.SortBy;
+            m_SearchState.SortBy = value ? ItemSortOption.NameAsc : m_SearchState.SortBy;
         }
         partial void OnSortByNameDescendingChanged(bool value)
         {
-            CurrentQuery.SortBy = value ? ItemSortOption.NameDesc : CurrentQuery.SortBy;
+            m_SearchState.SortBy = value ? ItemSortOption.NameDesc : m_SearchState.SortBy;
         }
         partial void OnSortByPriceAscendingChanged(bool value)
         {
-            CurrentQuery.SortBy = value ? ItemSortOption.PriceAsc : CurrentQuery.SortBy;
+            m_SearchState.SortBy = value ? ItemSortOption.PriceAsc : m_SearchState.SortBy;
         }
         partial void OnSortByPriceDescendingChanged(bool value)
         {
-            CurrentQuery.SortBy = value ? ItemSortOption.PriceDesc : CurrentQuery.SortBy;
+            m_SearchState.SortBy = value ? ItemSortOption.PriceDesc : m_SearchState.SortBy;
         }
 
 
@@ -356,7 +349,8 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         private void OnCancelButton()
         {
-            RestoreQueryToUserInterface(PreviousQuery);
+            // Present the previous search state to the user.
+            RestoreQueryToUserInterface(m_SearchState.CopyOfPreviousQuery);
 
             HideMenus();
         }
@@ -369,9 +363,10 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         private void OnResetButton()
         {
-            searchService.ResetSearch();
+            m_SearchState.ResetSearch();
 
-            RestoreQueryToUserInterface(CurrentQuery);
+            // Present the newly reset search state to the user.
+            RestoreQueryToUserInterface(m_SearchState.CopyOfCurrentQuery);
         }
 
 

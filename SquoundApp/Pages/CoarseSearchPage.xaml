@@ -10,13 +10,13 @@
 
     <ContentPage.Resources>
         <DataTemplate x:Key="CategoryTemplate" x:DataType="dtos:CategoryDto">
-            <Border Padding="10" BackgroundColor="LightBlue" Margin="5">
+            <Border Padding="10" BackgroundColor="Transparent" Margin="5">
                 <Label Text="{Binding Name}" FontSize="20"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="SubcategoryTemplate" x:DataType="dtos:SubcategoryDto">
-            <Border Padding="10" BackgroundColor="LightGreen" Margin="5">
+            <Border Padding="10" Background="Transparent" Margin="5">
                 <Label Text="{Binding Name}" FontSize="18"/>
             </Border>
         </DataTemplate>

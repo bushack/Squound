@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using SquoundApp.Models;
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.Utilities;
 
 
 namespace SquoundApp.ViewModels

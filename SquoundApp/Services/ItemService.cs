@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 
-using SquoundApp.Utilities;
+using SquoundApp.Exceptions;
+using SquoundApp.States;
 
 using Shared.DataTransfer;
 
@@ -10,9 +11,9 @@ namespace SquoundApp.Services
 {
     public class ItemService(HttpService httpService)
     {
-        private readonly HttpService httpService = httpService;
+        private readonly HttpService m_HttpService = httpService ?? throw new ArgumentNullException(nameof(httpService));
 
-        List<ItemSummaryDto> itemList = [];
+        SearchResponseDto<ItemSummaryDto> m_Response = new();
 
         // For the release version of the project we will set the base address for the HttpService
         // This is useful if you are making multiple requests to the same base URL.
@@ -32,40 +33,53 @@ namespace SquoundApp.Services
         /// <summary>
         /// Asynchronously retrieves a list of item summaries that match the query criteria from a REST API.
         /// </summary>
-        /// <param name="query">Search criteria to submit to the REST API.</param>
+        /// <param name="searchState"></param>
         /// <returns></returns>
-        public async Task<SearchResponseDto<ItemSummaryDto>> GetItemSummariesAsync(SearchQueryDto query)
+        public async Task<SearchResponseDto<ItemSummaryDto>> GetItemSummariesAsync(SearchState searchState)
         {
+            // Search state has not changed since last API call.
+            if (searchState.HasNotChanged)
+            {
+                // Return the cached response from the previous API call.
+                return m_Response;
+            }
+
+            // Search state has changed - fetch new data.
             try
             {
-                // Always clear the internal list prior to initiating a new fetch.
-                itemList.Clear();
-
                 // TODO : Want to set the base URL in the HttpService prior to release version.
-                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{query.ToQueryString()}";
+                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{searchState.ToQueryString()}";
 
                 // Fetch the items from the REST API using the provided SearchResponseDto.
-                var response = await httpService.GetJsonAsync<SearchResponseDto<ItemSummaryDto>>(url);
+                var response = await m_HttpService.GetJsonAsync<SearchResponseDto<ItemSummaryDto>>(url);
 
-                // If the response is not null, assign it's payload to the internal list.
-                if (response is not null)
+                // If successful, cache the data and reset the search state.
+                if (response is null)
                 {
-                    itemList = response.Items;
+                    throw new ApiResponseException("API response JSON was null.");
                 }
 
-                // Return the response with it's payload of items
-                // if not null, else a default empty result.
-                return response ?? new SearchResponseDto<ItemSummaryDto>();
+                m_Response = response;
+
+                // The itemList now contains data that matches the most up-to-date search state.
+                searchState.ResetChangedFlag();
+
+                // Always return the cached data.
+                // If an API call fails the response will contain cached data and the search state is still flagged as changed.
+                // This will initiate a new API call whenever the app hits an a call point, such as a change of page or by
+                // clicking on the 'Apply' button in the SortAndFilterView.
+                // If no API call ever succeeds a default SearchResponseDto will be returned.
+                return m_Response;
             }
 
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching items: {ex.Message}");
+                Debug.WriteLine($"{nameof(ItemService)} error fetching items: {ex.Message}");
 
-                await Shell.Current.DisplayAlert("Error", "Unable to fetch items from the server", "OK");
+                await Shell.Current.DisplayAlert($"{nameof(ItemService)} Error", "Invalid response from server.", "OK");
 
                 // Return a default empty result on exception.
-                return new SearchResponseDto<ItemSummaryDto>();
+                return m_Response ?? new SearchResponseDto<ItemSummaryDto>();
             }
         }
 
@@ -108,22 +122,22 @@ namespace SquoundApp.Services
         /// Asynchronously retrieves a list of items from a remote JSON file.
         /// </summary>
         /// <param name="url">URL of the file to read.
-        /// Example: "https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json"</param>
-        /// <returns></returns>
-        public async Task<List<ItemSummaryDto>?> GetItemsRemoteJson(string url)
-        {
-            if (itemList?.Count > 0)
-                return itemList;
+        ///// Example: "https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json"</param>
+        ///// <returns></returns>
+        //public async Task<List<ItemSummaryDto>?> GetItemsRemoteJson(string url)
+        //{
+        //    if (itemList?.Count > 0)
+        //        return itemList;
 
-            var response = await httpService.GetJsonAsync<List<ItemSummaryDto>>(url);
+        //    var response = await httpService.GetJsonAsync<List<ItemSummaryDto>>(url);
 
-            if (response != null)
-            {
-                itemList = response;
-            }
+        //    if (response != null)
+        //    {
+        //        itemList = response;
+        //    }
 
-            return itemList;
-        }
+        //    return itemList;
+        //}
 
         /// <summary>
         /// Asynchronously retrieves a list of items from an embedded JSON file.
@@ -131,24 +145,24 @@ namespace SquoundApp.Services
         /// <param name="filename">Relative filepath of the file to read.
         /// Example: "Resources/Raw/items.json"</param>
         /// <returns></returns>
-        public async Task<List<ItemSummaryDto>?> GetItemsEmbeddedJson(string filename)
-        {
-            if (itemList?.Count > 0)
-                return itemList;
+        //public async Task<List<ItemSummaryDto>?> GetItemsEmbeddedJson(string filename)
+        //{
+        //    if (itemList?.Count > 0)
+        //        return itemList;
 
-            // Else read from embedded JSON file
-            // See https://www.youtube.com/watch?v=DuNLR_NJv8U
-            using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
-            using var reader = new StreamReader(stream);
-            var contents = await reader.ReadToEndAsync();
-            var items = JsonSerializer.Deserialize<List<ItemSummaryDto>>(contents);
+        //    // Else read from embedded JSON file
+        //    // See https://www.youtube.com/watch?v=DuNLR_NJv8U
+        //    using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
+        //    using var reader = new StreamReader(stream);
+        //    var contents = await reader.ReadToEndAsync();
+        //    var items = JsonSerializer.Deserialize<List<ItemSummaryDto>>(contents);
 
-            if (items != null)
-            {
-                itemList = items;
-            }
+        //    if (items != null)
+        //    {
+        //        itemList = items;
+        //    }
 
-            return itemList;
-        }
+        //    return itemList;
+        //}
     }
 }

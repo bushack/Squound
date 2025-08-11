@@ -6,9 +6,9 @@ using System.Threading;
 
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.Utilities;
 using SquoundApp.ViewModels;
 using SquoundApp.Views;
+using SquoundApp.States;
 
 namespace SquoundApp
 {
@@ -59,8 +59,10 @@ namespace SquoundApp
             builder.Services.AddSingleton<HttpService>();
             builder.Services.AddSingleton<ItemService>();
             builder.Services.AddSingleton<NavigationService>();
-            builder.Services.AddSingleton<SearchService>();
             builder.Services.AddSingleton<SellService>();
+
+            // States
+            builder.Services.AddSingleton<SearchState>();
 
             // Views
             builder.Services.AddSingleton<AdvancedHeaderView>();

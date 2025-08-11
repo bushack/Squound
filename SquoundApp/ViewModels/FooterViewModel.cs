@@ -2,7 +2,6 @@
 
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.Utilities;
 
 
 namespace SquoundApp.ViewModels

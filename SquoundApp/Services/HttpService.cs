@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 
 
-namespace SquoundApp.Utilities
+namespace SquoundApp.Services
 {
     public class HttpService
     {

@@ -7,9 +7,9 @@ using System.Diagnostics;
 using SquoundApp.Extensions;
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.Utilities;
 
 using Shared.DataTransfer;
+using SquoundApp.States;
 
 
 namespace SquoundApp.ViewModels
@@ -17,17 +17,17 @@ namespace SquoundApp.ViewModels
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="cs">The <see cref="CategoryService"/> instance used
+    /// <param name="categoryService">The <see cref="CategoryService"/> instance used
     /// to retrieve item category data. Cannot be null.</param>
-    /// <param name="ss">The <see cref="SearchService"/> instance used
+    /// <param name="searchState">The <see cref="SearchState"/> instance used
     /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class SearchCategoriesViewModel(CategoryService cs, SearchService ss) : BaseViewModel
+    public partial class SearchCategoriesViewModel(CategoryService categoryService, SearchState searchState) : BaseViewModel
     {
-        // Responsible for managing the current search criteria.
-        private readonly SearchService searchService = ss ?? throw new ArgumentNullException(nameof(ss));
-
         // Responsible for retrieving item categories from the REST API.
-        private readonly CategoryService categoryService = cs ?? throw new ArgumentNullException(nameof(cs));
+        private readonly CategoryService m_CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+
+        // Responsible for managing the current search criteria.
+        private readonly SearchState m_SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
 
         //
         private bool isInitialized = false;
@@ -47,7 +47,7 @@ namespace SquoundApp.ViewModels
             if (value is not null && value is CategoryDto category)
             {
                 // Write the selected category to the current search.
-                searchService.CurrentQuery.Category = category.Name;
+                m_SearchState.Category = category.Name;
 
                 // Navigate to the RefinedSearchPage.
                 GoToRefinedSearchPageAsync().FireAndForget();
@@ -85,7 +85,7 @@ namespace SquoundApp.ViewModels
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var categories = await categoryService.GetDataAsync();
+                var categories = await m_CategoryService.GetDataAsync();
 
                 if (categories == null)
                     return;

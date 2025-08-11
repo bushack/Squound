@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
 using SquoundApp.Interfaces;
-using SquoundApp.Utilities;
 
 using Shared.DataTransfer;
 

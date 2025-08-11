@@ -1,5 +1,5 @@
 using SquoundApp.ViewModels;
-using SquoundApp.Utilities;
+using SquoundApp.Services;
 
 namespace SquoundApp.Views;
 

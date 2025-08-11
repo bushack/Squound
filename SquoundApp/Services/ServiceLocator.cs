@@ -1,4 +1,4 @@
-﻿namespace SquoundApp.Utilities
+﻿namespace SquoundApp.Services
 {
     public static class ServiceLocator
     {

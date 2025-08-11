@@ -7,30 +7,30 @@ using System.Diagnostics;
 using SquoundApp.Extensions;
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.Utilities;
 
 using Shared.DataTransfer;
+using SquoundApp.States;
 
 
 namespace SquoundApp.ViewModels
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="CoarseSearchViewModel"/> class
-    /// with the specified <see cref="CategoryService"/> and <see cref="SearchService"/>.
+    /// with the specified <see cref="CategoryService"/> and <see cref="SearchState"/>.
     /// </summary>
-    /// <param name="cs">The <see cref="CategoryService"/> instance used
+    /// <param name="categoryService">The <see cref="CategoryService"/> instance used
     /// to retrieve item category data. Cannot be null.</param>
-    /// <param name="ss">The <see cref="SearchService"/> instance used
+    /// <param name="searchState">The <see cref="SearchState"/> instance used
     /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class CoarseSearchViewModel(CategoryService cs, SearchService ss) : BaseViewModel
+    public partial class CoarseSearchViewModel(CategoryService categoryService, SearchState searchState) : BaseViewModel
     {
-        // Responsible for managing the current search criteria.
-        private readonly SearchService searchService = ss ?? throw new ArgumentNullException(nameof(ss));
-
         // Responsible for retrieving item categories and subcategories from the REST API.
         // This data is presented to the user on the CoarseSearchPage, where the user can select a category
         // or subcategory before progressing to the RefinedSearchPage to further hone in on specific items.
-        private readonly CategoryService categoryService = cs ?? throw new ArgumentNullException(nameof(cs));
+        private readonly CategoryService m_CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+
+        // Responsible for managing the current search criteria.
+        private readonly SearchState m_SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
 
         // Collection of categories to display on the coarse search page.
         // This collection is populated by the ApplyQueryAsync method.
@@ -96,7 +96,7 @@ namespace SquoundApp.ViewModels
                     ItemList.Add(subcategory);
 
                     // Write the selected category to the current search.
-                    searchService.CurrentQuery.Category = category.Name;
+                    m_SearchState.Category = category.Name;
 
                     // Update the UI to reflect the selected category and its subcategories.
                     Title = category.Name;
@@ -112,7 +112,7 @@ namespace SquoundApp.ViewModels
                     //Title = string.Empty;
 
                     // Write the selected subcategory to the current search.
-                    searchService.CurrentQuery.Subcategory = subcategory.Name;
+                    m_SearchState.Subcategory = subcategory.Name;
 
                     // If the selected item is a subcategory, navigate to the RefinedSearchPage.
                     // This is where the user can perform a more detailed search based on the selected subcategory.
@@ -148,7 +148,7 @@ namespace SquoundApp.ViewModels
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var categories = await categoryService.GetDataAsync();
+                var categories = await m_CategoryService.GetDataAsync();
 
                 if (categories == null)
                     return;

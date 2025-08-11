@@ -1,4 +1,4 @@
-using SquoundApp.Utilities;
+using SquoundApp.Services;
 using SquoundApp.ViewModels;
 
 namespace SquoundApp.Views;
