@@ -17,7 +17,7 @@
 
         <views:SpacerView/>
 
-        <views:SearchCategoriesView/>
+        <views:QuickSearchView/>
 
         <views:SpacerView/>
 

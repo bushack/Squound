@@ -184,23 +184,23 @@ namespace SquoundApp.ViewModels
                 var response = await m_ItemService.GetItemSummariesAsync(m_SearchState);
 
                 // Null response from API.
-                if (response is null)
+                if (response.Success is false)
                 {
-                    await Shell.Current.DisplayAlert("Error", "Unable to fetch data from the server", "OK");
+                    await Shell.Current.DisplayAlert("Error", response.ErrorMessage, "OK");
                     return;
                 }
 
                 // Null or empty item list from API.
-                if (response.Items is null || response.Items.Count == 0)
+                if (response.Data is null || response.Data.TotalItems == 0)
                 {
                     await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
                     return;
                 }
 
                 // Prepare new pagination metadata for user.
-                TotalItems  = response.TotalItems;
-                TotalPages  = response.TotalPages;
-                CurrentPage = response.CurrentPage;
+                TotalItems  = response.Data.TotalItems;
+                TotalPages  = response.Data.TotalPages;
+                CurrentPage = response.Data.CurrentPage;
 
                 // The foreach loop iterates over the fetched items and adds each one to the Items collection.
                 // This ensures that the UI reflects the latest data.
@@ -209,7 +209,7 @@ namespace SquoundApp.ViewModels
                 // This is particularly useful in MVVM (Model-View-ViewModel) patterns where the ViewModel
                 // holds the data and the View binds to it.
                 //ItemList.Clear();
-                foreach (var item in response.Items)
+                foreach (var item in response.Data.Items)
                 {
                     // Add each item to the ObservableCollection.
                     // This will trigger the UI to update and display the new items.

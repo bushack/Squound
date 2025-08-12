@@ -11,7 +11,7 @@
         <views:SearchHeadingView Margin="0, 10, 0, 10"/>
 
         <!-- Horizontal scrollbar of item categories -->
-        <views:SearchCategoriesView/>
+        <views:QuickSearchView/>
 
         <!-- Displays the sort and filter buttons and their menus -->
         <views:SortAndFilterView/>

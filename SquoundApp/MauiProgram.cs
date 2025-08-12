@@ -2,7 +2,6 @@
 using CommunityToolkit.Maui;
 
 using System.Globalization;
-using System.Threading;
 
 using SquoundApp.Pages;
 using SquoundApp.Services;
@@ -34,6 +33,21 @@ namespace SquoundApp
                     fonts.AddFont("BarlowSemiCondensed-Regular.ttf", "HeadlineFont");
                     fonts.AddFont("PublicSans-SemiBold.ttf", "RegularFont");
                 });
+
+
+            // Logging
+            builder.Logging.ClearProviders();
+#if DEBUG
+            // Output log to Console (stdout) and Debug window during development.
+            builder.Logging.SetMinimumLevel(LogLevel.Debug);        // Logs Debug, Information, Warning, Error and Critical messages
+            builder.Logging.AddConsole();                           // Console stdout
+            builder.Logging.AddDebug();                             // For IDE debugging only
+#else
+            // Output log to Console (stdout) only during production (release).
+            builder.Logging.SetMinimumLevel(LogLevel.Warning);      // Logs Warning, Error and Critical messages only
+            builder.Logging.AddConsole();                           // Keep console logs for production(release) diagnostics
+            // TODO : Optional logging to, eg. file, remote, etc.
+#endif
 
             // Register services and view models
             // This is where you register your services and view models with the dependency injection container.
@@ -69,7 +83,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<BasicHeaderView>();
             builder.Services.AddSingleton<FooterView>();
             builder.Services.AddSingleton<SearchHeadingView>();
-            builder.Services.AddSingleton<SearchCategoriesView>();
+            builder.Services.AddSingleton<QuickSearchView>();
             builder.Services.AddSingleton<SortAndFilterView>();
 
             // View Models
@@ -78,13 +92,9 @@ namespace SquoundApp
             builder.Services.AddSingleton<FooterViewModel>();
             builder.Services.AddTransient<ItemViewModel>();
             builder.Services.AddSingleton<RefinedSearchViewModel>();
-            builder.Services.AddSingleton<SearchCategoriesViewModel>();
+            builder.Services.AddSingleton<QuickSearchViewModel>();
             builder.Services.AddTransient<SellViewModel>();
             builder.Services.AddSingleton<SortAndFilterViewModel>();
-
-#if DEBUG
-            builder.Logging.AddDebug();
-#endif
 
             return builder.Build();
         }

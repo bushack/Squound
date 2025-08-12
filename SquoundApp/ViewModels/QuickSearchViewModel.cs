@@ -21,7 +21,7 @@ namespace SquoundApp.ViewModels
     /// to retrieve item category data. Cannot be null.</param>
     /// <param name="searchState">The <see cref="SearchState"/> instance used
     /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class SearchCategoriesViewModel(CategoryService categoryService, SearchState searchState) : BaseViewModel
+    public partial class QuickSearchViewModel(CategoryService categoryService, SearchState searchState) : BaseViewModel
     {
         // Responsible for retrieving item categories from the REST API.
         private readonly CategoryService m_CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));

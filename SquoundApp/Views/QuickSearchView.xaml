@@ -4,8 +4,8 @@
              xmlns:dtos="clr-namespace:Shared.DataTransfer;assembly=Shared"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
-             x:Class="SquoundApp.Views.SearchCategoriesView"
-             x:DataType="viewmodels:SearchCategoriesViewModel">
+             x:Class="SquoundApp.Views.QuickSearchView"
+             x:DataType="viewmodels:QuickSearchViewModel">
 
     <ContentView.Resources>
         <DataTemplate x:Key="CategoryTemplate" x:DataType="dtos:CategoryDto">
