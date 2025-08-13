@@ -11,10 +11,10 @@ namespace SquoundApp.Services
 {
     public class ItemService(HttpService httpService, ILogger<ItemService> logger)
     {
-        private readonly ILogger<ItemService> m_Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        private readonly HttpService m_HttpService = httpService ?? throw new ArgumentNullException(nameof(httpService));
+        private readonly ILogger<ItemService> _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly HttpService _HttpService = httpService ?? throw new ArgumentNullException(nameof(httpService));
 
-        SearchResponseDto<ItemSummaryDto> m_Response = new();
+        SearchResponseDto<ItemSummaryDto> _Response = new();
 
         // For the release version of the project we will set the base address for the HttpService
         // This is useful if you are making multiple requests to the same base URL.
@@ -36,15 +36,15 @@ namespace SquoundApp.Services
         /// </summary>
         /// <param name="searchState"></param>
         /// <returns></returns>
-        public async Task<Result<SearchResponseDto<ItemSummaryDto>>> GetItemSummariesAsync(SearchState searchState)
+        public async Task<Result<SearchResponseDto<ItemSummaryDto>>> GetDataAsync(SearchState searchState)
         {
             // Search state has not changed since last API call.
             if (searchState.HasNotChanged)
             {
-                m_Logger.LogDebug("Search state unchanged. Returning cached data.");
+                _Logger.LogDebug("Search state unchanged. Returning cached data.");
 
                 // Return the cached response from the previous API call.
-                return Result<SearchResponseDto<ItemSummaryDto>>.Ok(m_Response);
+                return Result<SearchResponseDto<ItemSummaryDto>>.Ok(_Response);
             }
 
             // Search state has changed - fetch new data.
@@ -53,38 +53,36 @@ namespace SquoundApp.Services
                 // TODO : Want to set the base URL in the HttpService prior to release version.
                 var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{searchState.ToQueryString()}";
 
-                m_Logger.LogInformation("Retrieving items from {url}", url);
+                _Logger.LogInformation("Retrieving items from {url}", url);
 
                 // Fetch the items from the REST API.
-                var response = await m_HttpService.GetJsonAsync<SearchResponseDto<ItemSummaryDto>>(url)
-                    ?? throw new ApiResponseException("API response JSON is null.");
+                var response = await _HttpService.GetJsonAsync<SearchResponseDto<ItemSummaryDto>>(url)
+                    ?? throw new ApiResponseException("API retrieve JSON is failed.");
 
                 // Cache data in the event that a duplicate search is performed - lowers API workload.
-                m_Response = response;
+                _Response = response.Data
+                    ?? throw new ApiResponseException("API response data is null.");
 
                 // Member m_Response now contains data that matches the most up-to-date search state.
                 searchState.ResetChangedFlag();
 
-                m_Logger.LogInformation("Successfully retrieved {m_Response.TotalItems} item(s).", m_Response.TotalItems);
+                _Logger.LogInformation("Successfully retrieved {Count} item(s).", _Response.Items.Count);
 
-                return Result<SearchResponseDto<ItemSummaryDto>>.Ok(m_Response);
+                return Result<SearchResponseDto<ItemSummaryDto>>.Ok(_Response);
+            }
+
+            catch (ApiResponseException ex)
+            {
+                _Logger.LogWarning(ex, "Invalid response from server.");
+                
+                return Result<SearchResponseDto<ItemSummaryDto>>.Fail("Invalid response from server.");
             }
 
             catch (Exception ex)
             {
-                if (ex is ApiResponseException apiEx)
-                {
-                    m_Logger.LogWarning(apiEx, "Invalid response from server.");
-
-                    return Result<SearchResponseDto<ItemSummaryDto>>.Fail("Invalid response from server.");
-                }
-
-                else
-                {
-                    m_Logger.LogWarning(ex, "Undefined error from server.");
-
-                    return Result<SearchResponseDto<ItemSummaryDto>>.Fail("Undefined error from server.");
-                }
+                _Logger.LogWarning(ex, "Undefined error from server.");
+                
+                return Result<SearchResponseDto<ItemSummaryDto>>.Fail("Undefined error from server.");
             }
         }
 
@@ -94,39 +92,39 @@ namespace SquoundApp.Services
         /// </summary>
         /// <param name="itemId">Identifier of the ItemDetailDto to retrieve.</param>
         /// <returns></returns>
-        public async Task<Result<ItemDetailDto>> GetItemDetailAsync(long itemId)
+        public async Task<Result<ItemDetailDto>> GetDataAsync(long itemId)
         {
             try
             {
                 // TODO : Want to set the base URL in the HttpService prior to release version.
                 var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/{itemId}";
 
-                m_Logger.LogInformation("Retrieving item {itemId} from {url}", itemId, url);
+                _Logger.LogInformation("Retrieving item {itemId} from {url}", itemId, url);
 
                 // Fetch the items from the REST API.
                 var response = await httpService.GetJsonAsync<ItemDetailDto>(url)
-                    ?? throw new ApiResponseException("API response JSON is null.");
+                    ?? throw new ApiResponseException("Failed to retrieve JSON content from API.");
 
-                m_Logger.LogInformation("Successfully retrieved item {response.ItemId}.", response.ItemId);
+                var data = response.Data
+                    ?? throw new ApiResponseException("JSON content retrieved from API is null.");
 
-                return Result<ItemDetailDto>.Ok(response);
+                _Logger.LogInformation("Successfully retrieved item {ItemId} from {url}.", data.ItemId, url);
+
+                return Result<ItemDetailDto>.Ok(data);
+            }
+
+            catch (ApiResponseException ex)
+            {
+                _Logger.LogWarning(ex, "Invalid response while retrieving item {itemId} from server.", itemId);
+
+                return Result<ItemDetailDto>.Fail("Invalid response from server.");
             }
 
             catch (Exception ex)
             {
-                if (ex is ApiResponseException apiEx)
-                {
-                    m_Logger.LogWarning(apiEx, "Invalid response from server.");
+                _Logger.LogWarning(ex, "Unexpected error while retrieving item {itemId} from server.", itemId);
 
-                    return Result<ItemDetailDto>.Fail("Invalid response from server.");
-                }
-
-                else
-                {
-                    m_Logger.LogWarning(ex, "Undefined error from server.");
-
-                    return Result<ItemDetailDto>.Fail("Undefined error from server.");
-                }
+                return Result<ItemDetailDto>.Fail("Unexpected error occurred while retrieving data from server.");
             }
         }
 

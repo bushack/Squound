@@ -7,10 +7,14 @@ namespace SquoundApp.Services
     {
         private readonly HttpService httpService = httpService;
 
-        public async Task<SellModel> GetHTTP()
+        public async Task<SellModel> GetDataAsync()
         {
-            return await httpService.GetJsonAsync<SellModel>(
+            var response = await httpService.GetJsonAsync<SellModel>(
                 "https://raw.githubusercontent.com/bushack/files/refs/heads/main/sell.json");
+
+            // Either return the retrieved data or a default model.
+            // TODO : Must populate the default model with appropriate information.
+            return response.Data ?? new SellModel();
         }
     }
 }

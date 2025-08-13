@@ -13,11 +13,11 @@ namespace SquoundApp.ViewModels
     [QueryProperty(nameof(ItemId), nameof(ItemId))]
     public partial class ItemViewModel(ItemService itemService, ILogger<ItemViewModel> logger) : BaseViewModel
     {
-        private readonly ILogger<ItemViewModel> m_Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly ILogger<ItemViewModel> _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         // Responsible for retrieving items from the REST API.
         // This data is presented to the user on the ItemPage, where the user can view a specific item in detail.
-        private readonly ItemService m_ItemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
+        private readonly ItemService _ItemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
 
         // Item
         [ObservableProperty]
@@ -62,7 +62,7 @@ namespace SquoundApp.ViewModels
                 IsBusy = true;
 
                 // Note that awaiting the result will unpack the ItemDetailDto from the containing Task object.
-                var response = await m_ItemService.GetItemDetailAsync(id);
+                var response = await _ItemService.GetDataAsync(id);
 
                 if (response.Success is false)
                 {
@@ -84,7 +84,7 @@ namespace SquoundApp.ViewModels
 
             catch (Exception ex)
             {
-                m_Logger.LogWarning(ex, "Undefined error while retrieving item {id} from server.", id);
+                _Logger.LogWarning(ex, "Undefined error while retrieving item {id} from server.", id);
 
                 // Display an alert to the user indicating that an error occurred while fetching data.
                 await Shell.Current.DisplayAlert(

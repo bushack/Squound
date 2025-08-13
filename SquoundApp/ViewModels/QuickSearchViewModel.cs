@@ -24,13 +24,13 @@ namespace SquoundApp.ViewModels
     public partial class QuickSearchViewModel(CategoryService categoryService, SearchState searchState) : BaseViewModel
     {
         // Responsible for retrieving item categories from the REST API.
-        private readonly CategoryService m_CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        private readonly CategoryService _CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchState m_SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
+        private readonly SearchState _SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
 
         //
-        private bool isInitialized = false;
+        private bool _IsInitialized = false;
 
         //
         [ObservableProperty]
@@ -47,7 +47,7 @@ namespace SquoundApp.ViewModels
             if (value is not null && value is CategoryDto category)
             {
                 // Write the selected category to the current search.
-                m_SearchState.Category = category.Name;
+                _SearchState.Category = category.Name;
 
                 // Navigate to the RefinedSearchPage.
                 GoToRefinedSearchPageAsync().FireAndForget();
@@ -72,8 +72,8 @@ namespace SquoundApp.ViewModels
             try
             {
                 // Ensure one-time run of initialization logic.
-                if (isInitialized) return;
-                isInitialized = true;
+                if (_IsInitialized) return;
+                    _IsInitialized = true;
 
                 // Set IsBusy to true to indicate that a fetch operation is in progress.
                 // This will typically disable UI elements that should not be interacted with
@@ -85,14 +85,24 @@ namespace SquoundApp.ViewModels
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var categories = await m_CategoryService.GetDataAsync();
+                var response = await _CategoryService.GetDataAsync();
 
-                if (categories == null)
+                if (response.Success is false)
+                {
+                    await Shell.Current.DisplayAlert("Error", response.ErrorMessage, "OK");
                     return;
+                }
+
+                // Null or empty item list from API.
+                if (response.Data is null || response.Data.Count == 0)
+                {
+                    await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
+                    return;
+                }
 
                 // By assigning the fetched categories to the CategoryList, a notification is triggered
                 // that the collection has changed and the OnCategoryListChanged method is called.
-                CategoryList = new ObservableCollection<CategoryDto>(categories);
+                CategoryList = [.. response.Data];
             }
 
             catch (Exception ex)

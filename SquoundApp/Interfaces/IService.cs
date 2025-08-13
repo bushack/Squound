@@ -1,9 +1,10 @@
-﻿
+﻿using Shared.Logging;
+
 
 namespace SquoundApp.Interfaces
 {
     public interface IService<T>
     {
-        Task<List<T>> GetDataAsync();
+        Task<Result<List<T>>> GetDataAsync();
     }
 }

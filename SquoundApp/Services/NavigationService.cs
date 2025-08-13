@@ -1,19 +1,22 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.Logging;
 
 
 namespace SquoundApp.Services
 {
     public class NavigationService
     {
-        private readonly SemaphoreSlim navigationLock = new(1, 1);
-        private readonly List<string> navigationHistory = [];
+        private readonly ILogger<NavigationService> _Logger;
+        private readonly SemaphoreSlim _NavigationLock = new(1, 1);
+        private readonly List<string> _NavigationHistory = [];
 
-        public IReadOnlyList<string> NavigationHistory => navigationHistory.AsReadOnly();
+        public IReadOnlyList<string> NavigationHistory => _NavigationHistory.AsReadOnly();
 
 
         //
-        public NavigationService()
+        public NavigationService(ILogger<NavigationService> logger)
         {
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
             UpdateNavigationHistory();
         }
 
@@ -21,15 +24,15 @@ namespace SquoundApp.Services
         //
         private void UpdateNavigationHistory()
         {
+            _NavigationHistory.Clear();
             var navigationStack = Shell.Current?.Navigation?.NavigationStack;
-            navigationHistory.Clear();
 
             if (navigationStack is null)
                 return;
 
             foreach (var page in navigationStack)
             {
-                navigationHistory.Add(page?.GetType().Name ?? "Null");
+                _NavigationHistory.Add(page?.GetType().Name ?? "Null");
             }
         }
 
@@ -37,13 +40,12 @@ namespace SquoundApp.Services
         //
         private void LogNavigationHistory()
         {
-            Debug.WriteLine("Current Navigation Stack:");
+            _Logger.LogDebug("Current Navigation Stack:");
 
             int i = 0;
-            foreach (var route in navigationHistory)
+            foreach (var route in _NavigationHistory)
             {
-                Debug.WriteLine($"[{i}]: {route}");
-                i++;
+                _Logger.LogDebug("[{i++}]: {route}", i, route);
             }
         }
 
@@ -51,11 +53,11 @@ namespace SquoundApp.Services
         //
         public async Task GoToAsync(string route, bool animate = true, IDictionary<string, object>? parameters = null)
         {
-            await navigationLock.WaitAsync();
+            await _NavigationLock.WaitAsync();
 
             try
             {
-                Debug.WriteLine($"Navigating to {route}");
+                _Logger.LogDebug("Navigating to {route}", route);
 
                 if (parameters is not null && parameters.Count > 0)
                 {
@@ -66,19 +68,19 @@ namespace SquoundApp.Services
                 {
                     await Shell.Current.GoToAsync(route, animate);
                 }
-
-                    UpdateNavigationHistory();
+                
+                UpdateNavigationHistory();
                 LogNavigationHistory();
             }
 
             catch (Exception ex)
             {
-                Debug.WriteLine($"Navigation error: {ex}");
+                _Logger.LogWarning(ex, "Error while attempting to navigate to {route}", route);
             }
 
             finally
             {
-                navigationLock.Release();
+                _NavigationLock.Release();
             }
         }
 
@@ -89,11 +91,11 @@ namespace SquoundApp.Services
         /// </summary>
         public async Task GoBackOrHomeAsync()
         {
-            await navigationLock.WaitAsync();
+            await _NavigationLock.WaitAsync();
 
             try
             {
-                Debug.WriteLine($"Navigating back");
+                _Logger.LogDebug("Navigating back:");
 
                 var current = Shell.Current;
                 if (current is null)
@@ -119,12 +121,12 @@ namespace SquoundApp.Services
 
             catch (Exception ex)
             {
-                Debug.WriteLine($"Navigation error: {ex}");
+                _Logger.LogWarning(ex, "Error while attempting to navigate back");
             }
 
             finally
             {
-                navigationLock.Release();
+                _NavigationLock.Release();
             }
         }
     }

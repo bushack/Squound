@@ -2,18 +2,9 @@
 {
     public class AboutModel
     {
-        public string Image { get; set; }
-        public string Headline { get; set; }
-        public string SubHeadline { get; set; }
-        public string Text { get; set; }
-
-        public AboutModel()
-        {
-            // Default values.
-            Image = "squound_logo.png";
-            Headline = "Sorry!";
-            SubHeadline = "It's not you - it's us";
-            Text = "We can't find what we're looking for.";
-        }
+        public string Image { get; set; } = "squound_logo.png";
+        public string Headline { get; set; } = "Sorry!";
+        public string SubHeadline { get; set; } = "It's not you - it's us";
+        public string Text { get; set; } = "We can't find the page you were expecting to see.";
     }
 }

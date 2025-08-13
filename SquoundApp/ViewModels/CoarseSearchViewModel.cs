@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -27,10 +26,10 @@ namespace SquoundApp.ViewModels
         // Responsible for retrieving item categories and subcategories from the REST API.
         // This data is presented to the user on the CoarseSearchPage, where the user can select a category
         // or subcategory before progressing to the RefinedSearchPage to further hone in on specific items.
-        private readonly CategoryService m_CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        private readonly CategoryService _CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchState m_SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
+        private readonly SearchState _SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
 
         // Collection of categories to display on the coarse search page.
         // This collection is populated by the ApplyQueryAsync method.
@@ -47,7 +46,7 @@ namespace SquoundApp.ViewModels
         // This collection is bound to the UI and therefore must be an ObservableCollection so that the UI
         // automatically updates when items are added or removed.
         [ObservableProperty]
-        private ObservableCollection<object> itemList = [];
+        private ObservableCollection<object> dynamicList = [];
 
         // The category or subcategory selected by the user.
         // This property is used to track the user's selection and trigger either the loading of
@@ -57,46 +56,48 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Populates the ItemList with categories when the CategoryList changes.
+        /// Populates the DynamicList with categories when the CategoryList changes.
         /// This typically happens only once when the CoarseSearchPage's OnAppearing method
         /// is called for the first time.
         /// </summary>
         /// <param name="value"></param>
         partial void OnCategoryListChanged(List<CategoryDto> value)
         {
-            // When the CategoryList changes, we also want to update the ItemList
+            // When the CategoryList changes, we also want to update the DynamicList
             // to reflect the current categories available for selection.
             // This ensures that the UI is always in sync with the data.
-            ItemList.Clear();
+            DynamicList.Clear();
 
             foreach (var category in value)
-                ItemList.Add(category);
+                DynamicList.Add(category);
         }
 
 
         /// <summary>
-        /// Updates the ItemList contents and Title when the SelectedCategory changes.
+        /// Updates the DynamicList contents and Title when the SelectedCategory changes.
         /// </summary>
         /// <param name="value">The category or subcategory selected by the user.</param>
         partial void OnSelectedItemChanged(object? value)
         {
             switch (value)
             {
-                // If the selected item is a category, we want to load its subcategories into the ItemList.
+                // If the selected item is a category, we want to load its subcategories into the DynamicList.
                 case CategoryDto category:
                 {
                     // Check if the selected category is null or if it has no subcategories.
                     if (category.Subcategories is null || category.Subcategories.Count is 0)
                         return;
 
-                    // If the selected category has subcategories, load them into the ItemList.
-                    ItemList.Clear();
+                    // If the selected category has subcategories, load them into the DynamicList.
+                    DynamicList.Clear();
 
                     foreach (var subcategory in category.Subcategories)
-                    ItemList.Add(subcategory);
+                    {
+                        DynamicList.Add(subcategory);
+                    }
 
                     // Write the selected category to the current search.
-                    m_SearchState.Category = category.Name;
+                    _SearchState.Category = category.Name;
 
                     // Update the UI to reflect the selected category and its subcategories.
                     Title = category.Name;
@@ -112,7 +113,7 @@ namespace SquoundApp.ViewModels
                     //Title = string.Empty;
 
                     // Write the selected subcategory to the current search.
-                    m_SearchState.Subcategory = subcategory.Name;
+                    _SearchState.Subcategory = subcategory.Name;
 
                     // If the selected item is a subcategory, navigate to the RefinedSearchPage.
                     // This is where the user can perform a more detailed search based on the selected subcategory.
@@ -148,14 +149,24 @@ namespace SquoundApp.ViewModels
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var categories = await m_CategoryService.GetDataAsync();
+                var response = await _CategoryService.GetDataAsync();
 
-                if (categories == null)
+                if (response.Success is false)
+                {
+                    await Shell.Current.DisplayAlert("Error", response.ErrorMessage, "OK");
                     return;
+                }
+
+                // Null or empty item list from API.
+                if (response.Data is null || response.Data.Count == 0)
+                {
+                    await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
+                    return;
+                }
 
                 // By assigning the fetched categories to the CategoryList, a notification is triggered
                 // that the collection has changed and the OnCategoryListChanged method is called.
-                CategoryList = new List<CategoryDto>(categories);
+                CategoryList = [.. response.Data];
             }
 
             catch (Exception ex)

@@ -1,51 +1,68 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.Logging;
+
+using System.Diagnostics;
 using System.Net.Http.Json;
+
+using SquoundApp.Exceptions;
+
+using Shared.Logging;
 
 
 namespace SquoundApp.Services
 {
     public class HttpService
     {
-        protected readonly HttpClient httpClient;
+        private readonly ILogger<HttpService> _Logger;
+        protected readonly HttpClient _HttpClient;
 
-        public HttpService(HttpClient? client = null, string? baseUrl = null)
+        public HttpService(ILogger<HttpService> logger, HttpClient? client = null, string? baseUrl = null)
         {
-            httpClient = client ?? new HttpClient();
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _HttpClient = client ?? new HttpClient();
 
             // Set the base address for the httpClient
             // This is useful if you are making multiple requests to the same base URL.
             // Ensure that the URL is valid and accessible.
             if (baseUrl is not null)
             {
-                httpClient.BaseAddress = new Uri(baseUrl);
+                _HttpClient.BaseAddress = new Uri(baseUrl);
             }
         }
 
-        public async Task<T?> GetJsonAsync<T>(string url)
+        public async Task<Result<T?>> GetJsonAsync<T>(string url)
         {
             try
             {
-                var response = await httpClient.GetAsync(url);
+                _Logger.LogInformation("Attempting to retrieve JSON content from {url}", url);
 
-                if (response.IsSuccessStatusCode == false)
-                {
-                    return default;
-                }
+                // Asynchronously request data from url.
+                var response = await _HttpClient.GetAsync(url);
 
-                return await response.Content.ReadFromJsonAsync<T>();
+                // Check success.
+                if (response.IsSuccessStatusCode is false)
+                    throw new HttpServiceException($"Server returned status code {response.StatusCode}");
+
+                // Check content.
+                var content = await response.Content.ReadFromJsonAsync<T>()
+                    ?? throw new HttpServiceException("Failed to deserialize JSON content.");
+
+                _Logger.LogInformation("Successfully retrieved and deserialized JSON from {url}.", url);
+
+                return Result<T?>.Ok(content);
+            }
+
+            catch (HttpServiceException ex)
+            {
+                _Logger.LogWarning(ex, "Service error while retrieving JSON content from {url}.", url);
+
+                return Result<T?>.Fail("An invalid response was received while retrieving data from the server.");
             }
 
             catch (Exception ex)
             {
-                // Handle exceptions, e.g., log them or show an alert to the user.
-                Debug.WriteLine($"{nameof(HttpService)} Error : {ex.Message}");
+                _Logger.LogWarning(ex, "Error retrieving JSON from {url}.", url);
 
-                await Shell.Current.DisplayAlert(
-                    $"{nameof(HttpService)} Error",
-                    $"An error occurred while attempting to fetch data.",
-                    "OK");
-
-                return default;
+                return Result<T?>.Fail("An error occurred while retrieving data from the server.");
             }
         }
     }

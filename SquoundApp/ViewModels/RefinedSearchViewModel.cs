@@ -26,10 +26,10 @@ namespace SquoundApp.ViewModels
         // Responsible for retrieving items from the REST API.
         // This data is presented to the user on the RefinedSearchPage, where the user can select a specific
         // item before progressing to the ItemPage to study the item in detail.
-        private readonly ItemService m_ItemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
+        private readonly ItemService _ItemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchState m_SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
+        private readonly SearchState _SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
 
         // Collection of items retrieved from the REST API based on the current search criteria.
         public ObservableCollection<ItemSummaryDto> ItemList { get; } = [];
@@ -106,7 +106,7 @@ namespace SquoundApp.ViewModels
         {
             if (HasNextPage)
             {
-                m_SearchState.IncrementPageNumber();
+                _SearchState.IncrementPageNumber();
                 await ApplyQueryAsync();
             }
         }
@@ -118,7 +118,7 @@ namespace SquoundApp.ViewModels
         {
             if (HasPrevPage)
             {
-                m_SearchState.DecrementPageNumber();
+                _SearchState.DecrementPageNumber();
                 await ApplyQueryAsync();
             }
         }
@@ -153,7 +153,7 @@ namespace SquoundApp.ViewModels
                 // Save a deep copy of the current query to the PreviousQuery property.
                 // This is useful for scenarios where you might want to revert to the
                 // previous query or to compare the current query with the previous one.
-                m_SearchState.SaveCurrentSearch();
+                _SearchState.SaveCurrentSearch();
 
                 // Clear the existing items in the ObservableCollection.
                 // This ensures that the collection is updated with whatever is returned by the API.
@@ -168,20 +168,20 @@ namespace SquoundApp.ViewModels
                 CurrentPage = 0;
 
                 // Prepare page title.
-                Title = m_SearchState.Keyword ??
-                        m_SearchState.Subcategory ??
-                        m_SearchState.Category ??
+                Title = _SearchState.Keyword ??
+                        _SearchState.Subcategory ??
+                        _SearchState.Category ??
                         "Search";
 
                 // Retrieve items from the item service.
                 // This method is expected to return a list of items asynchronously.
                 // The retrieved items will be added to the itemList collection.
                 // To retrieve items from a remote JSON file, use:
-                // var itemList = await m_ItemService.GetItemsRemoteJson
+                // var itemList = await _ItemService.GetItemsRemoteJson
                 // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json");
                 // To retrieve items from an embedded JSON file instead, use:
-                // var itemList = await m_ItemService.GetItemsEmbeddedJson();
-                var response = await m_ItemService.GetItemSummariesAsync(m_SearchState);
+                // var itemList = await _ItemService.GetItemsEmbeddedJson();
+                var response = await _ItemService.GetDataAsync(_SearchState);
 
                 // Null response from API.
                 if (response.Success is false)

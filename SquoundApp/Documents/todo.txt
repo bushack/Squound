@@ -30,3 +30,6 @@ item page
 	- must have at least one default image if none are returned by API to avoid crash
 	- fetch images of assorted sizes
 	- allow user to tap to zoom and scroll all images
+
+TODO
+	- ctrl+f find any TODOs throughout the solution
