@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using System.Collections.ObjectModel;
+
 using SquoundApp.Pages;
 using SquoundApp.Services;
 using SquoundApp.States;
@@ -10,11 +12,22 @@ using Shared.DataTransfer;
 
 namespace SquoundApp.ViewModels
 {
-    public partial class SortAndFilterViewModel : BaseViewModel
+    public partial class SortAndFilterViewModel(CategoryService categoryService, SearchState searchState) : BaseViewModel
     {
-        // Singleton state managing the current search parameters.
-        // This state can be accessed from anywhere in the application to retrieve or reset the current search parameters.
-        private readonly SearchState m_SearchState;
+        private readonly CategoryService _CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        private readonly SearchState _SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
+
+        [ObservableProperty]
+        private ObservableCollection<CategoryDto> categoryList = [];
+
+        [ObservableProperty]
+        private ObservableCollection<SubcategoryDto> subcategoryList = [];
+
+        [ObservableProperty]
+        private CategoryDto? selectedCategory = null;
+
+        [ObservableProperty]
+        private SubcategoryDto? selectedSubcategory = null;
 
 
         // Variables responsible for adjusting the sort options.
@@ -40,6 +53,9 @@ namespace SquoundApp.ViewModels
 
         [ObservableProperty]
         private string manufacturer = string.Empty;
+
+        [ObservableProperty]
+        private string material = string.Empty;
 
         [ObservableProperty]
         private string keyword = string.Empty;
@@ -69,32 +85,92 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Constructor for the SortAndFilterViewModel class.
+        /// Populates the DynamicList with categories when the CategoryList changes.
+        /// This typically happens only once when the CoarseSearchPage's OnAppearing method
+        /// is called for the first time.
         /// </summary>
-        /// <param name="searchState">The <see cref="SearchState"/> instance used
-        /// to manage the current search parameters. Cannot be null.</param>
-        public SortAndFilterViewModel(SearchState searchState)
+        /// <param name="value"></param>
+        partial void OnCategoryListChanged(ObservableCollection<CategoryDto> value)
         {
-            m_SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
+            // If the user has selected a category on a previous
+            // screen we need to preselect that same category here.
+            if (_SearchState.Category is not null)
+            {
+                SelectedCategory = CategoryList.FirstOrDefault(c => c.Name == _SearchState.Category);
+
+                //this whole selecting of category/subcategory needs to be recoded
+            }
+
+            // TODO : What if null?
+        }
+
+        //
+        partial void OnSelectedCategoryChanged(CategoryDto? value)
+        {
+            if (CategoryList.Count == 0)
+                return;
+
+            // If the value is null (likely after a reset) we need to assign a default value.
+            if (value is null)
+            {
+                value = CategoryList.FirstOrDefault();
+            }
+
+            // Writes the category to the search state.
+            Category = value.Name;
+
+            // Clear any previously selected subcategory.
+            SelectedSubcategory = null;
+
+            // Clear the subcategories list.
+            SubcategoryList.Clear();
+
+            // Then repopulate it with subcategories of the selected category.
+            foreach (var subcategory in value.Subcategories)
+            {
+                SubcategoryList.Add(subcategory);
+            }
+
+            // Preselect the first subcategory as default.
+            if (SubcategoryList.Count > 0)
+            {
+                SelectedSubcategory = SubcategoryList.FirstOrDefault();
+            }
+        }
+
+        //
+        partial void OnSubcategoryListChanged(ObservableCollection<SubcategoryDto> value)
+        {
+        }
+
+        //
+        partial void OnSelectedSubcategoryChanged(SubcategoryDto? value)
+        {
+            // Write the subcategory to the search state.
+            Subcategory = value != null ? value.Name : string.Empty;
         }
 
 
         // Partial methods to handle changes in filter properties.
         partial void OnCategoryChanged(string value)
         {
-            m_SearchState.Category = value;
+            _SearchState.Category = value;
         }
         partial void OnSubcategoryChanged(string value)
         {
-            m_SearchState.Subcategory = value;
+            _SearchState.Subcategory = value;
         }
         partial void OnManufacturerChanged(string value)
         {
-            m_SearchState.Manufacturer = value;
+            _SearchState.Manufacturer = value;
+        }
+        partial void OnMaterialChanged(string value)
+        {
+            _SearchState.Material = value;
         }
         partial void OnKeywordChanged(string value)
         {
-            m_SearchState.Keyword = value;
+            _SearchState.Keyword = value;
         }
         partial void OnMinimumPriceChanged(string value)
         {
@@ -107,30 +183,30 @@ namespace SquoundApp.ViewModels
                 // If the parsed price is out of the valid range.
                 if (price < 0 || price > (decimal)SearchQueryDto.PracticalMaximumPrice)
                 {
-                    m_SearchState.MinPrice = null;
+                    _SearchState.MinPrice = null;
                 }
 
                 // If the parsed price is greater than the maximum price.
                 // Set both minimum and maximum prices to the parsed price.
-                else if (price > m_SearchState.MaxPrice)
+                else if (price > _SearchState.MaxPrice)
                 {
-                    m_SearchState.MinPrice = price;
-                    m_SearchState.MaxPrice = price;
+                    _SearchState.MinPrice = price;
+                    _SearchState.MaxPrice = price;
 
-                    RestoreQueryToUserInterface(m_SearchState.CopyOfCurrentQuery);
+                    RestoreQueryToUserInterface(_SearchState.CopyOfCurrentQuery);
                 }
 
                 // If the parsed price is valid and within the range.
                 else
                 {
-                    m_SearchState.MinPrice = price;
+                    _SearchState.MinPrice = price;
                 }
             }
 
             else
             {
                 // If parsing fails.
-                m_SearchState.MinPrice = null;
+                _SearchState.MinPrice = null;
             }
         }
         partial void OnMaximumPriceChanged(string value)
@@ -144,47 +220,47 @@ namespace SquoundApp.ViewModels
                 // If the parsed price is out of the valid range.
                 if (price < 0 || price > (decimal)SearchQueryDto.PracticalMaximumPrice)
                 {
-                    m_SearchState.MaxPrice = null;
+                    _SearchState.MaxPrice = null;
                 }
 
                 // If the parsed price is less than the minimum price.
                 // Set both minimum and maximum prices to the parsed price.
-                else if (price < m_SearchState.MinPrice)
+                else if (price < _SearchState.MinPrice)
                 {
-                    m_SearchState.MinPrice = price;
-                    m_SearchState.MaxPrice = price;
+                    _SearchState.MinPrice = price;
+                    _SearchState.MaxPrice = price;
 
-                    RestoreQueryToUserInterface(m_SearchState.CopyOfCurrentQuery);
+                    RestoreQueryToUserInterface(_SearchState.CopyOfCurrentQuery);
                 }
 
                 // If the parsed price is valid and within the range.
                 else
                 {
-                    m_SearchState.MaxPrice = price;
+                    _SearchState.MaxPrice = price;
                 }
             }
 
             else
             {
                 // If parsing fails.
-                m_SearchState.MaxPrice = null;
+                _SearchState.MaxPrice = null;
             }
         }
         partial void OnSortByNameAscendingChanged(bool value)
         {
-            m_SearchState.SortBy = value ? ItemSortOption.NameAsc : m_SearchState.SortBy;
+            _SearchState.SortBy = value ? ItemSortOption.NameAsc : _SearchState.SortBy;
         }
         partial void OnSortByNameDescendingChanged(bool value)
         {
-            m_SearchState.SortBy = value ? ItemSortOption.NameDesc : m_SearchState.SortBy;
+            _SearchState.SortBy = value ? ItemSortOption.NameDesc : _SearchState.SortBy;
         }
         partial void OnSortByPriceAscendingChanged(bool value)
         {
-            m_SearchState.SortBy = value ? ItemSortOption.PriceAsc : m_SearchState.SortBy;
+            _SearchState.SortBy = value ? ItemSortOption.PriceAsc : _SearchState.SortBy;
         }
         partial void OnSortByPriceDescendingChanged(bool value)
         {
-            m_SearchState.SortBy = value ? ItemSortOption.PriceDesc : m_SearchState.SortBy;
+            _SearchState.SortBy = value ? ItemSortOption.PriceDesc : _SearchState.SortBy;
         }
 
 
@@ -326,6 +402,60 @@ namespace SquoundApp.ViewModels
         }
 
 
+        //
+        public async Task InitAsync()
+        {
+            if (IsBusy)
+                return;
+
+            try
+            {
+                // Set IsBusy to true to indicate that a fetch operation is in progress.
+                // This will typically disable UI elements that should not be interacted with
+                // while the data is being fetched, providing a better user experience.
+                // This is important to ensure that the UI reflects that data is being loaded,
+                // and to prevent the user from initiating another fetch operation while one is already in progress.
+                IsBusy = true;
+
+                // Retrieve item categories from the category service.
+                // This method is expected to return a list of item categories asynchronously.
+                // The retrieved categories will be added to the categoryList collection.
+                var response = await _CategoryService.GetDataAsync();
+
+                if (response.Success is false)
+                {
+                    await Shell.Current.DisplayAlert("Error", response.ErrorMessage, "OK");
+                    return;
+                }
+
+                // Null or empty item list from API.
+                if (response.Data is null || response.Data.Count == 0)
+                {
+                    await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
+                    return;
+                }
+
+                // By assigning the fetched categories to the CategoryList, a notification is triggered
+                // that the collection has changed and the OnCategoryListChanged method is called.
+                CategoryList = [.. response.Data];
+            }
+
+            catch (Exception ex)
+            {
+                // Display an alert to the user indicating that an error occurred while fetching data.
+                await Shell.Current.DisplayAlert(
+                    "Search Error",
+                    "An undefined error occurred while attempting to fetch data",
+                    "OK");
+            }
+
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+
         /// <summary>
         /// Handles the apply sort and apply filter button click events.
         /// </summary>
@@ -350,7 +480,7 @@ namespace SquoundApp.ViewModels
         private void OnCancelButton()
         {
             // Present the previous search state to the user.
-            RestoreQueryToUserInterface(m_SearchState.CopyOfPreviousQuery);
+            RestoreQueryToUserInterface(_SearchState.CopyOfPreviousQuery);
 
             HideMenus();
         }
@@ -363,10 +493,16 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         private void OnResetButton()
         {
-            m_SearchState.ResetSearch();
+            _SearchState.ResetSearch();
+
+            // Assign the first category in the list as default.
+            // This will also assign a default subcategory.
+            // We want to avoid a situation where no category is selected as that would
+            // result in all items being returned from the API.
+            SelectedCategory = CategoryList.FirstOrDefault();
 
             // Present the newly reset search state to the user.
-            RestoreQueryToUserInterface(m_SearchState.CopyOfCurrentQuery);
+            RestoreQueryToUserInterface(_SearchState.CopyOfCurrentQuery);
         }
 
 
@@ -382,6 +518,7 @@ namespace SquoundApp.ViewModels
             this.Category       = query.Category ?? string.Empty;
             this.Subcategory    = query.Subcategory ?? string.Empty;
             this.Manufacturer   = query.Manufacturer ?? string.Empty;
+            this.Material       = query.Material ?? string.Empty;
 
             // NOTE : Null checks are not actually required because ToString() would return an empty string if the value is null.
             this.MinimumPrice   = query.MinPrice.ToString() ?? string.Empty;

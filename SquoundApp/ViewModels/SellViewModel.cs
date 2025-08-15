@@ -77,7 +77,9 @@ namespace SquoundApp.ViewModels
             {
                 IsBusy = true;
 
-                Model = await service.GetDataAsync();
+                var response = await service.GetDataAsync();
+
+                Model = response.Data ?? new SellModel();
             }
 
             catch (Exception ex)

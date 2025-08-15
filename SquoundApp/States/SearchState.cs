@@ -76,6 +76,17 @@ namespace SquoundApp.States
         }
 
         //
+        public string? Material
+        {
+            get => m_CurrentQuery.Material;
+            set
+            {
+                m_CurrentQuery.Material = value;
+                m_HasChanged = true;
+            }
+        }
+
+        //
         public string? Keyword
         {
             get => m_CurrentQuery.Keyword;
@@ -208,6 +219,7 @@ namespace SquoundApp.States
                 Category        = query.Category,
                 Subcategory     = query.Subcategory,
                 Manufacturer    = query.Manufacturer,
+                Material        = query.Material,
                 Keyword         = query.Keyword,
 
                 MinPrice        = query.MinPrice,

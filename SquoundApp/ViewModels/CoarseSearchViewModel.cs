@@ -6,9 +6,9 @@ using System.Diagnostics;
 using SquoundApp.Extensions;
 using SquoundApp.Pages;
 using SquoundApp.Services;
+using SquoundApp.States;
 
 using Shared.DataTransfer;
-using SquoundApp.States;
 
 
 namespace SquoundApp.ViewModels

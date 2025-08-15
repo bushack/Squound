@@ -3,7 +3,6 @@ pagination
 	- check functionality of Previous Page and Next Page when more items added to database
 
 logging
-	- both dubug and release?
 	- ask!
 
 navigation
@@ -19,6 +18,7 @@ images
 
 search
 	- fetch thumbnail image(s) only
+	- user typing keyword only finds exact matchess, needs partial match
 	- incorporate keyword search? or remove in favour of below
 	- add functionality to CoarseSearchPage user search entry
 	- sort and filter menu

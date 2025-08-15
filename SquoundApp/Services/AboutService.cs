@@ -9,7 +9,7 @@ namespace SquoundApp.Services
 {
     public class AboutService(HttpService httpService, ILogger<AboutService> logger)
     {
-        private readonly ILogger _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly ILogger<AboutService> _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly HttpService _HttpService = httpService ?? throw new ArgumentNullException(nameof(httpService));
 
         private readonly string _Url = "https://raw.githubusercontent.com/bushack/files/refs/heads/main/about.json";
@@ -22,10 +22,10 @@ namespace SquoundApp.Services
             try
             {
                 var response = await _HttpService.GetJsonAsync<AboutModel>(_Url)
-                    ?? throw new Exception("msg");
+                    ?? throw new Exception($"Attempt to retrieve JSON content from {_Url} failed.");
 
                 var data = response.Data
-                    ?? throw new Exception("msg");
+                    ?? throw new Exception($"JSON content retrieved from {_Url} is null.");
 
                 return Result<AboutModel>.Ok(data);
             }

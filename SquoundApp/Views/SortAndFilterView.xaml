@@ -94,12 +94,40 @@
                              IsEnabled="{Binding IsFilterMenuActive}"
                              IsVisible="{Binding IsFilterMenuActive}">
 
-            <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="1*, 1*">
+            <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="1*, 1*">
 
-                <!-- Entry for keyword search -->
-                <Label Grid.Row="0" Grid.Column="0" Text="Keyword" HorizontalOptions="Center" VerticalOptions="Center"
+                <!-- Picker for category search -->
+                <Label Grid.Row="0" Grid.Column="0" Text="Category" HorizontalOptions="Center" VerticalOptions="Center"
                        TextColor="White"/>
                 <Border Grid.Row="0" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
+                        Style="{StaticResource LozengeBorder}">
+                    <Picker ItemsSource="{Binding CategoryList}"
+                            SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                            HorizontalTextAlignment="Center">
+                        <Picker.ItemDisplayBinding>
+                            <Binding Path="Name"/>
+                        </Picker.ItemDisplayBinding>
+                    </Picker>
+                </Border>
+
+                <!-- Picker for subcategory search -->
+                <Label Grid.Row="1" Grid.Column="0" Text="Subcategory" HorizontalOptions="Center" VerticalOptions="Center"
+                       TextColor="White"/>
+                <Border Grid.Row="1" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
+                        Style="{StaticResource LozengeBorder}">
+                    <Picker ItemsSource="{Binding SubcategoryList}"
+                            SelectedItem="{Binding SelectedSubcategory, Mode=TwoWay}"
+                            HorizontalTextAlignment="Center">
+                        <Picker.ItemDisplayBinding>
+                            <Binding Path="Name"/>
+                        </Picker.ItemDisplayBinding>
+                    </Picker>
+                </Border>
+                
+                <!-- Entry for keyword search -->
+                <Label Grid.Row="2" Grid.Column="0" Text="Keyword" HorizontalOptions="Center" VerticalOptions="Center"
+                       TextColor="White"/>
+                <Border Grid.Row="2" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
                         Style="{StaticResource LozengeBorder}">
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="Enter Keyword"
@@ -108,10 +136,22 @@
                            Style="{StaticResource GenericEntry}"/>
                 </Border>
 
-                <!-- Entry for minimum price with numeric validation -->
-                <Label Grid.Row="1" Grid.Column="0" Text="Minimum Price" HorizontalOptions="Center" VerticalOptions="Center"
+                <!-- Entry for material search -->
+                <Label Grid.Row="3" Grid.Column="0" Text="Material" HorizontalOptions="Center" VerticalOptions="Center"
                        TextColor="White"/>
-                <Border Grid.Row="1" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
+                <Border Grid.Row="3" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
+                        Style="{StaticResource LozengeBorder}">
+                    <Entry HeightRequest="40" WidthRequest="150"
+                           Placeholder="Enter Material"
+                           Keyboard="Text" MaxLength="20"
+                           Text="{Binding Material}"
+                           Style="{StaticResource GenericEntry}"/>
+                </Border>
+
+                <!-- Entry for minimum price with numeric validation -->
+                <Label Grid.Row="4" Grid.Column="0" Text="Minimum Price" HorizontalOptions="Center" VerticalOptions="Center"
+                       TextColor="White"/>
+                <Border Grid.Row="4" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
                         Style="{StaticResource LozengeBorder}">
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="None"
@@ -125,9 +165,9 @@
                 </Border>
 
                 <!-- Entry for maximum price with numeric validation -->
-                <Label Grid.Row="2" Grid.Column="0" Text="Maximum Price" HorizontalOptions="Center" VerticalOptions="Center"
+                <Label Grid.Row="5" Grid.Column="0" Text="Maximum Price" HorizontalOptions="Center" VerticalOptions="Center"
                        TextColor="White"/>
-                <Border Grid.Row="2" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
+                <Border Grid.Row="5" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
                         Style="{StaticResource LozengeBorder}">
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="None"

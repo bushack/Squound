@@ -1,4 +1,7 @@
-﻿namespace SquoundApp
+﻿using SquoundApp.Services;
+
+
+namespace SquoundApp
 {
     public partial class App : Application
     {
@@ -10,6 +13,13 @@
         protected override Window CreateWindow(IActivationState? activationState)
         {
             return new Window(new AppShell());
+        }
+
+        protected override async void OnStart()
+        {
+            base.OnStart();
+
+            await ServiceLocator.GetService<NavigationService>().GoToAsync("///LoadingPage");
         }
     }
 }

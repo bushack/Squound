@@ -10,6 +10,16 @@
     Title="Squound"
     NavBarIsVisible="false">
 
+    <!-- Pages that are part of shell but not part of TabBar -->
+    <ShellContent Title="Loading"
+                  ContentTemplate="{DataTemplate pages:LoadingPage}"
+                  Route="LoadingPage" />
+
+    <ShellContent Title="Error"
+                  ContentTemplate="{DataTemplate pages:ErrorPage}"
+                  Route="ErrorPage"/>
+    
+    <!-- TabBar pages -->
     <TabBar>
         <Tab Title="Home"
              Icon="home.png">
@@ -27,13 +37,13 @@
              Icon="account.png">
             <ShellContent Title="Account"
                           ContentTemplate="{DataTemplate pages:HomePage}"
-                          Route="MainPage" />
+                          Route="AccountPage" />
         </Tab>
         <Tab Title="Basket"
              Icon="shopping.png">
             <ShellContent Title="Basket"
                           ContentTemplate="{DataTemplate pages:HomePage}"
-                          Route="HomePage" />
+                          Route="BasketPage" />
         </Tab>
     </TabBar>
 </Shell>

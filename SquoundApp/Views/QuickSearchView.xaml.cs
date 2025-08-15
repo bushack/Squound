@@ -29,7 +29,7 @@ public partial class QuickSearchView : ContentView
     private async void OnLoaded(object? sender, EventArgs e)
     {
         // Unsubscribe from the Loaded event to ensure that the data is only loaded one time
-        // when the view is first displayed. This also has the benefit of preventing memory leaks
+        // when the view is first displayed. This also has the benefit of preventing memory leaks.
         this.Loaded -= OnLoaded;
 
         // Prevent multiple reloads of the data.

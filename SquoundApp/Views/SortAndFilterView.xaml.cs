@@ -6,11 +6,36 @@ namespace SquoundApp.Views;
 
 public partial class SortAndFilterView : ContentView
 {
-	public SortAndFilterView()
+    private bool hasLoaded = false;
+
+    public SortAndFilterView()
 	{
 		InitializeComponent();
 
+        this.Loaded += OnLoaded;
+
         BindingContext = ServiceLocator.GetService<SortAndFilterViewModel>()
 			?? throw new ArgumentNullException(nameof(SortAndFilterViewModel));
+    }
+
+
+    //
+    private async void OnLoaded(object? sender, EventArgs e)
+    {
+        // Unsubscribe from the Loaded event to ensure that the data is only loaded one time
+        // when the view is first displayed. This also has the benefit of preventing memory leaks.
+        this.Loaded -= OnLoaded;
+
+        // Prevent multiple reloads of the data.
+        // We only want to load the data once when the view is first displayed.
+        if (hasLoaded)
+            return;
+
+        hasLoaded = true;
+
+        if (BindingContext is SortAndFilterViewModel viewModel)
+        {
+            await viewModel.InitAsync();
+        }
     }
 }

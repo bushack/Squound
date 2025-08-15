@@ -95,6 +95,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<QuickSearchViewModel>();
             builder.Services.AddTransient<SellViewModel>();
             builder.Services.AddSingleton<SortAndFilterViewModel>();
+            builder.Services.AddSingleton<StartupViewModel>();
 
             return builder.Build();
         }

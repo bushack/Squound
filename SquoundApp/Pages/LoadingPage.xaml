@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
+             x:Class="SquoundApp.Pages.LoadingPage"
+             x:DataType="viewmodels:StartupViewModel"
+             Title="LoadingPage"
+             
+             BackgroundColor="White">
+
+    <VerticalStackLayout HorizontalOptions="Center"
+                         VerticalOptions="Center">
+
+        <Image Source="squound_logo.png"
+               HorizontalOptions="Center"
+               Margin="20"
+               WidthRequest="100"
+               HeightRequest="100"/>
+
+        <Label Text="{Binding LoadingMessage}"
+               HorizontalOptions="Center"
+               Margin="20"
+               Style="{StaticResource MediumText}"/>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           Color="Black"
+                           Margin="20"
+                           WidthRequest="50"
+                           HeightRequest="50"/>
+
+    </VerticalStackLayout>
+    
+</ContentPage>

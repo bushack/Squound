@@ -164,7 +164,7 @@ namespace SquoundApi.Controllers
                     linqQuery = linqQuery.Where(predicate => (predicate.Subcategory.Name == query.Subcategory));
                 }
 
-                // Filter by category if no subcategory is specified.
+                // Filter by category ONLY IF no subcategory is specified.
                 else if (string.IsNullOrEmpty(query.Category) == false)
                 {
                     Debug.WriteLine($"* * * Filtering by category: {query.Category} * * *");
@@ -176,6 +176,13 @@ namespace SquoundApi.Controllers
                 {
                     Debug.WriteLine($"* * * Filtering by manufacturer: {query.Manufacturer} * * *");
                     linqQuery = linqQuery.Where(predicate => (predicate.Manufacturer == query.Manufacturer));
+                }
+
+                // Filter by material.
+                if (string.IsNullOrEmpty(query.Material) == false)
+                {
+                    Debug.WriteLine($"* * * Filtering by material: {query.Material} * * *");
+                    linqQuery = linqQuery.Where(predicate => (predicate.Material == query.Material));
                 }
 
                 // Exclude items below minimum price.

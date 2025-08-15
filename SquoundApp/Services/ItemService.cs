@@ -128,12 +128,12 @@ namespace SquoundApp.Services
             }
         }
 
-        /// <summary>
-        /// Asynchronously retrieves a list of items from a remote JSON file.
-        /// </summary>
-        /// <param name="url">URL of the file to read.
-        ///// Example: "https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json"</param>
-        ///// <returns></returns>
+        // <summary>
+        // Asynchronously retrieves a list of items from a remote JSON file.
+        // </summary>
+        // <param name="url">URL of the file to read.
+        // Example: "https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json"</param>
+        // <returns></returns>
         //public async Task<List<ItemSummaryDto>?> GetItemsRemoteJson(string url)
         //{
         //    if (itemList?.Count > 0)
@@ -149,12 +149,12 @@ namespace SquoundApp.Services
         //    return itemList;
         //}
 
-        /// <summary>
-        /// Asynchronously retrieves a list of items from an embedded JSON file.
-        /// </summary>
-        /// <param name="filename">Relative filepath of the file to read.
-        /// Example: "Resources/Raw/items.json"</param>
-        /// <returns></returns>
+        // <summary>
+        // Asynchronously retrieves a list of items from an embedded JSON file.
+        // </summary>
+        // <param name="filename">Relative filepath of the file to read.
+        // Example: "Resources/Raw/items.json"</param>
+        // <returns></returns>
         //public async Task<List<ItemSummaryDto>?> GetItemsEmbeddedJson(string filename)
         //{
         //    if (itemList?.Count > 0)

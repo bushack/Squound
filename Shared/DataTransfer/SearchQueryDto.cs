@@ -73,6 +73,13 @@ namespace Shared.DataTransfer
         public string? Manufacturer { get; set; } = null;
 
         /// <summary>
+        /// Gets or sets the name of the item material.
+        /// </summary>
+        [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Material) + StringLengthErrorMessage)]
+        [RegularExpression(AlphabeticRegex, ErrorMessage = AlphanumericRegexErrorMessage)]
+        public string? Material { get; set; } = null;
+
+        /// <summary>
         /// Gets or sets the keyword used for filtering or searching operations.
         /// </summary>
         [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Keyword) + StringLengthErrorMessage)]
@@ -125,6 +132,9 @@ namespace Shared.DataTransfer
 
             if (string.IsNullOrEmpty(this.Manufacturer) is false)
                 queryString += $"manufacturer={Uri.EscapeDataString(this.Manufacturer.ToLower())}&";
+
+            if (string.IsNullOrEmpty(this.Material) is false)
+                queryString += $"material={Uri.EscapeDataString(this.Material.ToLower())}&";
 
             if (string.IsNullOrEmpty(this.Keyword) is false)
                 queryString += $"keyword={Uri.EscapeDataString(this.Keyword.ToLower())}&";
