@@ -34,12 +34,12 @@ namespace SquoundApp.Services
         /// <summary>
         /// Asynchronously retrieves a list of item summaries that match the query criteria from a REST API.
         /// </summary>
-        /// <param name="searchState"></param>
+        /// <param name="searchService"></param>
         /// <returns></returns>
-        public async Task<Result<SearchResponseDto<ItemSummaryDto>>> GetDataAsync(SearchState searchState)
+        public async Task<Result<SearchResponseDto<ItemSummaryDto>>> GetDataAsync(SearchService searchService)
         {
             // Search state has not changed since last API call.
-            if (searchState.HasNotChanged)
+            if (searchService.HasChanged is false)
             {
                 _Logger.LogDebug("Search state unchanged. Returning cached data.");
 
@@ -51,23 +51,25 @@ namespace SquoundApp.Services
             try
             {
                 // TODO : Want to set the base URL in the HttpService prior to release version.
-                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{searchState.ToQueryString()}";
+                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{searchService.BuildUrlQueryString()}";
 
                 _Logger.LogInformation("Retrieving items from {url}", url);
 
                 // Fetch the items from the REST API.
                 var response = await _HttpService.GetJsonAsync<SearchResponseDto<ItemSummaryDto>>(url)
-                    ?? throw new ApiResponseException("API retrieve JSON is failed.");
+                    ?? throw new ApiResponseException("API retrieve JSON failed.");
 
                 // Cache data in the event that a duplicate search is performed - lowers API workload.
                 _Response = response.Data
                     ?? throw new ApiResponseException("API response data is null.");
 
-                // Member m_Response now contains data that matches the most up-to-date search state.
-                searchState.ResetChangedFlag();
-
+                // Success.
                 _Logger.LogInformation("Successfully retrieved {Count} item(s).", _Response.Items.Count);
 
+                // Save the current search state in case the user wishes to cancel any future changes.
+                searchService.SaveState();
+
+                // Return success code and pagination data alongside the item summaries.
                 return Result<SearchResponseDto<ItemSummaryDto>>.Ok(_Response);
             }
 

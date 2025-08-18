@@ -14,7 +14,8 @@ namespace SquoundApp.Selectors
             {
                 CategoryDto => CategoryTemplate,
                 SubcategoryDto => SubcategoryTemplate,
-                _ => throw new NotSupportedException("Unsupported item type")
+                null => throw new ArgumentNullException(nameof(item), "Item was null"),
+                _ => throw new NotSupportedException($"Unsupported item type: {item?.GetType().Name}")
             };
         }
     }

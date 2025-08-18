@@ -15,13 +15,13 @@ namespace SquoundApp.ViewModels
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="RefinedSearchViewModel"/> class
-    /// with the specified <see cref="ItemService"/> and <see cref="SearchState"/>.
+    /// with the specified <see cref="ItemService"/> and <see cref="SearchService"/>.
     /// </summary>
     /// <param name="itemService">The <see cref="ItemService"/> instance used
     /// to retrieve item data. Cannot be null.</param>
-    /// <param name="searchState">The <see cref="SearchState"/> instance used
+    /// <param name="searchService">The <see cref="SearchService"/> instance used
     /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class RefinedSearchViewModel(ItemService itemService, SearchState searchState) : BaseViewModel
+    public partial class RefinedSearchViewModel(ItemService itemService, SearchService searchService) : BaseViewModel
     {
         // Responsible for retrieving items from the REST API.
         // This data is presented to the user on the RefinedSearchPage, where the user can select a specific
@@ -29,7 +29,7 @@ namespace SquoundApp.ViewModels
         private readonly ItemService _ItemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchState _SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
+        private readonly SearchService _SearchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
 
         // Collection of items retrieved from the REST API based on the current search criteria.
         public ObservableCollection<ItemSummaryDto> ItemList { get; } = [];
@@ -106,7 +106,7 @@ namespace SquoundApp.ViewModels
         {
             if (HasNextPage)
             {
-                _SearchState.IncrementPageNumber();
+                _SearchService.IncrementPageNumber();
                 await ApplyQueryAsync();
             }
         }
@@ -118,7 +118,7 @@ namespace SquoundApp.ViewModels
         {
             if (HasPrevPage)
             {
-                _SearchState.DecrementPageNumber();
+                _SearchService.DecrementPageNumber();
                 await ApplyQueryAsync();
             }
         }
@@ -153,7 +153,7 @@ namespace SquoundApp.ViewModels
                 // Save a deep copy of the current query to the PreviousQuery property.
                 // This is useful for scenarios where you might want to revert to the
                 // previous query or to compare the current query with the previous one.
-                _SearchState.SaveCurrentSearch();
+                //_SearchService.SaveState();
 
                 // Clear the existing items in the ObservableCollection.
                 // This ensures that the collection is updated with whatever is returned by the API.
@@ -168,9 +168,9 @@ namespace SquoundApp.ViewModels
                 CurrentPage = 0;
 
                 // Prepare page title.
-                Title = _SearchState.Keyword ??
-                        _SearchState.Subcategory ??
-                        _SearchState.Category ??
+                Title = _SearchService.Keyword ??
+                        _SearchService.Subcategory?.Name ??
+                        _SearchService.Category?.Name ??
                         "Search";
 
                 // Retrieve items from the item service.
@@ -181,7 +181,7 @@ namespace SquoundApp.ViewModels
                 // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json");
                 // To retrieve items from an embedded JSON file instead, use:
                 // var itemList = await _ItemService.GetItemsEmbeddedJson();
-                var response = await _ItemService.GetDataAsync(_SearchState);
+                var response = await _ItemService.GetDataAsync(_SearchService);
 
                 // Null response from API.
                 if (response.Success is false)

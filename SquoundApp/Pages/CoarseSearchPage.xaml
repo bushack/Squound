@@ -16,7 +16,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SubcategoryTemplate" x:DataType="dtos:SubcategoryDto">
-            <Border Padding="10" Background="Transparent" Margin="5">
+            <Border Padding="10" BackgroundColor="Transparent" Margin="5">
                 <Label Text="{Binding Name}" FontSize="18"/>
             </Border>
         </DataTemplate>

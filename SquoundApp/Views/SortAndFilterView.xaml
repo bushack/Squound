@@ -2,6 +2,8 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:behaviours="clr-namespace:SquoundApp.Behaviours"
+             xmlns:converters="clr-namespace:SquoundApp.Converters"
+             xmlns:dtos="clr-namespace:Shared.DataTransfer;assembly=Shared"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
              x:Class="SquoundApp.Views.SortAndFilterView"
              x:DataType="viewmodels:SortAndFilterViewModel"
@@ -41,39 +43,43 @@
 
                 <!-- Row 0 : Sort by Name Ascending -->
                 <Grid Grid.Row="0" Grid.Column="0" HeightRequest="20">
-                    <Image Source="selected.png" IsVisible="{Binding SortByNameAscending}"/>
+                    <Image Source="selected.png" IsVisible="{Binding SearchService.SortBy, Converter={StaticResource EnumEqualsConverter}, ConverterParameter={x:Static dtos:ItemSortOption.NameAsc}}"/>
                     <Image Source="unselected.png" IsVisible="True"/>
                 </Grid>
                 <Button Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent"
-                        Text="Name: Ascending" HorizontalOptions="Start"
-                        Command="{Binding SetSortOptionAsNameAscendingCommand}"/>
+                        Text="Name: Ascending ↑" HorizontalOptions="Start"
+                        Command="{Binding SearchService.SetSortByCommand}"
+                        CommandParameter="{x:Static dtos:ItemSortOption.NameAsc}"/>
 
                 <!-- Row 1 : Sort by Name Descending -->
                 <Grid Grid.Row="1" Grid.Column="0" HeightRequest="20">
-                    <Image Source="selected.png" IsVisible="{Binding SortByNameDescending}"/>
+                    <Image Source="selected.png" IsVisible="{Binding SearchService.SortBy, Converter={StaticResource EnumEqualsConverter}, ConverterParameter={x:Static dtos:ItemSortOption.NameDesc}}"/>
                     <Image Source="unselected.png" IsVisible="True"/>
                 </Grid>
                 <Button Grid.Row="1" Grid.Column="1" BackgroundColor="Transparent"
-                        Text="Name: Descending" HorizontalOptions="Start"
-                        Command="{Binding SetSortOptionAsNameDescendingCommand}"/>
+                        Text="Name: Descending ↓" HorizontalOptions="Start"
+                        Command="{Binding SearchService.SetSortByCommand}"
+                        CommandParameter="{x:Static dtos:ItemSortOption.NameDesc}"/>
 
                 <!-- Row 2 : Sort by Price Ascending -->
                 <Grid Grid.Row="2" Grid.Column="0" HeightRequest="20">
-                    <Image Source="selected.png" IsVisible="{Binding SortByPriceAscending}"/>
+                    <Image Source="selected.png" IsVisible="{Binding SearchService.SortBy, Converter={StaticResource EnumEqualsConverter}, ConverterParameter={x:Static dtos:ItemSortOption.PriceAsc}}"/>
                     <Image Source="unselected.png" IsVisible="True"/>
                 </Grid>
                 <Button Grid.Row="2" Grid.Column="1" BackgroundColor="Transparent"
-                        Text="Price: Ascending" HorizontalOptions="Start"
-                        Command="{Binding SetSortOptionAsPriceAscendingCommand}"/>
+                        Text="Price: Ascending ↑" HorizontalOptions="Start"
+                        Command="{Binding SearchService.SetSortByCommand}"
+                        CommandParameter="{x:Static dtos:ItemSortOption.PriceAsc}"/>
 
                 <!-- Row 3 : Sort by Price Descending -->
                 <Grid Grid.Row="3" Grid.Column="0" HeightRequest="20">
-                    <Image Source="selected.png" IsVisible="{Binding SortByPriceDescending}"/>
+                    <Image Source="selected.png" IsVisible="{Binding SearchService.SortBy, Converter={StaticResource EnumEqualsConverter}, ConverterParameter={x:Static dtos:ItemSortOption.PriceDesc}}"/>
                     <Image Source="unselected.png" IsVisible="True"/>
                 </Grid>
                 <Button Grid.Row="3" Grid.Column="1" BackgroundColor="Transparent"
-                        Text="Price: Descending" HorizontalOptions="Start"
-                        Command="{Binding SetSortOptionAsPriceDescendingCommand}"/>
+                        Text="Price: Descending ↓" HorizontalOptions="Start"
+                        Command="{Binding SearchService.SetSortByCommand}"
+                        CommandParameter="{x:Static dtos:ItemSortOption.PriceDesc}"/>
             </Grid>
 
             <!-- Bottom of Sort Menu : Apply and Cancel Buttons -->
@@ -102,7 +108,7 @@
                 <Border Grid.Row="0" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
                         Style="{StaticResource LozengeBorder}">
                     <Picker ItemsSource="{Binding CategoryList}"
-                            SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                            SelectedItem="{Binding SearchService.Category, Mode=TwoWay}"
                             HorizontalTextAlignment="Center">
                         <Picker.ItemDisplayBinding>
                             <Binding Path="Name"/>
@@ -116,7 +122,7 @@
                 <Border Grid.Row="1" Grid.Column="1" HeightRequest="40" WidthRequest="150" Margin="10"
                         Style="{StaticResource LozengeBorder}">
                     <Picker ItemsSource="{Binding SubcategoryList}"
-                            SelectedItem="{Binding SelectedSubcategory, Mode=TwoWay}"
+                            SelectedItem="{Binding SearchService.Subcategory, Mode=TwoWay}"
                             HorizontalTextAlignment="Center">
                         <Picker.ItemDisplayBinding>
                             <Binding Path="Name"/>
@@ -132,7 +138,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="Enter Keyword"
                            Keyboard="Text" MaxLength="20"
-                           Text="{Binding Keyword}"
+                           Text="{Binding SearchService.Keyword}"
                            Style="{StaticResource GenericEntry}"/>
                 </Border>
 
@@ -144,7 +150,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="Enter Material"
                            Keyboard="Text" MaxLength="20"
-                           Text="{Binding Material}"
+                           Text="{Binding SearchService.Material}"
                            Style="{StaticResource GenericEntry}"/>
                 </Border>
 
@@ -156,7 +162,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="None"
                            Keyboard="Numeric" MaxLength="6"
-                           Text="{Binding MinimumPrice}"
+                           Text="{Binding SearchService.MinimumPrice}"
                            Style="{StaticResource GenericEntry}">
                         <Entry.Behaviors>
                             <behaviours:NumericValidationBehaviour />
@@ -172,7 +178,7 @@
                     <Entry HeightRequest="40" WidthRequest="150"
                            Placeholder="None"
                            Keyboard="Numeric" MaxLength="6"
-                           Text="{Binding MaximumPrice}"
+                           Text="{Binding SearchService.MaximumPrice}"
                            Style="{StaticResource GenericEntry}">
                         <Entry.Behaviors>
                             <behaviours:NumericValidationBehaviour />

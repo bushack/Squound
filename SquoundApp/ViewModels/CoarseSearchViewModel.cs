@@ -15,13 +15,13 @@ namespace SquoundApp.ViewModels
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="CoarseSearchViewModel"/> class
-    /// with the specified <see cref="CategoryService"/> and <see cref="SearchState"/>.
+    /// with the specified <see cref="CategoryService"/> and <see cref="SearchService"/>.
     /// </summary>
     /// <param name="categoryService">The <see cref="CategoryService"/> instance used
     /// to retrieve item category data. Cannot be null.</param>
-    /// <param name="searchState">The <see cref="SearchState"/> instance used
+    /// <param name="searchService">The <see cref="SearchService"/> instance used
     /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class CoarseSearchViewModel(CategoryService categoryService, SearchState searchState) : BaseViewModel
+    public partial class CoarseSearchViewModel(CategoryService categoryService, SearchService searchService) : BaseViewModel
     {
         // Responsible for retrieving item categories and subcategories from the REST API.
         // This data is presented to the user on the CoarseSearchPage, where the user can select a category
@@ -29,7 +29,7 @@ namespace SquoundApp.ViewModels
         private readonly CategoryService _CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchState _SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
+        private readonly SearchService _SearchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
 
         // Collection of categories to display on the coarse search page.
         // This collection is populated by the ApplyQueryAsync method.
@@ -97,10 +97,10 @@ namespace SquoundApp.ViewModels
                     }
 
                     // Write the selected category to the current search.
-                    _SearchState.Category = category.Name;
+                    _SearchService.Category = category;
 
                     // Update the UI to reflect the selected category and its subcategories.
-                    Title = category.Name;
+                    Title = _SearchService.Category?.Name ?? string.Empty;
 
                     break;
                 }
@@ -108,14 +108,10 @@ namespace SquoundApp.ViewModels
                 // If the selected item is a subcategory, we want to navigate to the RefinedSearchPage.
                 case SubcategoryDto subcategory:
                 {
-                    // Clear the selected item and title in readiness for the next time the page is displayed.
-                    //SelectedItem = null;
-                    //Title = string.Empty;
+                    // Write the selected subcategory to the search service.
+                    _SearchService.Subcategory = subcategory;
 
-                    // Write the selected subcategory to the current search.
-                    _SearchState.Subcategory = subcategory.Name;
-
-                    // If the selected item is a subcategory, navigate to the RefinedSearchPage.
+                    // The selected item is a subcategory, therefore navigate to the RefinedSearchPage.
                     // This is where the user can perform a more detailed search based on the selected subcategory.
                     GoToRefinedSearchPageAsync().FireAndForget();
                     break;

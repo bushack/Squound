@@ -73,10 +73,8 @@ namespace SquoundApp
             builder.Services.AddSingleton<HttpService>();
             builder.Services.AddSingleton<ItemService>();
             builder.Services.AddSingleton<NavigationService>();
+            builder.Services.AddSingleton<SearchService>();
             builder.Services.AddSingleton<SellService>();
-
-            // States
-            builder.Services.AddSingleton<SearchState>();
 
             // Views
             builder.Services.AddSingleton<AdvancedHeaderView>();

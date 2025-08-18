@@ -112,9 +112,9 @@ namespace Shared.DataTransfer
 
 
         /// <summary>
-        /// Converts the DTO properties into a query string format for use in REST API calls.
+        /// Returns the query section of a URL that can be submitted to a REST API endpoint.
         /// </summary>
-        public string ToQueryString()
+        public string AsQueryString()
         {
             var queryString = string.Empty;
 
@@ -123,11 +123,11 @@ namespace Shared.DataTransfer
             if (this.ItemId is not null)
                 return queryString += $"itemid={this.ItemId}";
 
-            // Append the category, manufacturer, keyword, and price filters if they are set.
-            if (string.IsNullOrEmpty(this.Category) is false)
+            // Append the category, subcategory, manufacturer, material, keyword, and price filters if they are set.
+            if (Category is not null)
                 queryString += $"category={Uri.EscapeDataString(this.Category.ToLower())}&";
 
-            if (string.IsNullOrEmpty(this.Subcategory) is false)
+            if (Subcategory is not null)
                 queryString += $"subcategory={Uri.EscapeDataString(this.Subcategory.ToLower())}&";
 
             if (string.IsNullOrEmpty(this.Manufacturer) is false)

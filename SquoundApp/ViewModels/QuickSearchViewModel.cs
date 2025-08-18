@@ -19,15 +19,15 @@ namespace SquoundApp.ViewModels
     /// </summary>
     /// <param name="categoryService">The <see cref="CategoryService"/> instance used
     /// to retrieve item category data. Cannot be null.</param>
-    /// <param name="searchState">The <see cref="SearchState"/> instance used
+    /// <param name="searchService">The <see cref="SearchService"/> instance used
     /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class QuickSearchViewModel(CategoryService categoryService, SearchState searchState) : BaseViewModel
+    public partial class QuickSearchViewModel(CategoryService categoryService, SearchService searchService) : BaseViewModel
     {
         // Responsible for retrieving item categories from the REST API.
         private readonly CategoryService _CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchState _SearchState = searchState ?? throw new ArgumentNullException(nameof(searchState));
+        private readonly SearchService _SearchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
 
         //
         private bool _IsInitialized = false;
@@ -46,8 +46,8 @@ namespace SquoundApp.ViewModels
         {
             if (value is not null && value is CategoryDto category)
             {
-                // Write the selected category to the current search.
-                _SearchState.Category = category.Name;
+                // Write the selected category to the search service.
+                _SearchService.Category = category;
 
                 // Navigate to the RefinedSearchPage.
                 GoToRefinedSearchPageAsync().FireAndForget();
