@@ -97,7 +97,7 @@ namespace SquoundApp.ViewModels
                     }
 
                     // Write the selected category to the current search.
-                    _SearchService.Category = category;
+                    _SearchService.SetCategory(category, false);
 
                     // Update the UI to reflect the selected category and its subcategories.
                     Title = _SearchService.Category?.Name ?? string.Empty;
@@ -109,7 +109,7 @@ namespace SquoundApp.ViewModels
                 case SubcategoryDto subcategory:
                 {
                     // Write the selected subcategory to the search service.
-                    _SearchService.Subcategory = subcategory;
+                    _SearchService.SetSubcategory(subcategory);
 
                     // The selected item is a subcategory, therefore navigate to the RefinedSearchPage.
                     // This is where the user can perform a more detailed search based on the selected subcategory.

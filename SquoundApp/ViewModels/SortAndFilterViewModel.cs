@@ -104,7 +104,7 @@ namespace SquoundApp.ViewModels
 		{
 			if (SearchService.Category is null)
 			{
-				SearchService.Category = value.FirstOrDefault();
+				SearchService.SetCategory(value.FirstOrDefault(), true);
 			}
 
 			// If the user has selected a category on a previous

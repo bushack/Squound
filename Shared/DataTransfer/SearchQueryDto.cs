@@ -18,8 +18,12 @@ namespace Shared.DataTransfer
         public const int MinimumStringLength = 3;
         public const int MaximumStringLength = 25;
 
+        // Defaults for pagination.
+        public const int DefaultPageNumber = 1;
+        public const int DefaultPageSize = 10;
+
         // Limits for pagination.
-        public const int MinimumPageSize = 10;
+        public const int MinimumPageSize = DefaultPageSize;
         public const int MaximumPageSize = 100;
 
         // Limits for price range queries.
@@ -102,13 +106,13 @@ namespace Shared.DataTransfer
         /// Gets or sets the current page number for pagination.
         /// </summary>
         [Range(1, int.MaxValue, ErrorMessage = nameof(PageNumber) + RangeErrorMessage)]
-        public int PageNumber { get; set; } = 1;
+        public int PageNumber { get; set; } = DefaultPageNumber;
 
         /// <summary>
         /// Gets or sets the maximum number of items to return per page.
         /// </summary>
         [Range(MinimumPageSize, MaximumPageSize, ErrorMessage = nameof(PageSize) + RangeErrorMessage)]
-        public int PageSize { get; set; } = 10;
+        public int PageSize { get; set; } = DefaultPageSize;
 
 
         /// <summary>

@@ -47,7 +47,7 @@ namespace SquoundApp.ViewModels
             if (value is not null && value is CategoryDto category)
             {
                 // Write the selected category to the search service.
-                _SearchService.Category = category;
+                _SearchService.SetCategory(category, false);
 
                 // Navigate to the RefinedSearchPage.
                 GoToRefinedSearchPageAsync().FireAndForget();
