@@ -6,7 +6,6 @@ using System.Diagnostics;
 using SquoundApp.Extensions;
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.States;
 
 using Shared.DataTransfer;
 
@@ -26,10 +25,10 @@ namespace SquoundApp.ViewModels
         // Responsible for retrieving item categories and subcategories from the REST API.
         // This data is presented to the user on the CoarseSearchPage, where the user can select a category
         // or subcategory before progressing to the RefinedSearchPage to further hone in on specific items.
-        private readonly CategoryService _CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        private readonly CategoryService _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchService _SearchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
+        private readonly SearchService _searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
 
         // Collection of categories to display on the coarse search page.
         // This collection is populated by the ApplyQueryAsync method.
@@ -97,10 +96,10 @@ namespace SquoundApp.ViewModels
                     }
 
                     // Write the selected category to the current search.
-                    _SearchService.SetCategory(category, false);
+                    _searchService.SetCategory(category, false);
 
                     // Update the UI to reflect the selected category and its subcategories.
-                    Title = _SearchService.Category?.Name ?? string.Empty;
+                    Title = _searchService.Category?.Name ?? string.Empty;
 
                     break;
                 }
@@ -109,7 +108,7 @@ namespace SquoundApp.ViewModels
                 case SubcategoryDto subcategory:
                 {
                     // Write the selected subcategory to the search service.
-                    _SearchService.SetSubcategory(subcategory);
+                    _searchService.SetSubcategory(subcategory);
 
                     // The selected item is a subcategory, therefore navigate to the RefinedSearchPage.
                     // This is where the user can perform a more detailed search based on the selected subcategory.
@@ -145,7 +144,7 @@ namespace SquoundApp.ViewModels
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var response = await _CategoryService.GetDataAsync();
+                var response = await _categoryService.GetDataAsync();
 
                 if (response.Success is false)
                 {

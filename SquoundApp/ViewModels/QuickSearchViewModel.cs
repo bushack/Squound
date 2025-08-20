@@ -9,7 +9,6 @@ using SquoundApp.Pages;
 using SquoundApp.Services;
 
 using Shared.DataTransfer;
-using SquoundApp.States;
 
 
 namespace SquoundApp.ViewModels
@@ -24,10 +23,10 @@ namespace SquoundApp.ViewModels
     public partial class QuickSearchViewModel(CategoryService categoryService, SearchService searchService) : BaseViewModel
     {
         // Responsible for retrieving item categories from the REST API.
-        private readonly CategoryService _CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        private readonly CategoryService _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
 
         // Responsible for managing the current search criteria.
-        private readonly SearchService _SearchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
+        private readonly SearchService _searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
 
         //
         private bool _IsInitialized = false;
@@ -47,7 +46,7 @@ namespace SquoundApp.ViewModels
             if (value is not null && value is CategoryDto category)
             {
                 // Write the selected category to the search service.
-                _SearchService.SetCategory(category, false);
+                _searchService.SetCategory(category, false);
 
                 // Navigate to the RefinedSearchPage.
                 GoToRefinedSearchPageAsync().FireAndForget();
@@ -85,7 +84,7 @@ namespace SquoundApp.ViewModels
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var response = await _CategoryService.GetDataAsync();
+                var response = await _categoryService.GetDataAsync();
 
                 if (response.Success is false)
                 {

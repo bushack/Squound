@@ -8,7 +8,6 @@ using SquoundApp.Pages;
 using SquoundApp.Services;
 
 using Shared.DataTransfer;
-using SquoundApp.States;
 
 
 namespace SquoundApp.ViewModels

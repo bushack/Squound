@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 
 using SquoundApp.Pages;
 using SquoundApp.Services;
-using SquoundApp.States;
 
 using Shared.DataTransfer;
 
@@ -14,7 +13,7 @@ namespace SquoundApp.ViewModels
 {
 	public partial class SortAndFilterViewModel : BaseViewModel
 	{
-		private readonly CategoryService _CategoryService;
+		private readonly CategoryService _categoryService;
 
 		[ObservableProperty]
 		private SearchService searchService;
@@ -29,7 +28,7 @@ namespace SquoundApp.ViewModels
 		//
 		public SortAndFilterViewModel(CategoryService categoryService, SearchService searchService)
 		{
-			this._CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+			this._categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
 			this.SearchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
 		}
 
@@ -104,7 +103,7 @@ namespace SquoundApp.ViewModels
 		{
 			if (SearchService.Category is null)
 			{
-				SearchService.SetCategory(value.FirstOrDefault(), true);
+				//SearchService.SetCategory(value.FirstOrDefault(), true);
 			}
 
 			// If the user has selected a category on a previous
@@ -372,7 +371,12 @@ namespace SquoundApp.ViewModels
 		/// </summary>
 		private void ShowFilterMenu()
 		{
-			Title = "Filter Options";
+            if (SearchService.Category is null)
+            {
+                SearchService.SetCategory(CategoryList.FirstOrDefault(), true);
+            }
+
+            Title = "Filter Options";
 
 			IsTitleLabelVisible     = true;
 			IsFilterButtonActive    = false;
@@ -435,7 +439,7 @@ namespace SquoundApp.ViewModels
 				// Retrieve item categories from the category service.
 				// This method is expected to return a list of item categories asynchronously.
 				// The retrieved categories will be added to the categoryList collection.
-				var response = await _CategoryService.GetDataAsync();
+				var response = await _categoryService.GetDataAsync();
 
 				if (response.Success is false)
 				{

@@ -7,7 +7,6 @@ using SquoundApp.Pages;
 using SquoundApp.Services;
 using SquoundApp.ViewModels;
 using SquoundApp.Views;
-using SquoundApp.States;
 
 namespace SquoundApp
 {

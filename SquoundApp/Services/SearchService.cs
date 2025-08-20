@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Microsoft.Extensions.Logging;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using SquoundApp.ViewModels;
@@ -6,10 +8,13 @@ using SquoundApp.ViewModels;
 using Shared.DataTransfer;
 
 
-namespace SquoundApp.States
+namespace SquoundApp.Services
 {
-	public partial class SearchService : ObservableObject
+	public partial class SearchService(ILogger<SearchService> logger) : ObservableObject
 	{
+		private readonly ILogger<SearchService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+
 		/// <summary>
 		/// Internal class responsible for caching current and previous search parameters.
 		/// To submit a search query to the API, first request a SearchQueryDto using the
@@ -75,11 +80,22 @@ namespace SquoundApp.States
 		}
 
 
+		// Responsible for caching user-selected filter and sort parameters.
+		// To be used when the user wishes to apply a filter or sort and perform a database query.
 		private SearchState _currentState = new();
+
+		// Responsible for caching user-selected filter and sort parameters from the last successful database query.
+		// To be used when the user wishes to cancel changes made to the current state.
 		private SearchState _previousState = new();
 
-		// Observable properties for user interface binding.
-		[ObservableProperty] private CategoryDto? category = null;
+        // Flags if any parameter has changed since the last successful database query.
+        private bool _hasChanged = true;
+
+        // The data should be considered out-of-date if the interval since the last successful database query exceeds 30 minutes.
+        private readonly TimeSpan _maxInterval = TimeSpan.FromMinutes(30);
+
+        // Observable properties for user interface binding.
+        [ObservableProperty] private CategoryDto? category = null;
 		[ObservableProperty] private SubcategoryDto? subcategory = null;
 		[ObservableProperty] private string? manufacturer = null;
 		[ObservableProperty] private string? material = null;
@@ -88,13 +104,7 @@ namespace SquoundApp.States
 		[ObservableProperty] private string? maximumPrice = null;
 		[ObservableProperty] private int pageNumber = SearchQueryDto.DefaultPageNumber;
 		[ObservableProperty] private int pageSize = SearchQueryDto.DefaultPageSize;
-        [ObservableProperty] private ItemSortOption sortBy = ItemSortOption.PriceAsc;
-
-        // Flags if any search parameter has changed since last fetch.
-        private bool _hasChanged = true;
-
-		// The data should be considered out-of-date if the time span since the last fetch exceeds 30 minutes.
-		private readonly TimeSpan _maxInterval = TimeSpan.FromMinutes(30);
+		[ObservableProperty] private ItemSortOption sortBy = ItemSortOption.PriceAsc;
 
 
 		/// <summary>
@@ -110,6 +120,8 @@ namespace SquoundApp.States
 		/// </summary>
 		public void SaveState()
 		{
+			_logger.LogDebug("Saving current state.");
+
 			_currentState.TimeStamp = DateTime.UtcNow;
 
 			_previousState = _currentState.Clone();
@@ -123,6 +135,8 @@ namespace SquoundApp.States
 		/// </summary>
 		public void CancelChanges()
 		{
+			_logger.LogDebug("Cancelling changes to current state.");
+
 			_currentState = _previousState.Clone();
 			_hasChanged = false;
 
@@ -136,6 +150,8 @@ namespace SquoundApp.States
 		/// </summary>
 		public void ResetState(CategoryDto? defaultCategory = null)
 		{
+			_logger.LogDebug("Resetting current state.");
+
 			// Overwrite the current state with a default state.
 			_currentState = new SearchState { TimeStamp = DateTime.Now };
 
@@ -146,13 +162,17 @@ namespace SquoundApp.States
 
 		//
 		public void SetCategory(CategoryDto? category, bool forceSubcategory)
-		{
-			_currentState.Category = category;
+        {
+            _logger.LogDebug("Setting Category to {category}.", category?.Name);
+
+            _currentState.Category = category;
 
 			// If possible, forcibly assign the new category's first subcategory.
 			if (forceSubcategory && _currentState.Category?.Subcategories.Count > 0)
-			{
-				_currentState.Subcategory = _currentState.Category.Subcategories.First();
+            {
+                _logger.LogDebug("Setting Subcategory to {subcategory}.", _currentState.Category.Subcategories.First().Name);
+
+                _currentState.Subcategory = _currentState.Category.Subcategories.First();
 			}
 
 			_hasChanged = true;
@@ -161,76 +181,91 @@ namespace SquoundApp.States
 
 
 		public void SetSubcategory(SubcategoryDto? subcategory)
-		{
-			_currentState.Subcategory = subcategory;
-            _hasChanged = true;
-            SyncUserInterface();
+        {
+            _logger.LogDebug("Setting Subcategory to {subcategory}.", subcategory?.Name);
+
+            _currentState.Subcategory = subcategory;
+			_hasChanged = true;
+			SyncUserInterface();
+
 		}
 
 
 		public void SetManufacturer(string? manufacturer)
-		{
-			_currentState.Manufacturer = manufacturer;
-            _hasChanged = true;
-            SyncUserInterface();
+        {
+            _logger.LogDebug("Setting Manufacturer to {manufacturer}.", manufacturer);
+
+            _currentState.Manufacturer = manufacturer;
+			_hasChanged = true;
+			SyncUserInterface();
 		}
 
 
 		public void SetMaterial(string? material)
-		{
-			_currentState.Material = material;
-            _hasChanged = true;
-            SyncUserInterface();
+        {
+            _logger.LogDebug("Setting Material to {material}.", material);
+
+            _currentState.Material = material;
+			_hasChanged = true;
+			SyncUserInterface();
 		}
 
 
 		public void SetKeyword(string? keyword)
-		{
-			_currentState.Keyword = keyword;
-            _hasChanged = true;
-            SyncUserInterface();
+        {
+            _logger.LogDebug("Setting Keyword to {keyword}.", keyword);
+
+            _currentState.Keyword = keyword;
+			_hasChanged = true;
+			SyncUserInterface();
 		}
 
 
 		public void SetMinPrice(string? minPrice)
         {
+            _logger.LogDebug("Attempting to set MinPrice to {minPrice}.", minPrice);
+
             // Attempt to parse the string to a decimal.
             if (TryParsePrice(minPrice, out decimal? parsePrice) is false || parsePrice is null)
-            {
-                _currentState.MinPrice = null;
+			{
+				_currentState.MinPrice = null;
+			}
+
+			// If successfully parsed.
+			else
+			{
+				// Clamp price to within practical range.
+				decimal price = Math.Clamp(parsePrice.Value,
+					(decimal)SearchQueryDto.PracticalMinimumPrice,
+						(decimal)SearchQueryDto.PracticalMaximumPrice);
+
+				// Ensure max price is greater-than or equal-to new min price.
+				if (_currentState.MaxPrice < price)
+				{
+					_currentState.MinPrice = price;
+					_currentState.MaxPrice = price;
+				}
+
+				// No conflict; simply assign new min price.
+				else
+				{
+					_currentState.MinPrice = price;
+				}
             }
 
-            // If successfully parsed.
-            else
-            {
-                // Clamp price to within practical range.
-                decimal price = Math.Clamp(parsePrice.Value,
-                    (decimal)SearchQueryDto.PracticalMinimumPrice,
-                        (decimal)SearchQueryDto.PracticalMaximumPrice);
-
-                // Ensure max price is greater-than or equal-to new min price.
-                if (_currentState.MaxPrice < price)
-                {
-                    _currentState.MinPrice = price;
-                    _currentState.MaxPrice = price;
-                }
-
-                // No conflict; simply assign new min price.
-                else
-                {
-                    _currentState.MinPrice = price;
-                }
-            }
+            _logger.LogDebug("MinPrice set to {price}.", _currentState.MinPrice);
 
             _hasChanged = true;
-            SyncUserInterface();
-        }
+			SyncUserInterface();
+		}
 
 
 		public void SetMaxPrice(string? maxPrice)
         {
-			// Attempt to parse the string to a decimal.
-			if (TryParsePrice(maxPrice, out decimal? parsePrice) is false || parsePrice is null)
+            _logger.LogDebug("Attempting to set MinPrice to {maxPrice}.", maxPrice);
+
+            // Attempt to parse the string to a decimal.
+            if (TryParsePrice(maxPrice, out decimal? parsePrice) is false || parsePrice is null)
 			{
 				_currentState.MaxPrice = null;
 			}
@@ -239,26 +274,28 @@ namespace SquoundApp.States
 			else
 			{
 				// Clamp price to within practical range.
-                decimal price = Math.Clamp(parsePrice.Value,
+				decimal price = Math.Clamp(parsePrice.Value,
 					(decimal)SearchQueryDto.PracticalMinimumPrice,
 						(decimal)SearchQueryDto.PracticalMaximumPrice);
 
-                // Ensure min price is less-than or equal-to new max price.
-                if (_currentState.MinPrice > price)
-                {
-                    _currentState.MinPrice = price;
-                    _currentState.MaxPrice = price;
-                }
-
-                // No conflict; simply assign new max price.
-                else
-                {
+				// Ensure min price is less-than or equal-to new max price.
+				if (_currentState.MinPrice > price)
+				{
+					_currentState.MinPrice = price;
 					_currentState.MaxPrice = price;
 				}
-			}
-			
-			_hasChanged = true;
-            SyncUserInterface();
+
+				// No conflict; simply assign new max price.
+				else
+				{
+					_currentState.MaxPrice = price;
+				}
+            }
+
+            _logger.LogDebug("MaxPrice set to {price}.", _currentState.MaxPrice);
+
+            _hasChanged = true;
+			SyncUserInterface();
 		}
 
 
@@ -266,7 +303,10 @@ namespace SquoundApp.States
 		{
 			_currentState.PageNumber = pageNumber;
 			_hasChanged = true;
-			SyncUserInterface();
+
+            _logger.LogDebug("PageNumber set to {pageNumber}.", _currentState.PageNumber);
+
+            SyncUserInterface();
 		}
 
 
@@ -274,33 +314,45 @@ namespace SquoundApp.States
 		{
 			_currentState.PageNumber++;
 			_hasChanged = true;
+
+            _logger.LogDebug("Incremented PageNumber. PageNumber is {pageNumber}.", _currentState.PageNumber);
+
             SyncUserInterface();
-        }
+		}
 
 
 		public void DecrementPageNumber()
 		{
 			_currentState.PageNumber--;
 			_hasChanged = true;
+
+            _logger.LogDebug("Decremented PageNumber. PageNumber is {pageNumber}.", _currentState.PageNumber);
+
             SyncUserInterface();
-        }
+		}
 
 
 		public void SetPageSize(int pageSize)
 		{
 			_currentState.PageSize = pageSize;
 			_hasChanged = true;
-			SyncUserInterface();
-        }
 
+            _logger.LogDebug("PageSize set to {PageSize}.", _currentState.PageSize);
 
-        [RelayCommand]
-        public void SetSortBy(ItemSortOption sortBy)
-        {
-            _currentState.SortBy = sortBy;
-            _hasChanged = true;
             SyncUserInterface();
-        }
+		}
+
+
+		[RelayCommand]
+		public void SetSortBy(ItemSortOption sortBy)
+		{
+			_currentState.SortBy = sortBy;
+			_hasChanged = true;
+
+            _logger.LogDebug("SortBy set to {SortBy}.", _currentState.SortBy);
+
+            SyncUserInterface();
+		}
 
 
 		/// <summary>
@@ -322,6 +374,8 @@ namespace SquoundApp.States
 		/// </summary>
 		private void SyncUserInterface()
 		{
+			_logger.LogDebug("Synchronising user interface");
+
 			this.Category       = _currentState.Category;
 			this.Subcategory    = _currentState.Subcategory;
 			this.Manufacturer   = _currentState.Manufacturer;
@@ -336,9 +390,11 @@ namespace SquoundApp.States
 
 
 		//
-		private static bool TryParsePrice(string? input, out decimal? result)
-		{
-			result = null;
+		private bool TryParsePrice(string? input, out decimal? result)
+        {
+            _logger.LogDebug("Attempting to parse {input} to decimal", input);
+
+            result = null;
 
 			if (string.IsNullOrWhiteSpace(input))
 				return false;
@@ -346,12 +402,16 @@ namespace SquoundApp.States
 			var digits = string.Concat(input.Where(char.IsDigit));
 
 			if (decimal.TryParse(digits, out decimal parsed))
-			{
-				result = parsed;
+            {
+                _logger.LogDebug("Parsing successful. Value is {parsed}", parsed);
+
+                result = parsed;
 				return true;
 			}
 
-			return false;
+            _logger.LogDebug("Parsing unsuccessful.");
+
+            return false;
 		}
 	}
 }
