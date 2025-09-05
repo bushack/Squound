@@ -22,12 +22,10 @@
 
     <VerticalStackLayout>
         
-        
-
         <CollectionView ItemsLayout="HorizontalList"
                         ItemsSource="{Binding CategoryList}"
                         ItemTemplate="{StaticResource CategoryTemplate}"
-                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                         SelectionMode="Single"
                         IsEnabled="True"
                         IsVisible="True"

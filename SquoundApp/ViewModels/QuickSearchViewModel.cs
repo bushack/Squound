@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+
+using Microsoft.Extensions.Logging;
 
 using SquoundApp.Extensions;
+using SquoundApp.Interfaces;
 using SquoundApp.Pages;
 using SquoundApp.Services;
 
@@ -16,41 +17,36 @@ namespace SquoundApp.ViewModels
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="categoryService">The <see cref="CategoryService"/> instance used
-    /// to retrieve item category data. Cannot be null.</param>
-    /// <param name="searchService">The <see cref="SearchService"/> instance used
-    /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class QuickSearchViewModel(CategoryService categoryService, SearchService searchService) : BaseViewModel
+    public partial class QuickSearchViewModel : BaseViewModel
     {
-        // Responsible for retrieving item categories from the REST API.
-        private readonly CategoryService _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        private readonly ILogger<QuickSearchViewModel> _Logger;
+        private readonly ICategoryService _Categories;
+        private readonly ISearchContext _Search;
 
-        // Responsible for managing the current search criteria.
-        private readonly SearchService _searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
-
-        //
+        // Ensures one-time initialization.
         private bool _IsInitialized = false;
 
-        //
+        // For user interface binding.
         [ObservableProperty]
         private ObservableCollection<CategoryDto> categoryList = [];
 
-        //
+        // For user interface binding.
         [ObservableProperty]
-        private object? selectedCategory = null;
+        private CategoryDto? selectedItem = null;
 
 
-        //
-        partial void OnSelectedCategoryChanged(object? value)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="categories"></param>
+        /// <param name="search"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public QuickSearchViewModel(ILogger<QuickSearchViewModel> logger, ICategoryService categories, ISearchContext search)
         {
-            if (value is not null && value is CategoryDto category)
-            {
-                // Write the selected category to the search service.
-                _searchService.SetCategory(category, false);
-
-                // Navigate to the RefinedSearchPage.
-                GoToRefinedSearchPageAsync().FireAndForget();
-            }
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _Categories = categories ?? throw new ArgumentNullException(nameof(categories));
+            _Search = search ?? throw new ArgumentNullException(nameof(search));
         }
 
 
@@ -58,7 +54,6 @@ namespace SquoundApp.ViewModels
         /// Retrieves item categories from the category service and populates the CategoryList.
         /// This method is called by the CoarseSearchPage's OnAppearing method.
         /// </summary>
-        /// <returns></returns>
         public async Task InitAsync()
         {
             // Check if the view model is already busy fetching data.
@@ -71,8 +66,10 @@ namespace SquoundApp.ViewModels
             try
             {
                 // Ensure one-time run of initialization logic.
-                if (_IsInitialized) return;
-                    _IsInitialized = true;
+                if (_IsInitialized)
+                    return;
+
+                _IsInitialized = true;
 
                 // Set IsBusy to true to indicate that a fetch operation is in progress.
                 // This will typically disable UI elements that should not be interacted with
@@ -84,7 +81,7 @@ namespace SquoundApp.ViewModels
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var response = await _categoryService.GetDataAsync();
+                var response = await _Categories.GetDataAsync();
 
                 if (response.Success is false)
                 {
@@ -106,13 +103,12 @@ namespace SquoundApp.ViewModels
 
             catch (Exception ex)
             {
-                // Handle exceptions, e.g., log them.
-                Debug.WriteLine($"Search error while attempting to fetch data: {ex.Message}");
+                _Logger.LogWarning(ex, "Error while retrieving category data.");
 
                 // Display an alert to the user indicating that an error occurred while fetching data.
                 await Shell.Current.DisplayAlert(
                     "Search Error",
-                    "An undefined error occurred while attempting to fetch data",
+                    "An undefined error occurred while attempting to retrieve data",
                     "OK");
             }
 
@@ -124,16 +120,27 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
+        /// Called when the SelectedItem property changes.
+        /// </summary>
+        partial void OnSelectedItemChanged(CategoryDto? value)
+        {
+            if (value is not null)
+            {
+                // Write the selected category to the search service.
+                _Search.Category = value;
+
+                // Navigate to the RefinedSearchPage.
+                GoToRefinedSearchPageAsync().FireAndForget();
+            }
+        }
+
+
+        /// <summary>
         /// Asynchronously initiates a navigation to the RefinedSearchPage.
         /// </summary>
-        /// <returns></returns>
         private async Task GoToRefinedSearchPageAsync()
         {
-            // Navigate to the RefinedSearchPage and pass the selected category as a parameter.
-            //await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
-
-            var navService = ServiceLocator.GetService<NavigationService>();
-            await navService.GoToAsync(nameof(RefinedSearchPage));
+            await ServiceLocator.GetService<NavigationService>().GoToAsync(nameof(RefinedSearchPage));
         }
     }
 }

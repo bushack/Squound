@@ -1,360 +1,164 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using Microsoft.Extensions.Logging;
 
 using System.Collections.ObjectModel;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
+using SquoundApp.Events;
+using SquoundApp.Interfaces;
 using SquoundApp.Pages;
 using SquoundApp.Services;
 
 using Shared.DataTransfer;
+using Shared.Interfaces;
 
 
 namespace SquoundApp.ViewModels
 {
 	public partial class SortAndFilterViewModel : BaseViewModel
 	{
-		private readonly CategoryService _categoryService;
+		// Services & Contexts.
+		private readonly ILogger<SortAndFilterViewModel> _Logger;
+		private readonly IEventService _Events;
+		private readonly ICategoryService _Categories;
+		private readonly ISearchContext _Search;
 
-		[ObservableProperty]
-		private SearchService searchService;
+		// Search state binding properties.
+		[ObservableProperty] private ObservableCollection<CategoryDto> categoryList = [];
+		[ObservableProperty] private ObservableCollection<SubcategoryDto> subcategoryList = [];
+		
+		[ObservableProperty] private CategoryDto? category = null;
+		[ObservableProperty] private SubcategoryDto? subcategory = null;
 
-		[ObservableProperty]
-		private ObservableCollection<CategoryDto> categoryList = [];
+		[ObservableProperty] private string? manufacturer = null;
+		[ObservableProperty] private string? material = null;
+		[ObservableProperty] private string? keyword = null;
+		[ObservableProperty] private string? minPrice = null;
+		[ObservableProperty] private string? maxPrice = null;
+		
+		[ObservableProperty] private int pageNumber = SearchQueryDto.DefaultPageNumber;
+		[ObservableProperty] private int pageSize = SearchQueryDto.DefaultPageSize;
+		
+		[ObservableProperty] private ItemSortOption sortBy = ItemSortOption.PriceAsc;
 
-		[ObservableProperty]
-		private ObservableCollection<SubcategoryDto> subcategoryList = [];
+        // User Interface state binding properties.
+        [ObservableProperty] private bool sortByNameAscending = false;
+        [ObservableProperty] private bool sortByNameDescending = false;
+        [ObservableProperty] private bool sortByPriceAscending = true;
+        [ObservableProperty] private bool sortByPriceDescending = false;
 
-
-		//
-		public SortAndFilterViewModel(CategoryService categoryService, SearchService searchService)
-		{
-			this._categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
-			this.SearchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
-		}
-
-		//[ObservableProperty]
-		//private CategoryDto? selectedCategory = null;
-
-		//[ObservableProperty]
-		//private SubcategoryDto? selectedSubcategory = null;
-
-
-		// Variables responsible for adjusting the sort options.
-		//[ObservableProperty]
-		//private bool sortByNameAscending = false;   <<< continue migration over to SearchState
-
-		//[ObservableProperty]
-		//private bool sortByNameDescending = false;
-
-		//[ObservableProperty]
-		//private bool sortByPriceAscending = true;
-
-		//[ObservableProperty]
-		//private bool sortByPriceDescending = false;
-
-
-		// Variables responsible for adjusting the filter options.
-		//[ObservableProperty]
-		//private string category = string.Empty;
-
-		//[ObservableProperty]
-		//private string subcategory = string.Empty;
-
-		//[ObservableProperty]
-		//private string manufacturer = string.Empty;
-
-		//[ObservableProperty]
-		//private string material = string.Empty;
-
-		//[ObservableProperty]
-		//private string keyword = string.Empty;
-
-		//[ObservableProperty]
-		//private string minimumPrice = string.Empty;
-
-		//[ObservableProperty]
-		//private string maximumPrice = string.Empty;
-
-
-		// Variables responsible for showing and hiding the sort and filter menus.
-		[ObservableProperty]
-		private bool isTitleLabelVisible = true;
-
-		[ObservableProperty]
-		private bool isSortButtonActive = true;
-
-		[ObservableProperty]
-		private bool isFilterButtonActive = true;
-
-		[ObservableProperty]
-		private bool isSortMenuActive = false;
-
-		[ObservableProperty]
-		private bool isFilterMenuActive = false;
+        [ObservableProperty] private bool isTitleLabelVisible = true;
+		[ObservableProperty] private bool isSortButtonActive = true;
+		[ObservableProperty] private bool isFilterButtonActive = true;
+		[ObservableProperty] private bool isSortMenuActive = false;
+		[ObservableProperty] private bool isFilterMenuActive = false;
 
 
 		/// <summary>
-		/// Populates the DynamicList with categories when the CategoryList changes.
-		/// This typically happens only once when the CoarseSearchPage's OnAppearing method
-		/// is called for the first time.
+		/// Constructor.
 		/// </summary>
-		/// <param name="value"></param>
-		partial void OnCategoryListChanged(ObservableCollection<CategoryDto> value)
+		/// <param name="logger"></param>
+		/// <param name="events"></param>
+		/// <param name="categories"></param>
+		/// <param name="search"></param>
+		/// <exception cref="ArgumentNullException"></exception>
+		public SortAndFilterViewModel(ILogger<SortAndFilterViewModel> logger, IEventService events,
+			ICategoryService categories, ISearchContext search)
 		{
-			if (SearchService.Category is null)
-			{
-				//SearchService.SetCategory(value.FirstOrDefault(), true);
-			}
+			_Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			_Events = events ?? throw new ArgumentNullException(nameof(events));
+            _Categories = categories ?? throw new ArgumentNullException(nameof(categories));
+			_Search = search ?? throw new ArgumentNullException(nameof(search));
 
-			// If the user has selected a category on a previous
-			// screen we need to preselect that same category here.
-			//if (SearchState.Category is not null)
-			//{
-			//    SelectedCategory = CategoryList.FirstOrDefault(c => c.Name == SearchState.Category);
-
-			//    //this whole selecting of category/subcategory needs to be recoded
-			//}
-
-			// TODO : What if null?
+			_Events.Subscribe<SearchContextChangedEvent>(OnSearchContextChanged);
 		}
 
-		//
-		//partial void OnSelectedCategoryChanged(CategoryDto? value)
-		//{
-		//    if (CategoryList.Count == 0)
-		//        return;
 
-		//    // If the value is null (likely after a reset) we need to assign a default value.
-		//    if (value is null)
-		//    {
-		//        value = CategoryList.FirstOrDefault();
-		//    }
+		partial void OnCategoryListChanged(ObservableCollection<CategoryDto> value)
+		{
+		}
 
-		//    // Writes the category to the search state.
-		//    Category = value.Name;
 
-		//    // Clear any previously selected subcategory.
-		//    SelectedSubcategory = null;
-
-		//    // Clear the subcategories list.
-		//    SubcategoryList.Clear();
-
-		//    // Then repopulate it with subcategories of the selected category.
-		//    foreach (var subcategory in value.Subcategories)
-		//    {
-		//        SubcategoryList.Add(subcategory);
-		//    }
-
-		//    // Preselect the first subcategory as default.
-		//    if (SubcategoryList.Count > 0)
-		//    {
-		//        SelectedSubcategory = SubcategoryList.FirstOrDefault();
-		//    }
-		//}
-
-		//
 		partial void OnSubcategoryListChanged(ObservableCollection<SubcategoryDto> value)
 		{
 		}
 
-		//
-		//partial void OnSelectedSubcategoryChanged(SubcategoryDto? value)
-		//{
-		//    // Write the subcategory to the search state.
-		//    Subcategory = value != null ? value.Name : string.Empty;
-		//}
+
+		partial void OnCategoryChanged(CategoryDto? value)
+		{
+			_Search.Category = value;
+
+			// Sync the subcategory list with the selected category.
+			SubcategoryList.Clear();
+			if (value is not null)
+			{
+				foreach (var subcategory in value.Subcategories)
+				{
+					SubcategoryList.Add(subcategory);
+				}
+
+				// Preselect the first subcategory as default.
+				if (SubcategoryList.Count > 0)
+				{
+					Subcategory = SubcategoryList.FirstOrDefault();
+				}
+			}
+		}
 
 
-		// Partial methods to handle changes in filter properties.
-		//partial void OnCategoryChanged(string value)
-		//{
-		//    SearchState.Category = value;
-		//}
-		//partial void OnSubcategoryChanged(string value)
-		//{
-		//    SearchState.Subcategory = value;
-		//}
-		//partial void OnManufacturerChanged(string value)
-		//{
-		//    SearchState.Manufacturer = value;
-		//}
-		//partial void OnMaterialChanged(string value)
-		//{
-		//    SearchState.Material = value;
-		//}
-		//partial void OnKeywordChanged(string value)
-		//{
-		//    SearchState.Keyword = value;
-		//}
-		//partial void OnMinimumPriceChanged(string value)
-		//{
-		//    // Extract only the digits from the string.
-		//    var digits = new string(value.Where(char.IsDigit).ToArray());
-
-		//    // Try to parse the digits to a decimal.
-		//    if (decimal.TryParse(digits, out decimal price))
-		//    {
-		//        // If the parsed price is out of the valid range.
-		//        if (price < 0 || price > (decimal)SearchQueryDto.PracticalMaximumPrice)
-		//        {
-		//            SearchState.MinPrice = null;
-		//        }
-
-		//        // If the parsed price is greater than the maximum price.
-		//        // Set both minimum and maximum prices to the parsed price.
-		//        else if (price > SearchState.MaxPrice)
-		//        {
-		//            SearchState.MinPrice = price;
-		//            SearchState.MaxPrice = price;
-
-		//            RestoreQueryToUserInterface(SearchState.CopyOfCurrentQuery);
-		//        }
-
-		//        // If the parsed price is valid and within the range.
-		//        else
-		//        {
-		//            SearchState.MinPrice = price;
-		//        }
-		//    }
-
-		//    else
-		//    {
-		//        // If parsing fails.
-		//        SearchState.MinPrice = null;
-		//    }
-		//}
-		//partial void OnMaximumPriceChanged(string value)
-		//{
-		//    // Extract only the digits from the string.
-		//    var digits = new string(value.Where(char.IsDigit).ToArray());
-
-		//    // Try to parse the digits to a decimal.
-		//    if (decimal.TryParse(digits, out decimal price))
-		//    {
-		//        // If the parsed price is out of the valid range.
-		//        if (price < 0 || price > (decimal)SearchQueryDto.PracticalMaximumPrice)
-		//        {
-		//            SearchState.MaxPrice = null;
-		//        }
-
-		//        // If the parsed price is less than the minimum price.
-		//        // Set both minimum and maximum prices to the parsed price.
-		//        else if (price < SearchState.MinPrice)
-		//        {
-		//            SearchState.MinPrice = price;
-		//            SearchState.MaxPrice = price;
-
-		//            RestoreQueryToUserInterface(SearchState.CopyOfCurrentQuery);
-		//        }
-
-		//        // If the parsed price is valid and within the range.
-		//        else
-		//        {
-		//            SearchState.MaxPrice = price;
-		//        }
-		//    }
-
-		//    else
-		//    {
-		//        // If parsing fails.
-		//        SearchState.MaxPrice = null;
-		//    }
-		//}
-		//partial void OnSortByNameAscendingChanged(bool value)
-		//{
-		//    SearchState.SortBy = value ? ItemSortOption.NameAsc : SearchState.SortBy;
-		//}
-		//partial void OnSortByNameDescendingChanged(bool value)
-		//{
-		//    SearchState.SortBy = value ? ItemSortOption.NameDesc : SearchState.SortBy;
-		//}
-		//partial void OnSortByPriceAscendingChanged(bool value)
-		//{
-		//    SearchState.SortBy = value ? ItemSortOption.PriceAsc : SearchState.SortBy;
-		//}
-		//partial void OnSortByPriceDescendingChanged(bool value)
-		//{
-		//    SearchState.SortBy = value ? ItemSortOption.PriceDesc : SearchState.SortBy;
-		//}
+		partial void OnSubcategoryChanged(SubcategoryDto? value)
+		{
+			_Search.Subcategory = value;
+		}
 
 
-		//// Methods responsible for setting the sort options.
-		//[RelayCommand]
-		//private void SetSortOption(ItemSortOption sortBy)
-		//{
-		//    // Reset all sort options to false.
-		//    SortByNameAscending = false;
-		//    SortByNameDescending = false;
-		//    SortByPriceAscending = false;
-		//    SortByPriceDescending = false;
-
-		//    // Set the appropriate sort option based on the provided sortBy parameter.
-		//    switch (sortBy)
-		//    {
-		//        case ItemSortOption.NameAsc:
-		//            SortByNameAscending = true;
-		//            break;
-
-		//        case ItemSortOption.NameDesc:
-		//            SortByNameDescending = true;
-		//            break;
-
-		//        case ItemSortOption.PriceAsc:
-		//            SortByPriceAscending = true;
-		//            break;
-
-		//        case ItemSortOption.PriceDesc:
-		//            SortByPriceDescending = true;
-		//            break;
-
-		//        // If no valid sort option is provided, default to sorting by price ascending.
-		//        default:
-		//            SortByPriceAscending = true;
-		//            break;
-		//    }
-		//}
-
-		//[RelayCommand]
-		//private void SetSortOptionAsNameAscending()
-		//{
-		//    SortByNameAscending = true;
-		//    SortByNameDescending = false;
-		//    SortByPriceAscending = false;
-		//    SortByPriceDescending = false;
-		//}
-
-		//[RelayCommand]
-		//private void SetSortOptionAsNameDescending()
-		//{
-		//    SortByNameAscending = false;
-		//    SortByNameDescending = true;
-		//    SortByPriceAscending = false;
-		//    SortByPriceDescending = false;
-		//}
-
-		//[RelayCommand]
-		//private void SetSortOptionAsPriceAscending()
-		//{
-		//    SortByNameAscending = false;
-		//    SortByNameDescending = false;
-		//    SortByPriceAscending = true;
-		//    SortByPriceDescending = false;
-		//}
-
-		//[RelayCommand]
-		//private void SetSortOptionAsPriceDescending()
-		//{
-		//    SortByNameAscending = false;
-		//    SortByNameDescending = false;
-		//    SortByPriceAscending = false;
-		//    SortByPriceDescending = true;
-		//}
+        partial void OnManufacturerChanged(string? value)
+		{
+			_Search.Manufacturer = value;
+		}
 
 
-		/// <summary>
-		/// Shows and activates the sort menu, allowing users to choose how they want to sort the items.
-		/// </summary>
-		private void ShowSortMenu()
+        partial void OnMaterialChanged(string? value)
+		{
+			_Search.Material = value;
+        }
+
+
+        partial void OnKeywordChanged(string? value)
+        {
+			_Search.Keyword = value;
+        }
+
+
+        partial void OnMinPriceChanged(string? value)
+        {
+			_Search.MinPrice = value;
+        }
+
+
+        partial void OnMaxPriceChanged(string? value)
+        {
+			_Search.MaxPrice = value;
+        }
+
+
+        partial void OnPageNumberChanged(int value)
+        {
+			_Search.PageNumber = value;
+        }
+
+
+        partial void OnPageSizeChanged(int value)
+		{
+			_Search.PageSize = value;
+		}
+
+
+        /// <summary>
+        /// Shows and activates the sort menu, allowing users to choose how they want to sort the items.
+        /// </summary>
+        private void ShowSortMenu()
 		{
 			Title = "Sort Options";
 
@@ -371,12 +175,7 @@ namespace SquoundApp.ViewModels
 		/// </summary>
 		private void ShowFilterMenu()
 		{
-            if (SearchService.Category is null)
-            {
-                SearchService.SetCategory(CategoryList.FirstOrDefault(), true);
-            }
-
-            Title = "Filter Options";
+			Title = "Filter Options";
 
 			IsTitleLabelVisible     = true;
 			IsFilterButtonActive    = false;
@@ -439,7 +238,7 @@ namespace SquoundApp.ViewModels
 				// Retrieve item categories from the category service.
 				// This method is expected to return a list of item categories asynchronously.
 				// The retrieved categories will be added to the categoryList collection.
-				var response = await _categoryService.GetDataAsync();
+				var response = await _Categories.GetDataAsync();
 
 				if (response.Success is false)
 				{
@@ -484,10 +283,7 @@ namespace SquoundApp.ViewModels
 		{
 			HideMenus();
 
-			//await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
-
-			var navService = ServiceLocator.GetService<NavigationService>();
-			await navService.GoToAsync(nameof(RefinedSearchPage));
+			await ServiceLocator.GetService<NavigationService>().GoToAsync(nameof(RefinedSearchPage));
 		}
 
 
@@ -498,10 +294,7 @@ namespace SquoundApp.ViewModels
 		[RelayCommand]
 		private void OnCancelButton()
 		{
-			// Present the previous search state to the user.
-			//RestoreQueryToUserInterface(SearchState.CopyOfPreviousQuery);
-
-			SearchService.CancelChanges();
+			_Search.CancelChanges();
 
 			HideMenus();
 		}
@@ -518,33 +311,69 @@ namespace SquoundApp.ViewModels
 			// This will also assign a default subcategory.
 			// We want to avoid a situation where no category is selected as that would
 			// result in all items being returned from the API.
-			SearchService.ResetState(CategoryList.FirstOrDefault());
-
-			// Present the newly reset search state to the user.
-			//RestoreQueryToUserInterface(SearchState.CopyOfCurrentQuery);
+			_Search.ResetChanges(CategoryList.FirstOrDefault());
 		}
 
 
 		/// <summary>
-		/// Updates the user interface with the provided <see cref="SearchQueryDto"/>.
-		/// This ensures that the user interface reflects the given search criteria.
+		/// Handles sorting option changes.
 		/// </summary>
-		/// <param name="query">The <see cref="SearchQueryDto"/> containing the search criteria to restore.</param>
-		//private void RestoreQueryToUserInterface(SearchQueryDto query)
-		//{
-		//    // NOTE : Null checks are necessary to avoid NullReferenceException.
-		//    this.Keyword        = query.Keyword ?? string.Empty;
-		//    this.Category       = query.Category ?? string.Empty;
-		//    this.Subcategory    = query.Subcategory ?? string.Empty;
-		//    this.Manufacturer   = query.Manufacturer ?? string.Empty;
-		//    this.Material       = query.Material ?? string.Empty;
+		/// <param name="sortBy"></param>
+		[RelayCommand]
+		public void OnSortByButton(ItemSortOption sortBy)
+		{
+			_Search.SortBy = sortBy;
+		}
 
-		//    // NOTE : Null checks are not actually required because ToString() would return an empty string if the value is null.
-		//    this.MinimumPrice   = query.MinPrice.ToString() ?? string.Empty;
-		//    this.MaximumPrice   = query.MaxPrice.ToString() ?? string.Empty;
 
-		//    // Set the sort options based on the query.
-		//    SetSortOption(query.SortBy);
-		//}
-	}
+        //
+        private void OnSearchContextChanged(SearchContextChangedEvent e)
+        {
+            _Logger.LogDebug("Synchronising user interface");
+
+            if (this.Category != e.Context.Category)
+                this.Category = e.Context.Category;
+
+            if (this.Subcategory != e.Context.Subcategory)
+                this.Subcategory = e.Context.Subcategory;
+
+            if (this.Manufacturer != e.Context.Manufacturer)
+                this.Manufacturer = e.Context.Manufacturer;
+
+            if (this.Material != e.Context.Material)
+                this.Material = e.Context.Material;
+
+            if (this.Keyword != e.Context.Keyword)
+                this.Keyword = e.Context.Keyword;
+
+            var minPriceString = e.Context.MinPrice?.ToString() ?? string.Empty;
+            if (this.MinPrice != minPriceString)
+                this.MinPrice = minPriceString;
+
+            var maxPriceString = e.Context.MaxPrice?.ToString() ?? string.Empty;
+            if (this.MaxPrice != maxPriceString)
+                this.MaxPrice = maxPriceString;
+
+            if (this.PageNumber != e.Context.PageNumber)
+                this.PageNumber = e.Context.PageNumber;
+
+            if (this.PageSize != e.Context.PageSize)
+                this.PageSize = e.Context.PageSize;
+
+            if (this.SortBy != e.Context.SortBy)
+                this.SortBy = e.Context.SortBy;
+
+            if (this.SortByNameAscending != (e.Context.SortBy == ItemSortOption.NameAsc))
+                this.SortByNameAscending = (e.Context.SortBy == ItemSortOption.NameAsc);
+
+            if (this.SortByNameDescending != (e.Context.SortBy == ItemSortOption.NameDesc))
+                this.SortByNameDescending = (e.Context.SortBy == ItemSortOption.NameDesc);
+
+            if (this.SortByPriceAscending != (e.Context.SortBy == ItemSortOption.PriceAsc))
+                this.SortByPriceAscending = (e.Context.SortBy == ItemSortOption.PriceAsc);
+
+            if (this.SortByPriceDescending != (e.Context.SortBy == ItemSortOption.PriceDesc))
+                this.SortByPriceDescending = (e.Context.SortBy == ItemSortOption.PriceDesc);
+        }
+    }
 }

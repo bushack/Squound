@@ -2,21 +2,21 @@
 
 namespace Shared.Interfaces
 {
-    public interface IState<T>
+    public interface IState<TState>
     {
-        Task Enter(T owner);
-        Task Exit(T owner);
-        Task Update(T owner);
+        Task Enter(TState owner);
+        Task Exit(TState owner);
+        Task Update(TState owner);
     }
 
 
-    public interface IStateMachine<T>
+    public interface IStateMachine<TState>
     {
-        Task ChangeState(IState<T> newState);
+        Task ChangeState(IState<TState> newState);
         Task Update();
-        IState<T> CurrentState { get; }
-        IState<T> PreviousState { get; }
-        bool IsInState(IState<T> state);
-        bool WasInState(IState<T> state);
+        IState<TState> CurrentState { get; }
+        IState<TState> PreviousState { get; }
+        bool IsInState(IState<TState> state);
+        bool WasInState(IState<TState> state);
     }
 }

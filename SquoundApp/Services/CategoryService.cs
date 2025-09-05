@@ -1,30 +1,50 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using SquoundApp.Events;
 using SquoundApp.Exceptions;
 using SquoundApp.Interfaces;
 
 using Shared.DataTransfer;
+using Shared.Interfaces;
 using Shared.Logging;
 
 
 namespace SquoundApp.Services
 {
-    public class CategoryService(HttpService httpService, ILogger<CategoryService> logger) : IService<CategoryDto>
+    public partial class CategoryService : ICategoryService
     {
-        private readonly ILogger<CategoryService> _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        private readonly HttpService _HttpService = httpService ?? throw new ArgumentNullException(nameof(httpService));
+        private readonly ILogger<CategoryService> _Logger;
+        private readonly IEventService _Events;
+        private readonly IHttpService _Http;
 
+        // Internal cache.
         private List<CategoryDto> _CategoryList = [];
 
+        // For user interface binding.
+        //[ObservableProperty]
+        //private ObservableCollection<CategoryDto> categories = [];
+
+        //// For user interface binding.
+        //[ObservableProperty]
+        //private ObservableCollection<SubcategoryDto> subcategories = [];
+
         /// <summary>
-        /// Exposes the list of categories.
+        /// Exposes the internal cache as a read-only list.
         /// </summary>
         public IReadOnlyList<CategoryDto> CategoryList => _CategoryList;
 
         /// <summary>
-        /// Queries whether the list of categories has been loaded.
+        /// Queries whether the internal cache has been populated.
         /// </summary>
         public bool IsLoaded => _CategoryList.Count > 0;
+
+
+        public CategoryService(ILogger<CategoryService> logger, IEventService events, IHttpService http)
+        {
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _Events = events ?? throw new ArgumentNullException(nameof(events));
+            _Http = http ?? throw new ArgumentNullException(nameof(http));
+        }
 
 
         /// <summary>
@@ -56,13 +76,19 @@ namespace SquoundApp.Services
                 _Logger.LogInformation("Retrieving categories from {RestUrl}", RestUrl);
 
                 // Fetch the categories from the REST API.
-                var response = await _HttpService.GetJsonAsync<List<CategoryDto>>(RestUrl)
+                var response = await _Http.GetJsonAsync<List<CategoryDto>>(RestUrl)
                     ?? throw new ApiResponseException($"Attempt to retrieve JSON content from {RestUrl} failed.");
 
+                // Cache the data if successful.
                 _CategoryList = response.Data
                     ?? throw new ApiResponseException("JSON content retrieved from {RestUrl} is null.");
 
                 _Logger.LogInformation("Successfully retrieved categories from {RestUrl}.", RestUrl);
+
+                _Events.Publish(new CategoriesLoadedEvent(_CategoryList));
+
+                // Update the observable collection and notify subscribers.
+                //UpdateCategories();
 
                 // TODO : If we fail to retrieve the categories nothing will be displayed.
                 // Is it better to hardwire categories? Or maybe have a fallback list of categories in the
@@ -84,6 +110,7 @@ namespace SquoundApp.Services
                 return Result<List<CategoryDto>>.Fail("Undefined error from server.");
             }
         }
+
 
         public async Task RefreshDataAsync()
         {

@@ -1,12 +1,21 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
 using CommunityToolkit.Maui;
 
 using System.Globalization;
 
+using SquoundApp.Contexts;
+using SquoundApp.Interfaces;
 using SquoundApp.Pages;
+//using SquoundApp.Repositories;
 using SquoundApp.Services;
 using SquoundApp.ViewModels;
 using SquoundApp.Views;
+
+using Shared.Interfaces;
+using Shared.Services;
+
 
 namespace SquoundApp
 {
@@ -58,41 +67,45 @@ namespace SquoundApp
             // ItemViewModel is registered as a transient view model,
             // which means a new instance will be created each time it is requested.
 
-            // Pages
-            builder.Services.AddTransient<AboutPage>();
-            builder.Services.AddSingleton<HomePage>();
-            builder.Services.AddTransient<ItemPage>();
-            builder.Services.AddSingleton<CoarseSearchPage>();
-            builder.Services.AddSingleton<RefinedSearchPage>();
-            builder.Services.AddTransient<SellPage>();
-
-            // Services
-            builder.Services.AddSingleton<AboutService>();
-            builder.Services.AddSingleton<CategoryService>();
-            builder.Services.AddSingleton<HttpService>();
-            builder.Services.AddSingleton<ItemService>();
+            // Services & Contexts.
+            builder.Services.AddSingleton<IHttpService, HttpService>();
+            builder.Services.AddSingleton<IEventService, EventService>();
+            builder.Services.AddSingleton<ICategoryService, CategoryService>();
+            builder.Services.AddSingleton<ISearchContext, SearchContext>();
+            builder.Services.AddSingleton<IItemService, ItemService>();
             builder.Services.AddSingleton<NavigationService>();
-            builder.Services.AddSingleton<SearchService>();
+            builder.Services.AddSingleton<AboutService>();
             builder.Services.AddSingleton<SellService>();
 
-            // Views
-            builder.Services.AddSingleton<AdvancedHeaderView>();
-            builder.Services.AddSingleton<BasicHeaderView>();
-            builder.Services.AddSingleton<FooterView>();
-            builder.Services.AddSingleton<SearchHeadingView>();
-            builder.Services.AddSingleton<QuickSearchView>();
-            builder.Services.AddSingleton<SortAndFilterView>();
+            // Repositories.
+            //builder.Services.AddSingleton<ItemRepository>();
 
-            // View Models
+            // View Models.
             builder.Services.AddTransient<AboutViewModel>();
-            builder.Services.AddSingleton<CoarseSearchViewModel>();
-            builder.Services.AddSingleton<FooterViewModel>();
+            builder.Services.AddTransient<CoarseSearchViewModel>();
+            builder.Services.AddTransient<FooterViewModel>();
             builder.Services.AddTransient<ItemViewModel>();
-            builder.Services.AddSingleton<RefinedSearchViewModel>();
-            builder.Services.AddSingleton<QuickSearchViewModel>();
+            builder.Services.AddTransient<RefinedSearchViewModel>();
+            builder.Services.AddTransient<QuickSearchViewModel>();
             builder.Services.AddTransient<SellViewModel>();
-            builder.Services.AddSingleton<SortAndFilterViewModel>();
-            builder.Services.AddSingleton<StartupViewModel>();
+            builder.Services.AddTransient<SortAndFilterViewModel>();
+            builder.Services.AddTransient<StartupViewModel>();
+
+            // Views.
+            builder.Services.AddTransient<AdvancedHeaderView>();
+            builder.Services.AddTransient<BasicHeaderView>();
+            builder.Services.AddTransient<FooterView>();
+            builder.Services.AddTransient<SearchHeadingView>();
+            builder.Services.AddTransient<QuickSearchView>();
+            builder.Services.AddTransient<SortAndFilterView>();
+
+            // Pages.
+            builder.Services.AddTransient<AboutPage>();
+            builder.Services.AddTransient<HomePage>();
+            builder.Services.AddTransient<ItemPage>();
+            builder.Services.AddTransient<CoarseSearchPage>();
+            builder.Services.AddTransient<RefinedSearchPage>();
+            builder.Services.AddTransient<SellPage>();
 
             return builder.Build();
         }

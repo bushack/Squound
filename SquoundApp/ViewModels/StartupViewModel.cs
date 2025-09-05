@@ -1,14 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using Microsoft.Extensions.Logging;
+using SquoundApp.Interfaces;
 using SquoundApp.Services;
 
 
 namespace SquoundApp.ViewModels
 {
-    public partial class StartupViewModel(CategoryService categoryService) : BaseViewModel
+    public partial class StartupViewModel : BaseViewModel
     {
-        private readonly CategoryService _CategoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        private readonly ILogger<StartupViewModel> _Logger;
+        private readonly ICategoryService _Categories;
 
         [ObservableProperty]
         private string loadingMessage = "Connecting";
@@ -18,6 +20,14 @@ namespace SquoundApp.ViewModels
 
         [ObservableProperty]
         private bool canRetry = true;
+
+
+        //
+        public StartupViewModel(ILogger<StartupViewModel> logger, ICategoryService categories)
+        {
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _Categories = categories ?? throw new ArgumentNullException(nameof(categories));
+        }
 
 
 
@@ -32,7 +42,7 @@ namespace SquoundApp.ViewModels
             {
                 IsBusy = true;
 
-                var response = await _CategoryService.GetDataAsync();
+                var response = await _Categories.GetDataAsync();
 
                 if (response.Success)
                 {

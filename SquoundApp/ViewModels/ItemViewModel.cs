@@ -3,7 +3,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-using SquoundApp.Services;
+using SquoundApp.Interfaces;
 
 using Shared.DataTransfer;
 
@@ -11,13 +11,10 @@ using Shared.DataTransfer;
 namespace SquoundApp.ViewModels
 {
     [QueryProperty(nameof(ItemId), nameof(ItemId))]
-    public partial class ItemViewModel(ItemService itemService, ILogger<ItemViewModel> logger) : BaseViewModel
+    public partial class ItemViewModel : BaseViewModel
     {
-        private readonly ILogger<ItemViewModel> _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-        // Responsible for retrieving items from the REST API.
-        // This data is presented to the user on the ItemPage, where the user can view a specific item in detail.
-        private readonly ItemService _ItemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
+        private readonly ILogger<ItemViewModel> _Logger;
+        private readonly IItemService _Items;
 
         // Item
         [ObservableProperty]
@@ -52,6 +49,14 @@ namespace SquoundApp.ViewModels
 
 
         //
+        public ItemViewModel(ILogger<ItemViewModel> logger, IItemService items)
+        {
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _Items = items ?? throw new ArgumentNullException(nameof(items));
+        }
+
+
+        //
         private async Task LoadItemAsync(long id)
         {
             if (IsBusy)
@@ -62,7 +67,7 @@ namespace SquoundApp.ViewModels
                 IsBusy = true;
 
                 // Note that awaiting the result will unpack the ItemDetailDto from the containing Task object.
-                var response = await _ItemService.GetDataAsync(id);
+                var response = await _Items.GetDataAsync(id);
 
                 if (response.Success is false)
                 {

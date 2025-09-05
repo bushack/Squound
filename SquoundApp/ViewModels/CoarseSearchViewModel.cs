@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using Microsoft.Extensions.Logging;
+
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 using SquoundApp.Extensions;
+using SquoundApp.Interfaces;
 using SquoundApp.Pages;
 using SquoundApp.Services;
 
@@ -12,23 +15,12 @@ using Shared.DataTransfer;
 
 namespace SquoundApp.ViewModels
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CoarseSearchViewModel"/> class
-    /// with the specified <see cref="CategoryService"/> and <see cref="SearchService"/>.
-    /// </summary>
-    /// <param name="categoryService">The <see cref="CategoryService"/> instance used
-    /// to retrieve item category data. Cannot be null.</param>
-    /// <param name="searchService">The <see cref="SearchService"/> instance used
-    /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class CoarseSearchViewModel(CategoryService categoryService, SearchService searchService) : BaseViewModel
+    //
+    public partial class CoarseSearchViewModel : BaseViewModel
     {
-        // Responsible for retrieving item categories and subcategories from the REST API.
-        // This data is presented to the user on the CoarseSearchPage, where the user can select a category
-        // or subcategory before progressing to the RefinedSearchPage to further hone in on specific items.
-        private readonly CategoryService _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
-
-        // Responsible for managing the current search criteria.
-        private readonly SearchService _searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
+        private readonly ILogger<CoarseSearchViewModel> _Logger;
+        private readonly ICategoryService _Categories;
+        private readonly ISearchContext _Search;
 
         // Collection of categories to display on the coarse search page.
         // This collection is populated by the ApplyQueryAsync method.
@@ -52,6 +44,21 @@ namespace SquoundApp.ViewModels
         // subcategories or navigation to the refined search page.
         [ObservableProperty]
         private object? selectedItem = null;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="categories"></param>
+        /// <param name="search"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public CoarseSearchViewModel(ILogger<CoarseSearchViewModel> logger, ICategoryService categories, ISearchContext search)
+        {
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _Categories = categories ?? throw new ArgumentNullException(nameof(categories));
+            _Search = search ?? throw new ArgumentNullException(nameof(search));
+        }
 
 
         /// <summary>
@@ -96,10 +103,10 @@ namespace SquoundApp.ViewModels
                     }
 
                     // Write the selected category to the current search.
-                    _searchService.SetCategory(category, false);
+                    _Search.Category = category;
 
-                    // Update the UI to reflect the selected category and its subcategories.
-                    Title = _searchService.Category?.Name ?? string.Empty;
+                    // Update user interface.
+                    Title = category.Name ?? "Search";
 
                     break;
                 }
@@ -108,7 +115,7 @@ namespace SquoundApp.ViewModels
                 case SubcategoryDto subcategory:
                 {
                     // Write the selected subcategory to the search service.
-                    _searchService.SetSubcategory(subcategory);
+                    _Search.Subcategory = subcategory;
 
                     // The selected item is a subcategory, therefore navigate to the RefinedSearchPage.
                     // This is where the user can perform a more detailed search based on the selected subcategory.
@@ -144,7 +151,7 @@ namespace SquoundApp.ViewModels
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var response = await _categoryService.GetDataAsync();
+                var response = await _Categories.GetDataAsync();
 
                 if (response.Success is false)
                 {

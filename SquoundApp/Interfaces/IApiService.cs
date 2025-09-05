@@ -3,7 +3,7 @@
 
 namespace SquoundApp.Interfaces
 {
-    public interface IService<T>
+    public interface IApiService<T>
     {
         Task<Result<List<T>>> GetDataAsync();
     }

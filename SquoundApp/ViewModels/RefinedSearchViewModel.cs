@@ -1,34 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-
+using Microsoft.Extensions.Logging;
+using Shared.DataTransfer;
+using SquoundApp.Interfaces;
 using SquoundApp.Pages;
 using SquoundApp.Services;
-
-using Shared.DataTransfer;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 
 namespace SquoundApp.ViewModels
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="RefinedSearchViewModel"/> class
-    /// with the specified <see cref="ItemService"/> and <see cref="SearchService"/>.
+    /// 
     /// </summary>
-    /// <param name="itemService">The <see cref="ItemService"/> instance used
-    /// to retrieve item data. Cannot be null.</param>
-    /// <param name="searchService">The <see cref="SearchService"/> instance used
-    /// to manage the user's current search selection. Cannot be null.</param>
-    public partial class RefinedSearchViewModel(ItemService itemService, SearchService searchService) : BaseViewModel
+    public partial class RefinedSearchViewModel : BaseViewModel
     {
-        // Responsible for retrieving items from the REST API.
-        // This data is presented to the user on the RefinedSearchPage, where the user can select a specific
-        // item before progressing to the ItemPage to study the item in detail.
-        private readonly ItemService _ItemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
-
-        // Responsible for managing the current search criteria.
-        private readonly SearchService _SearchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
+        private readonly ILogger<RefinedSearchViewModel> _Logger;
+        private readonly IItemService _Items;
+        private readonly ISearchContext _Search;
 
         // Collection of items retrieved from the REST API based on the current search criteria.
         public ObservableCollection<ItemSummaryDto> ItemList { get; } = [];
@@ -59,6 +49,15 @@ namespace SquoundApp.ViewModels
         // Number of the page currently displayed by the user interface.
         [ObservableProperty]
         private int currentPage = 0;
+
+
+        //
+        public RefinedSearchViewModel(ILogger<RefinedSearchViewModel> logger, IItemService items, ISearchContext search)
+        {
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _Items = items ?? throw new ArgumentNullException(nameof(items));
+            _Search = search ?? throw new ArgumentNullException(nameof(search));
+        }
 
 
         /// <summary>
@@ -105,7 +104,7 @@ namespace SquoundApp.ViewModels
         {
             if (HasNextPage)
             {
-                _SearchService.IncrementPageNumber();
+                _Search.IncrementPageNumber();
                 await ApplyQueryAsync();
             }
         }
@@ -117,7 +116,7 @@ namespace SquoundApp.ViewModels
         {
             if (HasPrevPage)
             {
-                _SearchService.DecrementPageNumber();
+                _Search.DecrementPageNumber();
                 await ApplyQueryAsync();
             }
         }
@@ -167,9 +166,9 @@ namespace SquoundApp.ViewModels
                 CurrentPage = 0;
 
                 // Prepare page title.
-                Title = _SearchService.Keyword ??
-                        _SearchService.Subcategory?.Name ??
-                        _SearchService.Category?.Name ??
+                Title = _Search.Keyword ??
+                        _Search.Subcategory?.Name ??
+                        _Search.Category?.Name ??
                         "Search";
 
                 // Retrieve items from the item service.
@@ -180,7 +179,7 @@ namespace SquoundApp.ViewModels
                 // ("https://raw.githubusercontent.com/bushack/files/refs/heads/main/items.json");
                 // To retrieve items from an embedded JSON file instead, use:
                 // var itemList = await _ItemService.GetItemsEmbeddedJson();
-                var response = await _ItemService.GetDataAsync(_SearchService);
+                var response = await _Items.GetDataAsync(_Search);
 
                 // Null response from API.
                 if (response.Success is false)
