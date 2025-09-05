@@ -15,7 +15,7 @@ namespace SquoundApp.Services
         private readonly ILogger<HttpService> _Logger;
         protected readonly HttpClient _HttpClient;
 
-        public HttpService(ILogger<HttpService> logger, HttpClient? client = null, string? baseUrl = null)
+        public HttpService(ILogger<HttpService> logger, HttpClient httpClient, string? baseUrl = null)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _HttpClient = client ?? new HttpClient();
