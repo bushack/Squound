@@ -18,7 +18,7 @@ namespace SquoundApp.Services
         private readonly IHttpService _Http;
 
         // Internal cache.
-        private List<CategoryDto> _CategoryList = [];
+        //private List<CategoryDto> _CategoryList = [];
 
         // For user interface binding.
         //[ObservableProperty]
@@ -31,12 +31,12 @@ namespace SquoundApp.Services
         /// <summary>
         /// Exposes the internal cache as a read-only list.
         /// </summary>
-        public IReadOnlyList<CategoryDto> CategoryList => _CategoryList;
+        //public IReadOnlyList<CategoryDto> CategoryList => _CategoryList;
 
         /// <summary>
         /// Queries whether the internal cache has been populated.
         /// </summary>
-        public bool IsLoaded => _CategoryList.Count > 0;
+        //public bool IsLoaded => _CategoryList.Count > 0;
 
 
         public CategoryService(ILogger<CategoryService> logger, IEventService events, IHttpService http)
@@ -48,9 +48,8 @@ namespace SquoundApp.Services
 
 
         /// <summary>
-        /// Asynchronously retrieves a list of item categories from a REST API.
+        /// Asynchronously retrieves a list of categories from a REST API.
         /// </summary>
-        /// <returns></returns>
         public async Task<Result<List<CategoryDto>>> GetDataAsync()
         {
             // For the release version of the project we will set the base address for the HttpService
@@ -64,59 +63,38 @@ namespace SquoundApp.Services
             string Port = DeviceInfo.Platform == DevicePlatform.Android ? "5050" : "7184";
             string RestUrl = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/categories";
 
-            if (_CategoryList.Count > 0)
-            {
-                _Logger.LogDebug("Category data in memory. Returning cached data.");
+            //if (_CategoryList.Count > 0)
+            //{
+            //    _Logger.LogDebug("Category data in memory. Returning cached data.");
 
-                return Result<List<CategoryDto>>.Ok(_CategoryList);
-            }
+            //    return Result<List<CategoryDto>>.Ok(_CategoryList);
+            //}
 
             try
             {
-                _Logger.LogInformation("Retrieving categories from {RestUrl}", RestUrl);
+                _Logger.LogInformation("Requesting data from server at endpoint: {RestUrl}", RestUrl);
+                var result = await _Http.GetJsonAsync<List<CategoryDto>>(RestUrl)
+                    ?? throw new ApiResponseException($"Request failed.");
 
-                // Fetch the categories from the REST API.
-                var response = await _Http.GetJsonAsync<List<CategoryDto>>(RestUrl)
-                    ?? throw new ApiResponseException($"Attempt to retrieve JSON content from {RestUrl} failed.");
+                _Logger.LogInformation("Response received from server at endpoint: {RestUrl}", RestUrl);
+                var data = result.Data
+                    ?? throw new ApiResponseException("Data is null.");
 
-                // Cache the data if successful.
-                _CategoryList = response.Data
-                    ?? throw new ApiResponseException("JSON content retrieved from {RestUrl} is null.");
-
-                _Logger.LogInformation("Successfully retrieved categories from {RestUrl}.", RestUrl);
-
-                _Events.Publish(new CategoriesLoadedEvent(_CategoryList));
-
-                // Update the observable collection and notify subscribers.
-                //UpdateCategories();
-
-                // TODO : If we fail to retrieve the categories nothing will be displayed.
-                // Is it better to hardwire categories? Or maybe have a fallback list of categories in the
-                // event the query fails.
-                return Result<List<CategoryDto>>.Ok(_CategoryList);
+                _Logger.LogInformation("Retrieved data from server at endpoint: {RestUrl}.", RestUrl);
+                return Result<List<CategoryDto>>.Ok(data);
             }
 
             catch (ApiResponseException ex)
             {
-                _Logger.LogWarning(ex, "Invalid response from server at endpoint {RestUrl}", RestUrl);
-
+                _Logger.LogWarning(ex, "Invalid response from server at endpoint: {RestUrl}", RestUrl);
                 return Result<List<CategoryDto>>.Fail("Invalid response from server.");
             }
 
             catch (Exception ex)
             {
-                _Logger.LogWarning(ex, "Undefined error from server at endpoint {RestUrl}", RestUrl);
-
+                _Logger.LogWarning(ex, "Undefined error from server at endpoint: {RestUrl}", RestUrl);
                 return Result<List<CategoryDto>>.Fail("Undefined error from server.");
             }
-        }
-
-
-        public async Task RefreshDataAsync()
-        {
-            _CategoryList = [];
-
-            await GetDataAsync();
         }
     }
 }

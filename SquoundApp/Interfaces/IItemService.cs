@@ -1,5 +1,4 @@
-﻿
-using Shared.DataTransfer;
+﻿using Shared.DataTransfer;
 using Shared.Logging;
 
 

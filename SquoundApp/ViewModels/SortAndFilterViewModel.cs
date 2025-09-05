@@ -21,7 +21,7 @@ namespace SquoundApp.ViewModels
 		// Services & Contexts.
 		private readonly ILogger<SortAndFilterViewModel> _Logger;
 		private readonly IEventService _Events;
-		private readonly ICategoryService _Categories;
+		private readonly ICategoryRepository _Categories;
 		private readonly ISearchContext _Search;
 
 		// Search state binding properties.
@@ -54,17 +54,20 @@ namespace SquoundApp.ViewModels
 		[ObservableProperty] private bool isSortMenuActive = false;
 		[ObservableProperty] private bool isFilterMenuActive = false;
 
+        // To guard against recursive updates when synchronising the user interface.
+        private bool _IsSyncing = false;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="logger"></param>
-		/// <param name="events"></param>
-		/// <param name="categories"></param>
-		/// <param name="search"></param>
-		/// <exception cref="ArgumentNullException"></exception>
-		public SortAndFilterViewModel(ILogger<SortAndFilterViewModel> logger, IEventService events,
-			ICategoryService categories, ISearchContext search)
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="events"></param>
+        /// <param name="categories"></param>
+        /// <param name="search"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public SortAndFilterViewModel(ILogger<SortAndFilterViewModel> logger, IEventService events,
+            ICategoryRepository categories, ISearchContext search)
 		{
 			_Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_Events = events ?? throw new ArgumentNullException(nameof(events));
@@ -86,8 +89,11 @@ namespace SquoundApp.ViewModels
 
 
 		partial void OnCategoryChanged(CategoryDto? value)
-		{
-			_Search.Category = value;
+        {
+            if (_IsSyncing)
+                return;
+
+            _Search.Category = value;
 
 			// Sync the subcategory list with the selected category.
 			SubcategoryList.Clear();
@@ -108,50 +114,74 @@ namespace SquoundApp.ViewModels
 
 
 		partial void OnSubcategoryChanged(SubcategoryDto? value)
-		{
-			_Search.Subcategory = value;
+        {
+            if (_IsSyncing)
+                return;
+
+            _Search.Subcategory = value;
 		}
 
 
         partial void OnManufacturerChanged(string? value)
-		{
-			_Search.Manufacturer = value;
+        {
+            if (_IsSyncing)
+                return;
+
+            _Search.Manufacturer = value;
 		}
 
 
         partial void OnMaterialChanged(string? value)
-		{
-			_Search.Material = value;
+        {
+            if (_IsSyncing)
+                return;
+
+            _Search.Material = value;
         }
 
 
         partial void OnKeywordChanged(string? value)
         {
-			_Search.Keyword = value;
+            if (_IsSyncing)
+                return;
+
+            _Search.Keyword = value;
         }
 
 
         partial void OnMinPriceChanged(string? value)
         {
-			_Search.MinPrice = value;
+            if (_IsSyncing)
+                return;
+
+            _Search.MinPrice = value;
         }
 
 
         partial void OnMaxPriceChanged(string? value)
         {
-			_Search.MaxPrice = value;
+            if (_IsSyncing)
+                return;
+
+            _Search.MaxPrice = value;
         }
 
 
         partial void OnPageNumberChanged(int value)
         {
-			_Search.PageNumber = value;
+            if (_IsSyncing)
+                return;
+
+            _Search.PageNumber = value;
         }
 
 
         partial void OnPageSizeChanged(int value)
 		{
-			_Search.PageSize = value;
+			if (_IsSyncing)
+				return;
+
+            _Search.PageSize = value;
 		}
 
 
@@ -235,30 +265,32 @@ namespace SquoundApp.ViewModels
 				// and to prevent the user from initiating another fetch operation while one is already in progress.
 				IsBusy = true;
 
+				CategoryList = [.. await _Categories.GetCategoriesAsync()];
+
 				// Retrieve item categories from the category service.
 				// This method is expected to return a list of item categories asynchronously.
 				// The retrieved categories will be added to the categoryList collection.
-				var response = await _Categories.GetDataAsync();
+				//var response = await _Categories.GetDataAsync();
 
-				if (response.Success is false)
-				{
-					await Shell.Current.DisplayAlert("Error", response.ErrorMessage, "OK");
-					return;
-				}
+				//if (response.Success is false)
+				//{
+				//	await Shell.Current.DisplayAlert("Error", response.ErrorMessage, "OK");
+				//	return;
+				//}
 
-				// Null or empty item list from API.
-				if (response.Data is null || response.Data.Count == 0)
-				{
-					await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
-					return;
-				}
+				//// Null or empty item list from API.
+				//if (response.Data is null || response.Data.Count == 0)
+				//{
+				//	await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
+				//	return;
+				//}
 
-				// By assigning the fetched categories to the CategoryList, a notification is triggered
-				// that the collection has changed and the OnCategoryListChanged method is called.
-				CategoryList = [.. response.Data];
+				//// By assigning the fetched categories to the CategoryList, a notification is triggered
+				//// that the collection has changed and the OnCategoryListChanged method is called.
+				//CategoryList = [.. response.Data];
 			}
 
-			catch (Exception ex)
+			catch (Exception)
 			{
 				// Display an alert to the user indicating that an error occurred while fetching data.
 				await Shell.Current.DisplayAlert(
@@ -331,49 +363,61 @@ namespace SquoundApp.ViewModels
         {
             _Logger.LogDebug("Synchronising user interface");
 
-            if (this.Category != e.Context.Category)
-                this.Category = e.Context.Category;
+			try
+			{
+                // Avoid recursive updates.
+				_IsSyncing = true;
 
-            if (this.Subcategory != e.Context.Subcategory)
-                this.Subcategory = e.Context.Subcategory;
+                // Synchronise the user interface with the search context.
+                if (this.Category != e.Context.Category)
+					this.Category = e.Context.Category;
 
-            if (this.Manufacturer != e.Context.Manufacturer)
-                this.Manufacturer = e.Context.Manufacturer;
+				if (this.Subcategory != e.Context.Subcategory)
+					this.Subcategory = e.Context.Subcategory;
 
-            if (this.Material != e.Context.Material)
-                this.Material = e.Context.Material;
+				if (this.Manufacturer != e.Context.Manufacturer)
+					this.Manufacturer = e.Context.Manufacturer;
 
-            if (this.Keyword != e.Context.Keyword)
-                this.Keyword = e.Context.Keyword;
+				if (this.Material != e.Context.Material)
+					this.Material = e.Context.Material;
 
-            var minPriceString = e.Context.MinPrice?.ToString() ?? string.Empty;
-            if (this.MinPrice != minPriceString)
-                this.MinPrice = minPriceString;
+				if (this.Keyword != e.Context.Keyword)
+					this.Keyword = e.Context.Keyword;
 
-            var maxPriceString = e.Context.MaxPrice?.ToString() ?? string.Empty;
-            if (this.MaxPrice != maxPriceString)
-                this.MaxPrice = maxPriceString;
+				var minPriceString = e.Context.MinPrice?.ToString() ?? string.Empty;
+				if (this.MinPrice != minPriceString)
+					this.MinPrice = minPriceString;
 
-            if (this.PageNumber != e.Context.PageNumber)
-                this.PageNumber = e.Context.PageNumber;
+				var maxPriceString = e.Context.MaxPrice?.ToString() ?? string.Empty;
+				if (this.MaxPrice != maxPriceString)
+					this.MaxPrice = maxPriceString;
 
-            if (this.PageSize != e.Context.PageSize)
-                this.PageSize = e.Context.PageSize;
+				if (this.PageNumber != e.Context.PageNumber)
+					this.PageNumber = e.Context.PageNumber;
 
-            if (this.SortBy != e.Context.SortBy)
-                this.SortBy = e.Context.SortBy;
+				if (this.PageSize != e.Context.PageSize)
+					this.PageSize = e.Context.PageSize;
 
-            if (this.SortByNameAscending != (e.Context.SortBy == ItemSortOption.NameAsc))
-                this.SortByNameAscending = (e.Context.SortBy == ItemSortOption.NameAsc);
+				if (this.SortBy != e.Context.SortBy)
+					this.SortBy = e.Context.SortBy;
 
-            if (this.SortByNameDescending != (e.Context.SortBy == ItemSortOption.NameDesc))
-                this.SortByNameDescending = (e.Context.SortBy == ItemSortOption.NameDesc);
+				if (this.SortByNameAscending != (e.Context.SortBy == ItemSortOption.NameAsc))
+					this.SortByNameAscending = (e.Context.SortBy == ItemSortOption.NameAsc);
 
-            if (this.SortByPriceAscending != (e.Context.SortBy == ItemSortOption.PriceAsc))
-                this.SortByPriceAscending = (e.Context.SortBy == ItemSortOption.PriceAsc);
+				if (this.SortByNameDescending != (e.Context.SortBy == ItemSortOption.NameDesc))
+					this.SortByNameDescending = (e.Context.SortBy == ItemSortOption.NameDesc);
 
-            if (this.SortByPriceDescending != (e.Context.SortBy == ItemSortOption.PriceDesc))
-                this.SortByPriceDescending = (e.Context.SortBy == ItemSortOption.PriceDesc);
+				if (this.SortByPriceAscending != (e.Context.SortBy == ItemSortOption.PriceAsc))
+					this.SortByPriceAscending = (e.Context.SortBy == ItemSortOption.PriceAsc);
+
+				if (this.SortByPriceDescending != (e.Context.SortBy == ItemSortOption.PriceDesc))
+					this.SortByPriceDescending = (e.Context.SortBy == ItemSortOption.PriceDesc);
+			}
+
+			finally
+			{
+				_IsSyncing = false;
+			}
         }
     }
 }

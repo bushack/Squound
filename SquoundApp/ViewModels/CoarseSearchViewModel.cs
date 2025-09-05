@@ -19,7 +19,7 @@ namespace SquoundApp.ViewModels
     public partial class CoarseSearchViewModel : BaseViewModel
     {
         private readonly ILogger<CoarseSearchViewModel> _Logger;
-        private readonly ICategoryService _Categories;
+        private readonly ICategoryRepository _Categories;
         private readonly ISearchContext _Search;
 
         // Collection of categories to display on the coarse search page.
@@ -53,7 +53,7 @@ namespace SquoundApp.ViewModels
         /// <param name="categories"></param>
         /// <param name="search"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CoarseSearchViewModel(ILogger<CoarseSearchViewModel> logger, ICategoryService categories, ISearchContext search)
+        public CoarseSearchViewModel(ILogger<CoarseSearchViewModel> logger, ICategoryRepository categories, ISearchContext search)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _Categories = categories ?? throw new ArgumentNullException(nameof(categories));
@@ -148,27 +148,29 @@ namespace SquoundApp.ViewModels
                 // and to prevent the user from initiating another fetch operation while one is already in progress.
                 IsBusy = true;
 
+                CategoryList = [.. await _Categories.GetCategoriesAsync()];
+
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
                 // The retrieved categories will be added to the categoryList collection.
-                var response = await _Categories.GetDataAsync();
+                //var response = await _Categories.GetDataAsync();
 
-                if (response.Success is false)
-                {
-                    await Shell.Current.DisplayAlert("Error", response.ErrorMessage, "OK");
-                    return;
-                }
+                //if (response.Success is false)
+                //{
+                //    await Shell.Current.DisplayAlert("Error", response.ErrorMessage, "OK");
+                //    return;
+                //}
 
-                // Null or empty item list from API.
-                if (response.Data is null || response.Data.Count == 0)
-                {
-                    await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
-                    return;
-                }
+                //// Null or empty item list from API.
+                //if (response.Data is null || response.Data.Count == 0)
+                //{
+                //    await Shell.Current.DisplayAlert("Sorry", "No items matched the search criteria", "OK");
+                //    return;
+                //}
 
-                // By assigning the fetched categories to the CategoryList, a notification is triggered
-                // that the collection has changed and the OnCategoryListChanged method is called.
-                CategoryList = [.. response.Data];
+                //// By assigning the fetched categories to the CategoryList, a notification is triggered
+                //// that the collection has changed and the OnCategoryListChanged method is called.
+                //CategoryList = [.. response.Data];
             }
 
             catch (Exception ex)

@@ -8,7 +8,7 @@ using System.Globalization;
 using SquoundApp.Contexts;
 using SquoundApp.Interfaces;
 using SquoundApp.Pages;
-//using SquoundApp.Repositories;
+using SquoundApp.Repositories;
 using SquoundApp.Services;
 using SquoundApp.ViewModels;
 using SquoundApp.Views;
@@ -78,7 +78,7 @@ namespace SquoundApp
             builder.Services.AddSingleton<SellService>();
 
             // Repositories.
-            //builder.Services.AddSingleton<ItemRepository>();
+            builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
 
             // View Models.
             builder.Services.AddTransient<AboutViewModel>();
