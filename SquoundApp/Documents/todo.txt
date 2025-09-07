@@ -1,4 +1,9 @@
 ﻿
+remember
+	- viewModels are page logic, they request data from repositories or services and they administer views, they contain no state
+	- repositories cache state, and allow viewModels to read that state
+	- services are the workhorses, they retrieve data and pass it to the source of the request, usually a repo
+
 pagination
 	- check functionality of Previous Page and Next Page when more items added to database
 
@@ -7,6 +12,14 @@ logging
 
 navigation
 	- ask!
+
+contexts
+	- package complimentary services etc into appropriate contexts which can then be injected into ctors
+	- beware circular dependancies
+
+events
+	- remember, events can be subscribed to, should a class need to know when something happens
+	- use weak events to avoid memory leaks?
 
 images
 	- must have at least one default image if none are returned by API to avoid crash

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using CommunityToolkit.Maui;
-
 using System.Globalization;
+
+using CommunityToolkit.Maui;
 
 using SquoundApp.Contexts;
 using SquoundApp.Interfaces;
@@ -73,12 +73,16 @@ namespace SquoundApp
             builder.Services.AddSingleton<ICategoryService, CategoryService>();
             builder.Services.AddSingleton<ISearchContext, SearchContext>();
             builder.Services.AddSingleton<IItemService, ItemService>();
-            builder.Services.AddSingleton<NavigationService>();
+            builder.Services.AddSingleton<INavigationService, NavigationService>();
             builder.Services.AddSingleton<AboutService>();
             builder.Services.AddSingleton<SellService>();
 
+            builder.Services.AddSingleton<IApplicationContext, ApplicationContext>();
+
             // Repositories.
             builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddSingleton<IItemDetailRepository, ItemDetailRepository>();
+            builder.Services.AddSingleton<IItemSummaryRepository, ItemSummaryRepository>();
 
             // View Models.
             builder.Services.AddTransient<AboutViewModel>();

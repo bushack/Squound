@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using SquoundApp.Interfaces;
 using SquoundApp.Models;
 using SquoundApp.Pages;
 using SquoundApp.Services;
@@ -10,16 +11,17 @@ namespace SquoundApp.ViewModels
 {
     public partial class SellViewModel : BaseViewModel
     {
+        private readonly INavigationService _Navigation;
+        private readonly SellService _Service;
+
         [ObservableProperty]
         private SellModel model = new();
 
-        private readonly SellService service;
 
-        public SellViewModel(SellService service)
+        public SellViewModel(SellService service, INavigationService navigation)
         {
-            this.service = service;
-
-            Title = "Sell";
+            _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+            _Service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         /// <summary>
@@ -59,8 +61,7 @@ namespace SquoundApp.ViewModels
             // This is the call that initiates the change of page.
             //await Shell.Current.GoToAsync(nameof(SellPage));
 
-            var navService = ServiceLocator.GetService<NavigationService>();
-            await navService.GoToAsync(nameof(SellPage));
+            await _Navigation.GoToAsync(nameof(SellPage));
         }
 
         /*
@@ -77,7 +78,7 @@ namespace SquoundApp.ViewModels
             {
                 IsBusy = true;
 
-                var response = await service.GetDataAsync();
+                var response = await _Service.GetDataAsync();
 
                 Model = response.Data ?? new SellModel();
             }
@@ -97,6 +98,13 @@ namespace SquoundApp.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+
+        [RelayCommand]
+        private async Task OnBackButton()
+        {
+            await _Navigation.GoBackOrHomeAsync();
         }
     }
 }

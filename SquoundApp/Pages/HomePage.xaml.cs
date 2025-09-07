@@ -1,13 +1,18 @@
-using SquoundApp.Services;
+using SquoundApp.Interfaces;
 
 
 namespace SquoundApp.Pages;
 
 public partial class HomePage : ContentPage
 {
-	public HomePage()
+    private readonly INavigationService _Navigation;
+
+
+    public HomePage(INavigationService navigation)
 	{
 		InitializeComponent();
+
+        _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
     }
 
 
@@ -21,10 +26,7 @@ public partial class HomePage : ContentPage
     {
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            var navService = ServiceLocator.GetService<NavigationService>();
-
-            // Goes to the previous page. If no previous page exists, go to the HomePage.
-            await navService.GoBackOrHomeAsync();
+            await _Navigation.GoBackOrHomeAsync();
         });
 
         return true;

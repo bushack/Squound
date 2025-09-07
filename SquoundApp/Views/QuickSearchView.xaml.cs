@@ -6,7 +6,8 @@ namespace SquoundApp.Views;
 
 public partial class QuickSearchView : ContentView
 {
-    private bool hasLoaded = false;
+    private bool _HasLoaded = false;
+
 
     public QuickSearchView()
 	{
@@ -19,9 +20,9 @@ public partial class QuickSearchView : ContentView
         // this assists the XAML compiler in providing IntelliSense and type checking.
         // However, the actual instance of the ViewModel is provided by the ServiceLocator,
         // The instance is created in the file MauiProgram.cs with the line:
-        // builder.Services.AddSingleton<CategoriesViewModel>();
+        // builder.Services.AddTransient<CategoriesViewModel>();
         BindingContext = ServiceLocator.GetService<QuickSearchViewModel>()
-            ?? throw new ArgumentNullException(nameof(QuickSearchViewModel));
+            ?? throw new ArgumentNullException(nameof(BindingContext));
     }
 
 
@@ -34,10 +35,10 @@ public partial class QuickSearchView : ContentView
 
         // Prevent multiple reloads of the data.
         // We only want to load the data once when the view is first displayed.
-        if (hasLoaded)
+        if (_HasLoaded)
             return;
 
-        hasLoaded = true;
+        _HasLoaded = true;
 
         if (BindingContext is QuickSearchViewModel viewModel)
         {

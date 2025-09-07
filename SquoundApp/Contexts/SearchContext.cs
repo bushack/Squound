@@ -99,8 +99,14 @@ namespace SquoundApp.Contexts
         public bool HasChanged => GetChangedFields().Any() || DateTime.UtcNow - _CurrentState.TimeStamp > _MaxInterval;
 
 
-		//
-		public SearchContext(ILogger<SearchContext> logger, IEventService events)
+        /// <summary>
+        /// Returns true if the internal state has not changed since it was last saved.
+        /// </summary>
+        public bool HasNotChanged => !HasChanged;
+
+
+        //
+        public SearchContext(ILogger<SearchContext> logger, IEventService events)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_Events = events ?? throw new ArgumentNullException(nameof(events));

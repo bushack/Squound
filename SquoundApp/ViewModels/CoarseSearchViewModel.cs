@@ -8,18 +8,17 @@ using System.Diagnostics;
 using SquoundApp.Extensions;
 using SquoundApp.Interfaces;
 using SquoundApp.Pages;
-using SquoundApp.Services;
 
 using Shared.DataTransfer;
 
 
 namespace SquoundApp.ViewModels
 {
-    //
     public partial class CoarseSearchViewModel : BaseViewModel
     {
         private readonly ILogger<CoarseSearchViewModel> _Logger;
-        private readonly ICategoryRepository _Categories;
+        private readonly ICategoryRepository _Repository;
+        private readonly INavigationService _Navigation;
         private readonly ISearchContext _Search;
 
         // Collection of categories to display on the coarse search page.
@@ -53,10 +52,12 @@ namespace SquoundApp.ViewModels
         /// <param name="categories"></param>
         /// <param name="search"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CoarseSearchViewModel(ILogger<CoarseSearchViewModel> logger, ICategoryRepository categories, ISearchContext search)
+        public CoarseSearchViewModel(ILogger<CoarseSearchViewModel> logger, ICategoryRepository repository,
+            INavigationService navigation, ISearchContext search)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _Categories = categories ?? throw new ArgumentNullException(nameof(categories));
+            _Repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
             _Search = search ?? throw new ArgumentNullException(nameof(search));
         }
 
@@ -148,7 +149,7 @@ namespace SquoundApp.ViewModels
                 // and to prevent the user from initiating another fetch operation while one is already in progress.
                 IsBusy = true;
 
-                CategoryList = [.. await _Categories.GetCategoriesAsync()];
+                CategoryList = [.. await _Repository.GetCategoriesAsync()];
 
                 // Retrieve item categories from the category service.
                 // This method is expected to return a list of item categories asynchronously.
@@ -199,10 +200,7 @@ namespace SquoundApp.ViewModels
         private async Task GoToRefinedSearchPageAsync()
         {
             // Navigate to the RefinedSearchPage and pass the selected category as a parameter.
-            //await Shell.Current.GoToAsync(nameof(RefinedSearchPage));
-
-            var navService = ServiceLocator.GetService<NavigationService>();
-            await navService.GoToAsync(nameof(RefinedSearchPage));
+            await _Navigation.GoToAsync(nameof(RefinedSearchPage));
         }
     }
 }

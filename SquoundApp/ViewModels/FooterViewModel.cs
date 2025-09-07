@@ -1,44 +1,41 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 
+using SquoundApp.Interfaces;
 using SquoundApp.Pages;
-using SquoundApp.Services;
 
 
 namespace SquoundApp.ViewModels
 {
     public partial class FooterViewModel : BaseViewModel
     {
-        public FooterViewModel()
+        private readonly INavigationService _Navigation;
+
+
+        public FooterViewModel(INavigationService navigation)
         {
-            Title = "Footer";
+            _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
         }
+
 
         [RelayCommand]
         async Task GoToAboutPageAsync()
         {
-            // Prevent navigation if the current page is already AboutPage.
-            if (Shell.Current.CurrentPage.Title.Equals(nameof(AboutPage)))
+            // Disallow redundant navigation to the same page.
+            if (_Navigation.IsCurrentPage(nameof(AboutPage)))
                 return;
 
-            // This is the call that initiates the change of page.
-            //await Shell.Current.GoToAsync(nameof(AboutPage));
-
-            var navService = ServiceLocator.GetService<NavigationService>();
-            await navService.GoToAsync(nameof(AboutPage));
+            await _Navigation.GoToAsync(nameof(AboutPage));
         }
+
 
         [RelayCommand]
         async Task GoToSellPageAsync()
         {
-            // Prevent navigation if the current page is already SellPage.
-            if (Shell.Current.CurrentPage.Title.Equals(nameof(SellPage)))
+            // Disallow redundant navigation to the same page.
+            if (_Navigation.IsCurrentPage(nameof(SellPage)))
                 return;
 
-            // This is the call that initiates the change of page.
-            //await Shell.Current.GoToAsync(nameof(SellPage));
-
-            var navService = ServiceLocator.GetService<NavigationService>();
-            await navService.GoToAsync(nameof(SellPage));
+            await _Navigation.GoToAsync(nameof(SellPage));
         }
     }
 }

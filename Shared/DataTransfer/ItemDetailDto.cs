@@ -24,5 +24,10 @@ namespace Shared.DataTransfer
         /// Returns the URL of the item's primary image or a default image if none are available.
         /// </summary>
         public string PrimaryImageUrl => LargeImageUrls?.FirstOrDefault() ?? "default_product.png";
+
+        /// <summary>
+        /// Represents an empty item detail object with default values.
+        /// </summary>
+        public static ItemDetailDto Empty => new();
     }
 }

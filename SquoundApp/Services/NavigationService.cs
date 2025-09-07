@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using SquoundApp.Interfaces;
+using SquoundApp.Pages;
+
 
 namespace SquoundApp.Services
 {
-    public class NavigationService
+    public class NavigationService : INavigationService
     {
         private readonly ILogger<NavigationService> _Logger;
         private readonly SemaphoreSlim _NavigationLock = new(1, 1);
@@ -12,7 +15,11 @@ namespace SquoundApp.Services
         public IReadOnlyList<string> NavigationHistory => _NavigationHistory.AsReadOnly();
 
 
-        //
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public NavigationService(ILogger<NavigationService> logger)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -21,7 +28,9 @@ namespace SquoundApp.Services
         }
 
 
-        //
+        /// <summary>
+        /// Updates the internal navigation history list to reflect the current state of the Shell's navigation stack.
+        /// </summary>
         private void UpdateNavigationHistory()
         {
             _NavigationHistory.Clear();
@@ -37,7 +46,12 @@ namespace SquoundApp.Services
         }
 
 
-        //
+        /// <summary>
+        /// Logs the current navigation history to the debug output.
+        /// </summary>
+        /// <remarks>Each entry in the navigation history is logged with its index and route.  This method
+        /// is intended for debugging purposes and provides insight into the current state of the navigation
+        /// stack.</remarks>
         private void LogNavigationHistory()
         {
             _Logger.LogDebug("Current Navigation Stack:");
@@ -50,7 +64,28 @@ namespace SquoundApp.Services
         }
 
 
-        //
+        /// <summary>
+        /// Compares the provided route with the current page's route to determine if they match.
+        /// </summary>
+        public bool IsCurrentPage(string route)
+        {
+            var current = Shell.Current?.CurrentPage;
+
+            if (current is null)
+            {
+                return false;
+            }
+
+            return current.Title.Equals(route, StringComparison.OrdinalIgnoreCase);
+        }
+
+
+        /// <summary>
+        /// Navigates to a specified route within the application.
+        /// </summary>
+        /// <param name="route">The route to navigate to, which should correspond to a registered route in the Shell.</param>
+        /// <param name="animate">Whether to animate the navigation transition. Default is true.</param>
+        /// <param name="parameters">An optional dictionary of parameters to pass to the target page.</param>
         public async Task GoToAsync(string route, bool animate = true, IDictionary<string, object>? parameters = null)
         {
             await _NavigationLock.WaitAsync();
@@ -86,8 +121,8 @@ namespace SquoundApp.Services
 
 
         /// <summary>
-        /// Navigates to the previous page on the navigation stack.
-        /// If no previous page exists, navigation will proceed to the HomePage.
+        /// Navigates back to the previous page in the navigation stack if possible;
+        /// If a backward navigation is not possible, navigates to the home page instead.
         /// </summary>
         public async Task GoBackOrHomeAsync()
         {
@@ -112,7 +147,7 @@ namespace SquoundApp.Services
 
                 else
                 {
-                    await Shell.Current.GoToAsync("//HomePage");
+                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 }
 
                 UpdateNavigationHistory();

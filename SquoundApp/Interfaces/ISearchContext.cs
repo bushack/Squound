@@ -16,6 +16,7 @@ namespace SquoundApp.Interfaces
         int PageSize { get; set; }
         ItemSortOption SortBy { get; set; }
         bool HasChanged { get; }
+        bool HasNotChanged { get; }
 
 
         /// <summary>

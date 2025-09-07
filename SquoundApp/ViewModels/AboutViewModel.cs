@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using SquoundApp.Interfaces;
 using SquoundApp.Models;
 using SquoundApp.Pages;
 using SquoundApp.Services;
@@ -10,16 +11,17 @@ namespace SquoundApp.ViewModels
 {
     public partial class AboutViewModel : BaseViewModel
     {
+        private readonly INavigationService _Navigation;
+        private readonly AboutService _Service;
+
         [ObservableProperty]
         private AboutModel model = new();
 
-        private readonly AboutService service;
 
-        public AboutViewModel(AboutService service)
+        public AboutViewModel(AboutService service, INavigationService navigation)
         {
-            this.service = service;
-
-            Title = "About Us";
+            _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+            _Service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         /// <summary>
@@ -60,8 +62,7 @@ namespace SquoundApp.ViewModels
             // This is the call that initiates the change of page.
             //await Shell.Current.GoToAsync(nameof(AboutPage));
 
-            var navService = ServiceLocator.GetService<NavigationService>();
-            await navService.GoToAsync(nameof(AboutPage));
+            await _Navigation.GoToAsync(nameof(AboutPage));
         }
 
         /*
@@ -78,7 +79,7 @@ namespace SquoundApp.ViewModels
             {
                 IsBusy = true;
 
-                var response = await service.GetDataAsync();
+                var response = await _Service.GetDataAsync();
 
                 Model = response.Data ?? new AboutModel();
             }
@@ -98,6 +99,13 @@ namespace SquoundApp.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+
+        [RelayCommand]
+        private async Task OnBackButton()
+        {
+            await _Navigation.GoBackOrHomeAsync();
         }
     }
 }

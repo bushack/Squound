@@ -9,26 +9,26 @@ namespace Shared.Services
 {
     public class EventService : IEventService
     {
-        private readonly ILogger<EventService> _logger;
-        private readonly ConcurrentDictionary<Type, List<Delegate>> _subscribers = new();
+        private readonly ILogger<EventService> _Logger;
+        private readonly ConcurrentDictionary<Type, List<Delegate>> _Subscribers = new();
 
 
         public EventService(ILogger<EventService> logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
         public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
         {
             // Get or create the list of handlers for the event type.
-            var handlers = _subscribers.GetOrAdd(typeof(TEvent), _ => []);
+            var handlers = _Subscribers.GetOrAdd(typeof(TEvent), _ => []);
             
             lock (handlers)
             {
                 handlers.Add(handler);
 
-                _logger.LogDebug("Subscribed to event {EventType} with handler {Handler}", typeof(TEvent).Name, handler.Method.Name);
+                _Logger.LogDebug("Subscribed to event {EventType} with handler {Handler}", typeof(TEvent).Name, handler.Method.Name);
             }
         }
 
@@ -36,13 +36,13 @@ namespace Shared.Services
         public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
         {
             // Get the list of handlers for the event type.
-            if (_subscribers.TryGetValue(typeof(TEvent), out var handlers))
+            if (_Subscribers.TryGetValue(typeof(TEvent), out var handlers))
             {
                 lock (handlers)
                 {
                     handlers.Remove(handler);
 
-                    _logger.LogDebug("Unsubscribed from event {EventType} with handler {Handler}", typeof(TEvent).Name, handler.Method.Name);
+                    _Logger.LogDebug("Unsubscribed from event {EventType} with handler {Handler}", typeof(TEvent).Name, handler.Method.Name);
                 }
             }
         }
@@ -51,7 +51,7 @@ namespace Shared.Services
         public void Publish<TEvent>(TEvent eventItem) where TEvent : IEvent
         {
             // Get the list of handlers for the event type.
-            if (_subscribers.TryGetValue(typeof(TEvent), out var handlers))
+            if (_Subscribers.TryGetValue(typeof(TEvent), out var handlers))
             {
                 // Create a copy of the handlers to guard against modified during iteration.
                 List<Delegate> handlersCopy;
@@ -67,7 +67,7 @@ namespace Shared.Services
                     {
                         action(eventItem);
 
-                        _logger.LogDebug("Published event {EventType} to handler {Handler}", typeof(TEvent).Name, action.Method.Name);
+                        _Logger.LogDebug("Published event {EventType} to handler {Handler}", typeof(TEvent).Name, action.Method.Name);
                     }
                 }
             }

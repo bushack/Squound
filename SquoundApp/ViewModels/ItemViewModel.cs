@@ -1,11 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
+using SquoundApp.Exceptions;
 using SquoundApp.Interfaces;
 
 using Shared.DataTransfer;
+
+
+// TODO : Detect and render an empty ItemDetailDto differently when exception caught.
+// (e.g., show "No details available" instead of blank labels).
 
 
 namespace SquoundApp.ViewModels
@@ -14,87 +19,92 @@ namespace SquoundApp.ViewModels
     public partial class ItemViewModel : BaseViewModel
     {
         private readonly ILogger<ItemViewModel> _Logger;
-        private readonly IItemService _Items;
+        private readonly IItemDetailRepository _Repository;
 
-        // Item
+        // For user interface data binding.
         [ObservableProperty]
         private ItemDetailDto item = new();
 
-        // ItemId
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="logger">Reference to a logger instance.</param>
+        /// <param name="repository">Reference to an item repository instance.</param>
+        /// <exception cref="ArgumentNullException">Thrown if any parameter is null.</exception>
+        public ItemViewModel(ILogger<ItemViewModel> logger, IItemDetailRepository repository)
+        {
+            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _Repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        }
+
+
+        // For receiving the ItemId as a QueryProperty.
         private long itemId;
         public long ItemId
         {
             get => itemId;
-
             set
             {
                 // 'itemId' is passed as a reference parameter from RefinedSearchViewModel.
                 if (SetProperty(ref itemId, value))
                 {
                     // Fire and forget, but safe because exceptions handled inside LoadItemAsync.
-                    _ = LoadItemAsync(itemId);
+                    _ = GetItemAsync(itemId);
                 }
             }
         }
 
 
-        // Material
+        // Material information.
         public bool HasMaterial => Item.Material.IsNullOrEmpty() is false;
         public string Material => $"Primary material: {Item.Material}";
 
 
-        // Dimensions
+        // Dimensions information.
         public bool HasDimensions => Item.Width > 0 && Item.Height > 0 && Item.Depth > 0;
         public string Dimensions => $"Dimensions: (w) {Item.Width}mm, (d) {Item.Depth}mm, (h) {Item.Height}mm";
 
 
-        //
-        public ItemViewModel(ILogger<ItemViewModel> logger, IItemService items)
+        /// <summary>
+        /// Retrieves item detail from the repository asynchronously and handles exceptions.
+        /// </summary>
+        /// <param name="itemId">The unique identifier of the item to retrieve.</param>
+        private async Task GetItemAsync(long itemId)
         {
-            _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _Items = items ?? throw new ArgumentNullException(nameof(items));
-        }
-
-
-        //
-        private async Task LoadItemAsync(long id)
-        {
-            if (IsBusy)
-                return;
+            if (IsBusy) return;
 
             try
             {
                 IsBusy = true;
-
-                // Note that awaiting the result will unpack the ItemDetailDto from the containing Task object.
-                var response = await _Items.GetDataAsync(id);
-
-                if (response.Success is false)
-                {
-                    Item = new();
-                    await Shell.Current.DisplayAlert($"Error", response.ErrorMessage, "OK");
-                    return;
-                }
-
-                if (response.Data is null || response.Data.ItemId != id)
-                {
-                    Item = new();
-                    await Shell.Current.DisplayAlert($"Error", "Item {id} not found", "OK");
-                    return;
-                }
-
-                // Successfully retrieved the item.
-                Item = response.Data;
+                Item = await _Repository.GetItemAsync(itemId);
             }
 
-            catch (Exception ex)
+            catch (ItemRepositoryException ex)
             {
-                _Logger.LogWarning(ex, "Undefined error while retrieving item {id} from server.", id);
+                _Logger.LogWarning(ex, "Invalid response while attempting to retrieve Item Id: {itemId}.", itemId);
+
+                // Assign a new empty item to avoid null reference exceptions in the view.
+                Item = ItemDetailDto.Empty;
 
                 // Display an alert to the user indicating that an error occurred while fetching data.
                 await Shell.Current.DisplayAlert(
                     "Error",
-                    $"An undefined error occurred while retrieving item {id} from the server",
+                    $"An error occurred while attempting to retrieve the item.",
+                    "OK");
+            }
+
+            catch (Exception ex)
+            {
+                _Logger.LogWarning(ex, "Undefined error while attempting to retrieve Item Id: {itemId}.", itemId);
+
+                // Assign a new empty item to avoid null reference exceptions in the view.
+                Item = ItemDetailDto.Empty;
+
+                // Display an alert to the user indicating that an error occurred while fetching data.
+                await Shell.Current.DisplayAlert(
+                    "Error",
+                    $"An undefined error occurred while attempting to retrieve the item.",
                     "OK");
             }
 
@@ -105,7 +115,10 @@ namespace SquoundApp.ViewModels
         }
 
 
-        //
+        /// <summary>
+        /// Responsible for updating dependent properties when Item changes.
+        /// </summary>
+        /// <param name="value"></param>
         partial void OnItemChanged(ItemDetailDto value)
         {
             OnPropertyChanged(nameof(Dimensions));

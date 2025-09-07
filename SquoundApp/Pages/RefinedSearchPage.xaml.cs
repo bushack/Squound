@@ -1,4 +1,4 @@
-using SquoundApp.Services;
+using SquoundApp.Interfaces;
 using SquoundApp.ViewModels;
 
 
@@ -6,11 +6,15 @@ namespace SquoundApp.Pages;
 
 public partial class RefinedSearchPage : ContentPage
 {
-	public RefinedSearchPage(RefinedSearchViewModel viewModel)
+    private readonly INavigationService _Navigation;
+
+
+    public RefinedSearchPage(RefinedSearchViewModel viewModel, INavigationService navigation)
 	{
 		InitializeComponent();
 
 		BindingContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
     }
 
     protected override void OnAppearing()
@@ -35,10 +39,7 @@ public partial class RefinedSearchPage : ContentPage
     {
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            var navService = ServiceLocator.GetService<NavigationService>();
-
-            // Goes to the previous page. If no previous page exists, go to the HomePage.
-            await navService.GoBackOrHomeAsync();
+            await _Navigation.GoBackOrHomeAsync();
         });
 
         return true;

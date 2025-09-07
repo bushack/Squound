@@ -16,7 +16,7 @@ namespace SquoundApp.Services
         private readonly IEventService _Events = events ?? throw new ArgumentNullException(nameof(events));
         private readonly IHttpService _Http = http ?? throw new ArgumentNullException(nameof(http));
 
-        private SearchResponseDto<ItemSummaryDto> _Response = new();
+        //private SearchResponseDto<ItemSummaryDto> _Response = new();
 
         // For the release version of the project we will set the base address for the HttpService
         // This is useful if you are making multiple requests to the same base URL.
@@ -40,16 +40,6 @@ namespace SquoundApp.Services
         /// <returns></returns>
         public async Task<Result<SearchResponseDto<ItemSummaryDto>>> GetDataAsync(ISearchContext searchContext)
         {
-            // Search context has not changed since last API call.
-            if (searchContext.HasChanged is false)
-            {
-                _Logger.LogDebug("Search context unchanged. Returning cached data.");
-
-                // Return the cached response from the previous API call.
-                return Result<SearchResponseDto<ItemSummaryDto>>.Ok(_Response);
-            }
-
-            // Search context has changed - fetch new data.
             try
             {
                 // TODO : Want to set the base URL in the HttpService prior to release version.
@@ -61,18 +51,16 @@ namespace SquoundApp.Services
                 var response = await _Http.GetJsonAsync<SearchResponseDto<ItemSummaryDto>>(url)
                     ?? throw new ApiResponseException("API retrieve JSON failed.");
 
-                // Cache data in the event that a duplicate search is performed - lowers API workload.
-                _Response = response.Data
+                var data = response.Data
                     ?? throw new ApiResponseException("API response data is null.");
 
-                // Success.
-                _Logger.LogInformation("Successfully retrieved {Count} item(s).", _Response.Items.Count);
+                _Logger.LogInformation("Successfully retrieved {Count} item(s).", data.Items.Count);
 
                 // Save the search context in case the user wishes to cancel any future changes.
                 searchContext.SaveChanges();
 
                 // Return success code and pagination data alongside the item summaries.
-                return Result<SearchResponseDto<ItemSummaryDto>>.Ok(_Response);
+                return Result<SearchResponseDto<ItemSummaryDto>>.Ok(data);
             }
 
             catch (ApiResponseException ex)

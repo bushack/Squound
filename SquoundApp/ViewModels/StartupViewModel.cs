@@ -1,7 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Microsoft.Extensions.Logging;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.Logging;
+
 using SquoundApp.Interfaces;
+using SquoundApp.Pages;
 using SquoundApp.Services;
 
 
@@ -11,6 +14,7 @@ namespace SquoundApp.ViewModels
     {
         private readonly ILogger<StartupViewModel> _Logger;
         private readonly ICategoryService _Categories;
+        private readonly INavigationService _Navigation;
 
         [ObservableProperty]
         private string loadingMessage = "Connecting";
@@ -23,10 +27,11 @@ namespace SquoundApp.ViewModels
 
 
         //
-        public StartupViewModel(ILogger<StartupViewModel> logger, ICategoryService categories)
+        public StartupViewModel(ILogger<StartupViewModel> logger, ICategoryService categories, INavigationService navigation)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _Categories = categories ?? throw new ArgumentNullException(nameof(categories));
+            _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
         }
 
 
@@ -46,13 +51,13 @@ namespace SquoundApp.ViewModels
 
                 if (response.Success)
                 {
-                    await ServiceLocator.GetService<NavigationService>().GoToAsync("///HomePage");
+                    await _Navigation.GoToAsync($"///{nameof(HomePage)}");
                 }
 
                 else
                 {
                     CanRetry = true;
-                    await ServiceLocator.GetService<NavigationService>().GoToAsync("///ErrorPage");
+                    await _Navigation.GoToAsync($"///{nameof(ErrorPage)}");
                 }
             }
 
@@ -74,7 +79,7 @@ namespace SquoundApp.ViewModels
         [RelayCommand]
         private async Task RetryAsync()
         {
-            await ServiceLocator.GetService<NavigationService>().GoToAsync("///LoadingPage");
+            await _Navigation.GoToAsync($"///{nameof(LoadingPage)}");
 
             await GetDataAsync();
         }

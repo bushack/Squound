@@ -1,8 +1,8 @@
-using SquoundApp.ViewModels;
 using SquoundApp.Services;
+using SquoundApp.ViewModels;
+
 
 namespace SquoundApp.Views;
-
 
 public partial class FooterView : ContentView
 {
@@ -17,6 +17,6 @@ public partial class FooterView : ContentView
         // The instance is created in the file MauiProgram.cs with the line:
         // builder.Services.AddSingleton<FooterViewModel>();
         BindingContext = ServiceLocator.GetService<FooterViewModel>()
-            ?? throw new ArgumentNullException(nameof(FooterViewModel));
+            ?? throw new ArgumentNullException(nameof(BindingContext));
     }
 }

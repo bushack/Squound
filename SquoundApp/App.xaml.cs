@@ -1,12 +1,18 @@
-﻿using SquoundApp.Services;
+﻿using SquoundApp.Interfaces;
+using SquoundApp.Pages;
 
 
 namespace SquoundApp
 {
     public partial class App : Application
     {
-        public App()
+        private readonly INavigationService _Navigation;
+
+
+        public App(INavigationService navigation)
         {
+            _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+
             InitializeComponent();
         }
 
@@ -19,7 +25,7 @@ namespace SquoundApp
         {
             base.OnStart();
 
-            await ServiceLocator.GetService<NavigationService>().GoToAsync("///LoadingPage");
+            await _Navigation.GoToAsync($"///{nameof(LoadingPage)}");
         }
     }
 }

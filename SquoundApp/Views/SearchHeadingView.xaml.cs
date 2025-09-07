@@ -11,6 +11,6 @@ public partial class SearchHeadingView : ContentView
 		InitializeComponent();
 
         BindingContext = ServiceLocator.GetService<RefinedSearchViewModel>()
-			?? throw new ArgumentNullException(nameof(RefinedSearchViewModel));
+			?? throw new ArgumentNullException(nameof(BindingContext));
     }
 }

@@ -1,12 +1,12 @@
 using SquoundApp.Services;
 using SquoundApp.ViewModels;
 
-namespace SquoundApp.Views;
 
+namespace SquoundApp.Views;
 
 public partial class SortAndFilterView : ContentView
 {
-    private bool hasLoaded = false;
+    private bool _HasLoaded = false;
 
     public SortAndFilterView()
 	{
@@ -15,7 +15,7 @@ public partial class SortAndFilterView : ContentView
         this.Loaded += OnLoaded;
 
         BindingContext = ServiceLocator.GetService<SortAndFilterViewModel>()
-			?? throw new ArgumentNullException(nameof(SortAndFilterViewModel));
+            ?? throw new ArgumentNullException(nameof(BindingContext));
     }
 
 
@@ -28,10 +28,10 @@ public partial class SortAndFilterView : ContentView
 
         // Prevent multiple reloads of the data.
         // We only want to load the data once when the view is first displayed.
-        if (hasLoaded)
+        if (_HasLoaded)
             return;
 
-        hasLoaded = true;
+        _HasLoaded = true;
 
         if (BindingContext is SortAndFilterViewModel viewModel)
         {

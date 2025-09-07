@@ -1,16 +1,12 @@
-﻿//using Shared.Interfaces;
+﻿using Shared.Interfaces;
 
 
-//namespace SquoundApp.Interfaces
-//{
-//    public interface IApplicationContext
-//    {
-//        ICategoryService Categories { get; }
+namespace SquoundApp.Interfaces
+{
+    public interface IApplicationContext
+    {
+        IEventService Events { get; }
 
-//        IEventService Events { get; }
-
-//        IItemService Items { get; }
-
-//        ISearchService Search { get; }
-//    }
-//}
+        INavigationService Navigation { get; }
+    }
+}

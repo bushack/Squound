@@ -1,4 +1,4 @@
-using SquoundApp.Services;
+using SquoundApp.Interfaces;
 using SquoundApp.ViewModels;
 
 
@@ -6,11 +6,15 @@ namespace SquoundApp.Pages;
 
 public partial class ItemPage : ContentPage
 {
-	public ItemPage(ItemViewModel viewModel)
+    private readonly INavigationService _Navigation;
+
+
+    public ItemPage(ItemViewModel viewModel, INavigationService navigation)
 	{
 		InitializeComponent();
 
 		BindingContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
     }
 
 	protected override void OnNavigatedTo(NavigatedToEventArgs args)
@@ -55,10 +59,7 @@ public partial class ItemPage : ContentPage
     {
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            var navService = ServiceLocator.GetService<NavigationService>();
-
-            // Goes to the previous page. If no previous page exists, go to the HomePage.
-            await navService.GoBackOrHomeAsync();
+            await _Navigation.GoBackOrHomeAsync();
         });
 
         return true;

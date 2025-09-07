@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using SquoundApp.Events;
 using SquoundApp.Exceptions;
 using SquoundApp.Interfaces;
 

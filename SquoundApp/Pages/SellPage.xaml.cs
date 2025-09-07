@@ -1,4 +1,4 @@
-using SquoundApp.Services;
+using SquoundApp.Interfaces;
 using SquoundApp.ViewModels;
 
 
@@ -6,11 +6,15 @@ namespace SquoundApp.Pages;
 
 public partial class SellPage : ContentPage
 {
-	public SellPage(SellViewModel viewModel)
+    private readonly INavigationService _Navigation;
+
+
+    public SellPage(SellViewModel viewModel, INavigationService navigation)
     {
         InitializeComponent();
 
         BindingContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 
         _ = viewModel.InitializeAsync();
     }
@@ -26,10 +30,7 @@ public partial class SellPage : ContentPage
     {
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            var navService = ServiceLocator.GetService<NavigationService>();
-
-            // Goes to the previous page. If no previous page exists, go to the HomePage.
-            await navService.GoBackOrHomeAsync();
+            await _Navigation.GoBackOrHomeAsync();
         });
 
         return true;
