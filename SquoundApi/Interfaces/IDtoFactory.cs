@@ -14,8 +14,9 @@ namespace SquoundApi.Interfaces
         /// the client application. As such, it contains only the necessary data for the client application.
         /// </summary>
         /// <param name="model">ItemModel instance to use as the source data.</param>
+        /// <param name="requiredImageSize">Image size required by the client application.</param>
         /// <returns><see cref="ItemModel"/> Data Transfer Object (DTO) containing summary information about a single database item.</returns>
-        public ItemSummaryDto CreateItemSummaryDto(ItemModel model);
+        public ItemSummaryDto CreateItemSummaryDto(ItemModel model, string requiredImageSize);
 
         /// <summary>
         /// Converts an <see cref="ItemModel"/> to a <see cref="ItemDetailDto"/>.
@@ -24,7 +25,8 @@ namespace SquoundApi.Interfaces
         /// the client application. As such, it contains only the necessary data for the client application.
         /// </summary>
         /// <param name="model">ItemModel instance to use as the source data.</param>
+        /// <param name="requiredImageSize">Image size required by the client application.</param>
         /// <returns><see cref="ItemDetailDto"/> Data Transfer Object (DTO) containing detailed information about a single database item.</returns>
-        public ItemDetailDto CreateItemDetailDto(ItemModel model);
+        public ItemDetailDto CreateItemDetailDto(ItemModel model, string requiredImageSize);
     }
 }

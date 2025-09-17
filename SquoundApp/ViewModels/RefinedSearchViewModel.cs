@@ -64,6 +64,21 @@ namespace SquoundApp.ViewModels
 
 
 		/// <summary>
+		/// Logic to be executed when the content of the ItemList changes.
+		/// </summary>
+		/// <param name="value"></param>
+        partial void OnItemListChanged(ObservableCollection<ItemSummaryDto> value)
+        {
+			// Update page title.
+			// Note that Keyword overrides Subcategory, which overrides Category.
+			Title = _Search.Keyword ??
+					_Search.Subcategory?.Name ??
+					_Search.Category?.Name ??
+					"Search";
+        }
+
+
+		/// <summary>
 		/// Invokes a property changed event for search response information variables.
 		/// This will ensure that the user interface is updated as soon as a value changes.
 		/// </summary>
@@ -154,14 +169,11 @@ namespace SquoundApp.ViewModels
 				// ObservableCollection is used here so that the UI can automatically update
 				// when items are added or removed, without needing to manually refresh the UI.
 				// This is a key feature of ObservableCollection, which is designed for data binding in UI frameworks.
-				ItemList.Clear();
+				//ItemList.Clear();
 
-				var items = await _Repository.GetItemsAsync(_Search);
-
-				foreach (var item in items)
-				{
-					ItemList.Add(item);
-                }
+				// Assign the items supplied by the repository to the observable collection (updates UI).
+				// Note that ObservableCollection constructor accepts IEnumerable<ItemSummaryDto> type.
+				ItemList = [.. await _Repository.GetItemsAsync(_Search)];
 
                 // Prepare new pagination metadata for user interface.
                 TotalItems	= _Repository.TotalItems;
@@ -209,11 +221,33 @@ namespace SquoundApp.ViewModels
 			if (item is null)
 				return;
 
-			await _Navigation.GoToAsync(nameof(ItemPage), true,
-				new Dictionary<string, object>
-				{
-					{"ItemId", item.ItemId }
-				});
+			// Record the selected item's identifier in the search context.
+			_Search.ItemId = item.ItemId;
+
+			// TODO: Pre-fetch the item detail before instigating navigation?
+
+			// Navigate to show the selected item in detail.
+			await _Navigation.GoToAsync(nameof(ItemDetailPage));
+
+
+			// Depreciated.
+			//await _Navigation.GoToAsync(nameof(ItemPage), true,
+			//	new Dictionary<string, object>
+			//	{
+			//		{"ItemId", item.ItemId }
+			//	});
 		}
-	}
+
+
+        /// <summary>
+        /// For optimal image display, sets the required image dimensions in pixels.
+        /// </summary>
+        /// <param name="width">Required image width in pixels.</param>
+		/// <param name="height">Required image height in pixels.</param>
+        public void RequiredImageDimensions(int width, int height)
+		{
+			_Search.RequiredImageWidth = width;
+			_Search.RequiredImageHeight = height;
+        }
+    }
 }

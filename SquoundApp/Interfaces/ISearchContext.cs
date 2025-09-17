@@ -5,6 +5,10 @@ namespace SquoundApp.Interfaces
 {
     public interface ISearchContext
     {
+        /// <summary>
+        /// Get or set the unique item identifier.
+        /// </summary>
+        long? ItemId { get; set; }
         CategoryDto? Category { get; set; }
         SubcategoryDto? Subcategory { get; set; }
         string? Manufacturer { get; set; }
@@ -14,6 +18,8 @@ namespace SquoundApp.Interfaces
         string? MaxPrice { get; set; }
         int PageNumber { get; set; }
         int PageSize { get; set; }
+        int RequiredImageWidth { get; set; }
+        int RequiredImageHeight { get; set; }
         ItemSortOption SortBy { get; set; }
         bool HasChanged { get; }
         bool HasNotChanged { get; }
@@ -46,6 +52,12 @@ namespace SquoundApp.Interfaces
         public SearchQueryDto AsSearchQueryDto();
 
 
-        public string BuildUrlQueryString();
+        public ItemDetailQueryDto AsItemDetailQueryDto();
+
+
+        public string BuildItemSummaryUrlQueryString();
+
+
+        public string BuildItemDetailUrlQueryString();
     }
 }

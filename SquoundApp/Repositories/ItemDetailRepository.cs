@@ -11,7 +11,7 @@ namespace SquoundApp.Repositories
     public class ItemDetailRepository : IItemDetailRepository
     {
         private readonly ILogger<ItemDetailRepository> _Logger;
-        private readonly IItemService _Service;
+        private readonly IItemDetailService _Service;
 
         // Internal cache of the most recently retrieved items.
         private readonly List<ItemDetailDto> _Cache = [];
@@ -24,7 +24,7 @@ namespace SquoundApp.Repositories
         /// <param name="logger">Reference to a logging service.</param> 
         /// <param name="service">Reference to an item service for data retrieval.</param>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
-        public ItemDetailRepository(ILogger<ItemDetailRepository> logger, IItemService service) 
+        public ItemDetailRepository(ILogger<ItemDetailRepository> logger, IItemDetailService service) 
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _Service = service ?? throw new ArgumentNullException(nameof(service));
@@ -34,11 +34,16 @@ namespace SquoundApp.Repositories
         /// <summary>
         /// Asynchronously retrieves detailed information for a specific item by its unique identifier.
         /// </summary>
-        /// <param name="itemId">The unique identifier of the item to retrieve.</param>
+        /// <param name="query">Query parameter object defining the objectives of the GET request.</param>
         /// <returns></returns>
         /// <exception cref="ItemRepositoryException">Thrown when unable to successfully retrieve item detail.</exception>
-        public async Task<ItemDetailDto> GetItemAsync(long itemId)
+        public async Task<ItemDetailDto> GetItemAsync(ISearchContext searchContext)
         {
+            if (searchContext.ItemId is null)
+                throw new ItemRepositoryException("Item Id is null.");
+
+            var itemId = searchContext.ItemId ?? Defaults.MinimumItemId;
+
             // Check if item is cached.
             var cachedItem = GetItemFromCache(itemId);
 
@@ -54,7 +59,7 @@ namespace SquoundApp.Repositories
                 _Logger.LogInformation("Requesting data for Item Id: {itemId}.", itemId);
 
                 // Fetch item from API. Throw exception on failure.
-                var result = await _Service.GetDataAsync(itemId)
+                var result = await _Service.GetDataAsync(searchContext)
                     ?? throw new ItemRepositoryException("Item data not received.");
 
                 // Extract item from result. Throw exception on null.

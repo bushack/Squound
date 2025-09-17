@@ -17,11 +17,12 @@ namespace SquoundApp
             // This allows you to navigate to specific pages using a route name.
             // For example 'Shell.Current.GoToAsync(nameof(ItemPage));'
             Routing.RegisterRoute(nameof(AboutPage), typeof(AboutPage));
+            Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
             Routing.RegisterRoute(nameof(ItemPage), typeof(ItemPage));
             Routing.RegisterRoute(nameof(SellPage), typeof(SellPage));
             Routing.RegisterRoute(nameof(RefinedSearchPage), typeof(RefinedSearchPage));
 
-            // The following pages are registered as <ShellContent> and therefore ARE NOT re-registered here.
+            // The following pages are registered as <ShellContent> and therefore should NOT be re-registered here.
             // Routing.RegisterRoute(nameof(HomePage), typeof(HomePage));
             // Routing.RegisterRoute(nameof(CoarseSearchPage), typeof(CoarseSearchPage));
         }

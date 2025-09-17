@@ -10,9 +10,9 @@ using Shared.Logging;
 
 namespace SquoundApp.Services
 {
-    public class ItemService(ILogger<ItemService> logger, IEventService events, IHttpService http) : IItemService
+    public class ItemSummaryService(ILogger<ItemSummaryService> logger, IEventService events, IHttpService http) : IItemSummaryService
     {
-        private readonly ILogger<ItemService> _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly ILogger<ItemSummaryService> _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly IEventService _Events = events ?? throw new ArgumentNullException(nameof(events));
         private readonly IHttpService _Http = http ?? throw new ArgumentNullException(nameof(http));
 
@@ -34,16 +34,17 @@ namespace SquoundApp.Services
 
 
         /// <summary>
-        /// Asynchronously retrieves a list of item summaries that match the query criteria from a REST API.
+        /// Asynchronously attempts to retrieve a list of ItemSummaryDto objects from a REST API.
         /// </summary>
-        /// <param name="searchContext"></param>
-        /// <returns></returns>
+        /// <param name="searchContext">Database query parameters, for filtering search results.</param>
+        /// <returns>Object containing a list of ItemSummaryDto objects matching the query parameters.</returns>
+        /// <remarks>The return object can be queried for metadata and pagination info.</remarks>
         public async Task<Result<SearchResponseDto<ItemSummaryDto>>> GetDataAsync(ISearchContext searchContext)
         {
             try
             {
                 // TODO : Want to set the base URL in the HttpService prior to release version.
-                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{searchContext.BuildUrlQueryString()}";
+                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/search?{searchContext.BuildItemSummaryUrlQueryString()}";
 
                 _Logger.LogInformation("Retrieving items from {url}", url);
 
@@ -78,47 +79,6 @@ namespace SquoundApp.Services
             }
         }
 
-
-        /// <summary>
-        /// Asynchronously retrieves a single ItemDetailDto that matches the itemId from a REST API.
-        /// </summary>
-        /// <param name="itemId">Identifier of the ItemDetailDto to retrieve.</param>
-        /// <returns></returns>
-        public async Task<Result<ItemDetailDto>> GetDataAsync(long itemId)
-        {
-            try
-            {
-                // TODO : Want to set the base URL in the HttpService prior to release version.
-                var url = $"{Scheme}://{LocalHostUrl}:{Port}/api/items/{itemId}";
-
-                _Logger.LogInformation("Retrieving item {itemId} from {url}", itemId, url);
-
-                // Fetch the items from the REST API.
-                var response = await _Http.GetJsonAsync<ItemDetailDto>(url)
-                    ?? throw new ApiResponseException("Failed to retrieve JSON content from API.");
-
-                var data = response.Data
-                    ?? throw new ApiResponseException("JSON content retrieved from API is null.");
-
-                _Logger.LogInformation("Successfully retrieved item {ItemId} from {url}.", data.ItemId, url);
-
-                return Result<ItemDetailDto>.Ok(data);
-            }
-
-            catch (ApiResponseException ex)
-            {
-                _Logger.LogWarning(ex, "Invalid response while retrieving item {itemId} from server.", itemId);
-
-                return Result<ItemDetailDto>.Fail("Invalid response from server.");
-            }
-
-            catch (Exception ex)
-            {
-                _Logger.LogWarning(ex, "Unexpected error while retrieving item {itemId} from server.", itemId);
-
-                return Result<ItemDetailDto>.Fail("Unexpected error occurred while retrieving data from server.");
-            }
-        }
 
         // <summary>
         // Asynchronously retrieves a list of items from a remote JSON file.

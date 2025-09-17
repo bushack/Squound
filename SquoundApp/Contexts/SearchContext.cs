@@ -15,6 +15,31 @@ namespace SquoundApp.Contexts
 		private readonly IEventService _Events;
 
 
+        /// <summary>
+		/// Internal class responsible for caching current item detail request.
+		/// To submit a search query to the API, first request an ItemDetailQueryDto using the
+		/// method 'ToItemDetailQueryDto'. This object can then be used to produce the query
+		/// string section of a URL that can be submitted to a REST API GET endpoint with
+		/// the method 'AsQueryString'.
+		/// </summary>
+        private class RequestState
+        {
+            public DateTime TimeStamp;
+            public long? ItemId { get; set; } = null;
+
+
+            public ItemDetailQueryDto AsItemDetailQueryDto(int imageWidth, int imageHeight)
+            {
+                return new ItemDetailQueryDto
+                {
+                    ItemId          = ItemId ?? Defaults.MinimumItemId,
+                    ImageWidth      = imageWidth,
+                    ImageHeight     = imageHeight
+                };
+            }
+        }
+
+
 		/// <summary>
 		/// Internal class responsible for caching current and previous search parameters.
 		/// To submit a search query to the API, first request a SearchQueryDto using the
@@ -35,8 +60,8 @@ namespace SquoundApp.Contexts
 			public decimal? MinPrice { get; set; } = null;
 			public decimal? MaxPrice { get; set; } = null;
 
-			public int PageNumber { get; set; } = SearchQueryDto.DefaultPageNumber;
-			public int PageSize { get; set; } = SearchQueryDto.DefaultPageSize;
+			public int PageNumber { get; set; } = Shared.DataTransfer.Defaults.PageNumber;
+			public int PageSize { get; set; } = Shared.DataTransfer.Defaults.PageSize;
 
 			public ItemSortOption SortBy { get; set; } = ItemSortOption.PriceAsc;
 
@@ -60,11 +85,10 @@ namespace SquoundApp.Contexts
 			}
 
 
-			public SearchQueryDto AsSearchQueryDto()
+			public SearchQueryDto AsSearchQueryDto(int imageWidth, int imageHeight)
 			{
 				return new SearchQueryDto
 				{
-					ItemId          = null,
 					Category        = Category?.Name ?? null,
 					Subcategory     = Subcategory?.Name ?? null,
 					Manufacturer    = Manufacturer ?? null,
@@ -74,11 +98,17 @@ namespace SquoundApp.Contexts
 					MaxPrice        = MaxPrice ?? null,
 					PageNumber      = PageNumber,
 					PageSize        = PageSize,
-					SortBy          = SortBy
+                    ImageWidth      = imageWidth,
+                    ImageHeight     = imageHeight,
+                    SortBy          = SortBy
 				};
 			}
 		}
 
+
+        // Responsible for caching user-selected item id parameter.
+        // To be used when the user wishes to view a specific item in detail.
+        private RequestState _CurrentRequest = new();
 
 		// Responsible for caching user-selected filter and sort parameters.
 		// To be used when the user wishes to apply a filter or sort and perform a database query.
@@ -90,7 +120,11 @@ namespace SquoundApp.Contexts
 
 		// The data should be considered out-of-date if the interval since the last successful database query exceeds 30 minutes.
 		private readonly TimeSpan _MaxInterval = TimeSpan.FromMinutes(30);
-		
+
+        // Responsible for caching the required image dimensions for item thumbnails.
+        private int _RequiredImageWidth = Shared.DataTransfer.Defaults.ImageWidth;
+        private int _RequiredImageHeight = Shared.DataTransfer.Defaults.ImageHeight;
+
 
 
         /// <summary>
@@ -105,7 +139,12 @@ namespace SquoundApp.Contexts
         public bool HasNotChanged => !HasChanged;
 
 
-        //
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="events"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public SearchContext(ILogger<SearchContext> logger, IEventService events)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -148,6 +187,18 @@ namespace SquoundApp.Contexts
             Category = defaultCategory;
             _Logger.LogDebug("Reset changes. Reset: {changes}", string.Join(", ", GetChangedFields()));
             _Events.Publish(new SearchContextChangedEvent(this));
+        }
+
+
+        public long? ItemId
+        {
+            get => _CurrentRequest.ItemId;
+            set
+            {
+                _CurrentRequest.ItemId = value;
+                _Logger.LogDebug("Set ItemId to {id}.", value);
+                _Events.Publish(new SearchContextChangedEvent(this));
+            }
         }
 
 
@@ -231,8 +282,8 @@ namespace SquoundApp.Contexts
                 {
                     // Clamp price to within practical range.
                     decimal price = Math.Clamp(parsePrice.Value,
-                        (decimal)SearchQueryDto.PracticalMinimumPrice,
-                            (decimal)SearchQueryDto.PracticalMaximumPrice);
+                        (decimal)Shared.DataTransfer.Defaults.PracticalMinimumPrice,
+                            (decimal)Shared.DataTransfer.Defaults.PracticalMaximumPrice);
 
                     // Ensure max price is greater-than or equal-to new min price.
                     if (_CurrentState.MaxPrice < price)
@@ -270,8 +321,8 @@ namespace SquoundApp.Contexts
                 {
                     // Clamp price to within practical range.
                     decimal price = Math.Clamp(parsePrice.Value,
-                        (decimal)SearchQueryDto.PracticalMinimumPrice,
-                            (decimal)SearchQueryDto.PracticalMaximumPrice);
+                        (decimal)Shared.DataTransfer.Defaults.PracticalMinimumPrice,
+                            (decimal)Shared.DataTransfer.Defaults.PracticalMaximumPrice);
 
                     // Ensure min price is less-than or equal-to new max price.
                     if (_CurrentState.MinPrice > price)
@@ -330,10 +381,32 @@ namespace SquoundApp.Contexts
                 _Logger.LogDebug("Set PageSize to {PageSize}.", _CurrentState.PageSize);
                 _Events.Publish(new SearchContextChangedEvent(this));
             }
-		}
+        }
 
 
-		public ItemSortOption SortBy
+        public int RequiredImageWidth
+        {
+            get => _RequiredImageWidth;
+            set
+            {
+                _RequiredImageWidth = value;
+                _Logger.LogDebug("Set RequiredImageWidth to {Width}.", _RequiredImageWidth);
+            }
+        }
+
+
+        public int RequiredImageHeight
+        {
+            get => _RequiredImageHeight;
+            set
+            {
+                _RequiredImageHeight = value;
+                _Logger.LogDebug("Set RequiredImageHeight to {Height}.", _RequiredImageHeight);
+            }
+        }
+
+
+        public ItemSortOption SortBy
 		{
             get => _CurrentState.SortBy;
             set
@@ -349,14 +422,32 @@ namespace SquoundApp.Contexts
         /// Builds a SearchQueryDto representation of the internal state.
         /// </summary>
         /// <returns></returns>
-        public SearchQueryDto AsSearchQueryDto() => _CurrentState.AsSearchQueryDto();
+        public SearchQueryDto AsSearchQueryDto() =>
+            _CurrentState.AsSearchQueryDto(_RequiredImageWidth, _RequiredImageHeight);
 
 
-		/// <summary>
-		/// Builds the query section of a URL string which can be submitted to a REST API GET endpoint.
-		/// </summary>
-		/// <returns></returns>
-		public string BuildUrlQueryString() => _CurrentState.AsSearchQueryDto().AsQueryString();
+        /// <summary>
+        /// Builds an ItemDetailQueryDto representation of the internal state.
+        /// </summary>
+        /// <returns></returns>
+        public ItemDetailQueryDto AsItemDetailQueryDto() =>
+            _CurrentRequest.AsItemDetailQueryDto(_RequiredImageWidth, _RequiredImageHeight);
+
+
+        /// <summary>
+        /// Builds the query section of a URL string which can be submitted to a REST API GET endpoint.
+        /// </summary>
+        /// <returns></returns>
+        public string BuildItemSummaryUrlQueryString() =>
+            _CurrentState.AsSearchQueryDto(_RequiredImageWidth, _RequiredImageHeight).AsQueryString();
+
+
+        /// <summary>
+        /// Builds the query section of a URL string which can be submitted to a REST API endpoint.
+        /// </summary>
+        /// <returns></returns>
+        public string BuildItemDetailUrlQueryString() =>
+            _CurrentRequest.AsItemDetailQueryDto(_RequiredImageWidth, _RequiredImageHeight).AsQueryString();
 
 
         private IEnumerable<string> GetChangedFields()

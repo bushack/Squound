@@ -97,7 +97,7 @@
     
     <!-- General Images -->
     <MauiImage Update="Resources\Images\squound_logo.png" Resize="True" BaseSize="512,512" />
-    <MauiImage Update="Resources\Images\default_product.png" Resize="True" BaseSize="512,512" />
+    <MauiImage Update="Resources\Images\default_item.png" Resize="True" BaseSize="512,512" />
     
     <!-- TabBar Icons -->
     <MauiImage Update="Resources\Images\account.png" Resize="True" BaseSize="100,100" />
@@ -157,6 +157,11 @@
 	  <Compile Update="Pages\RefinedSearchPage.xaml.cs">
 	    <DependentUpon>RefinedSearchPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Resources\Strings\AppResources.en-GB.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AppResources.en-GB.resx</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\AdvancedHeaderView.xaml.cs">
 	    <DependentUpon>AdvancedHeaderView.xaml</DependentUpon>
 	  </Compile>
@@ -172,6 +177,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Strings\AppResources.en-GB.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>AppResources.en-GB.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Pages\AboutPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -182,6 +194,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\HomePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\ItemDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\LoadingPage.xaml">

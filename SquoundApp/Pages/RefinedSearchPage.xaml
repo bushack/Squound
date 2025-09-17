@@ -47,7 +47,8 @@
                         <Border BackgroundColor="Transparent"
                                 Margin="10"
                                 StrokeShape="RoundRectangle 15"
-                                StrokeThickness="0">
+                                StrokeThickness="0"
+                                SizeChanged="ImageBorder_SizeChanged">
 
                             <!-- The border defines a tappable area that allows the user to access a specific item -->
                             <Border.GestureRecognizers>
@@ -67,7 +68,7 @@
                                         StrokeThickness="0"
                                         HorizontalOptions="Fill"
                                         VerticalOptions="Center">
-                                    <Image Source="{Binding PrimaryThumbnailUrl}"
+                                    <Image Source="{Binding PrimaryImageUrl}"
                                            Aspect="AspectFit"/>
                                 </Border>
 

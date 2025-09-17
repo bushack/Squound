@@ -18,13 +18,6 @@ namespace Shared.DataTransfer
 
         public int Quantity { get; set; } = -1;
 
-        public IReadOnlyList<string> LargeImageUrls { get; set; } = [];
-
-        /// <summary>
-        /// Returns the URL of the item's primary image or a default image if none are available.
-        /// </summary>
-        public string PrimaryImageUrl => LargeImageUrls?.FirstOrDefault() ?? "default_product.png";
-
         /// <summary>
         /// Represents an empty item detail object with default values.
         /// </summary>

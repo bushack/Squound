@@ -14,35 +14,6 @@ namespace Shared.DataTransfer
 
     public class SearchQueryDto : IValidatableObject
     {
-        // Limits for string properties.
-        public const int MinimumStringLength = 3;
-        public const int MaximumStringLength = 25;
-
-        // Defaults for pagination.
-        public const int DefaultPageNumber = 1;
-        public const int DefaultPageSize = 10;
-
-        // Limits for pagination.
-        public const int MinimumPageSize = DefaultPageSize;
-        public const int MaximumPageSize = 100;
-
-        // Limits for price range queries.
-        public const double PracticalMinimumPrice = 0.0;
-        public const double PracticalMaximumPrice = 999999.99;
-
-        // Regular expressions for validating string content.
-        private const string AlphabeticRegex = @"^[a-zA-Z\s]+$";
-        private const string AlphanumericRegex = @"^[a-zA-Z0-9\s]+$";
-        private const string KeywordRegex = @"^[a-zA-Z0-9\s-']+$";
-
-        // Error messages for regular expression validation.
-        private const string AlphabeticRegexErrorMessage = "Only letters and spaces are allowed";
-        private const string AlphanumericRegexErrorMessage = "Only letters, numbers and spaces are allowed";
-        private const string KeywordRegexErrorMessage = "Only letters, numbers, spaces, hyphens and apostrophes are allowed";
-
-        // Error messages for string length and range validation.
-        private const string StringLengthErrorMessage = " string length out of range";
-        private const string RangeErrorMessage = " value out of range";
 
         /// <summary>
         /// Gets or sets the the method used for sorting operations.
@@ -50,69 +21,75 @@ namespace Shared.DataTransfer
         public ItemSortOption SortBy { get; set; } = ItemSortOption.PriceAsc;
 
         /// <summary>
-        /// Gets or sets the unique identifier for the item.
-        /// </summary>
-        [Range(1, long.MaxValue, ErrorMessage = nameof(ItemId) + RangeErrorMessage)]
-        public long? ItemId { get; set; } = null;
-
-        /// <summary>
         /// Gets or sets the name of the item category.
         /// </summary>
-        [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Category) + StringLengthErrorMessage)]
-        [RegularExpression(AlphabeticRegex, ErrorMessage = AlphabeticRegexErrorMessage)]
+        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Category) + Defaults.StringLengthErrorMessage)]
+        [RegularExpression(Defaults.AlphabeticRegex, ErrorMessage = Defaults.AlphabeticRegexErrorMessage)]
         public string? Category { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the name of the item subcategory.
         /// </summary>
-        [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Subcategory) + StringLengthErrorMessage)]
-        [RegularExpression(AlphabeticRegex, ErrorMessage = AlphabeticRegexErrorMessage)]
+        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Subcategory) + Defaults.StringLengthErrorMessage)]
+        [RegularExpression(Defaults.AlphabeticRegex, ErrorMessage = Defaults.AlphabeticRegexErrorMessage)]
         public string? Subcategory { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the name of the item manufacturer.
         /// </summary>
-        [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Manufacturer) + StringLengthErrorMessage)]
-        [RegularExpression(AlphanumericRegex, ErrorMessage = AlphanumericRegexErrorMessage)]
+        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Manufacturer) + Defaults.StringLengthErrorMessage)]
+        [RegularExpression(Defaults.AlphanumericRegex, ErrorMessage = Defaults.AlphanumericRegexErrorMessage)]
         public string? Manufacturer { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the name of the item material.
         /// </summary>
-        [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Material) + StringLengthErrorMessage)]
-        [RegularExpression(AlphabeticRegex, ErrorMessage = AlphanumericRegexErrorMessage)]
+        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Material) + Defaults.StringLengthErrorMessage)]
+        [RegularExpression(Defaults.AlphabeticRegex, ErrorMessage = Defaults.AlphanumericRegexErrorMessage)]
         public string? Material { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the keyword used for filtering or searching operations.
         /// </summary>
-        [StringLength(MaximumStringLength, MinimumLength = MinimumStringLength, ErrorMessage = nameof(Keyword) + StringLengthErrorMessage)]
-        [RegularExpression(KeywordRegex, ErrorMessage = KeywordRegexErrorMessage)]
+        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Keyword) + Defaults.StringLengthErrorMessage)]
+        [RegularExpression(Defaults.KeywordRegex, ErrorMessage = Defaults.KeywordRegexErrorMessage)]
         public string? Keyword { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the minimum value for queries restricted by price range.
         /// </summary>
-        [Range(PracticalMinimumPrice, PracticalMaximumPrice, ErrorMessage = nameof(MinPrice) + RangeErrorMessage)]
+        [Range(Defaults.PracticalMinimumPrice, Defaults.PracticalMaximumPrice, ErrorMessage = nameof(MinPrice) + Defaults.RangeErrorMessage)]
         public decimal? MinPrice { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the maximum value for queries restricted by price range.
         /// </summary>
-        [Range(PracticalMinimumPrice, PracticalMaximumPrice, ErrorMessage = nameof(MaxPrice) + RangeErrorMessage)]
+        [Range(Defaults.PracticalMinimumPrice, Defaults.PracticalMaximumPrice, ErrorMessage = nameof(MaxPrice) + Defaults.RangeErrorMessage)]
         public decimal? MaxPrice { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the current page number for pagination.
         /// </summary>
-        [Range(1, int.MaxValue, ErrorMessage = nameof(PageNumber) + RangeErrorMessage)]
-        public int PageNumber { get; set; } = DefaultPageNumber;
+        [Range(1, int.MaxValue, ErrorMessage = nameof(PageNumber) + Defaults.RangeErrorMessage)]
+        public int PageNumber { get; set; } = Defaults.PageNumber;
 
         /// <summary>
         /// Gets or sets the maximum number of items to return per page.
         /// </summary>
-        [Range(MinimumPageSize, MaximumPageSize, ErrorMessage = nameof(PageSize) + RangeErrorMessage)]
-        public int PageSize { get; set; } = DefaultPageSize;
+        [Range(Defaults.MinimumPageSize, Defaults.MaximumPageSize, ErrorMessage = nameof(PageSize) + Defaults.RangeErrorMessage)]
+        public int PageSize { get; set; } = Defaults.PageSize;
+
+        /// <summary>
+        /// Gets or sets the required image width in pixels.
+        /// </summary>
+        [Range(Defaults.MinimumImageWidth, Defaults.MaximumImageWidth, ErrorMessage = nameof(ImageWidth) + Defaults.RangeErrorMessage)]
+        public int ImageWidth { get; set; } = Defaults.ImageWidth;
+
+        /// <summary>
+        /// Gets or sets the required image height in pixels.
+        /// </summary>
+        [Range(Defaults.MinimumImageHeight, Defaults.MaximumImageHeight, ErrorMessage = nameof(ImageHeight) + Defaults.RangeErrorMessage)]
+        public int ImageHeight { get; set; } = Defaults.ImageHeight;
 
 
         /// <summary>
@@ -121,11 +98,6 @@ namespace Shared.DataTransfer
         public string AsQueryString()
         {
             var queryString = string.Empty;
-
-            // If the Id is provided, we are looking for one specific
-            // item and therefore all other filters are irrelevant.
-            if (this.ItemId is not null)
-                return queryString += $"itemid={this.ItemId}";
 
             // Append the category, subcategory, manufacturer, material, keyword, and price filters if they are set.
             if (Category is not null)
@@ -144,10 +116,10 @@ namespace Shared.DataTransfer
                 queryString += $"keyword={Uri.EscapeDataString(this.Keyword.ToLower())}&";
 
             // Append the MinPrice and/or MaxPrice if they are within the valid range.
-            if (this.MinPrice is not null && this.MinPrice > 0 && this.MinPrice <= (decimal)PracticalMaximumPrice)
+            if (this.MinPrice is not null && this.MinPrice > 0 && this.MinPrice <= (decimal)Defaults.PracticalMaximumPrice)
                 queryString += $"minprice={this.MinPrice}&";
 
-            if (this.MaxPrice is not null && this.MaxPrice > 0 && this.MaxPrice <= (decimal)PracticalMaximumPrice)
+            if (this.MaxPrice is not null && this.MaxPrice > 0 && this.MaxPrice <= (decimal)Defaults.PracticalMaximumPrice)
                 queryString += $"maxprice={this.MaxPrice}&";
 
             // Append the sorting and pagination parameters.
@@ -155,7 +127,9 @@ namespace Shared.DataTransfer
             // The PageNumber and PageSize are also always set to default values, so they do not need to be checked.
             queryString += $"sortby={this.SortBy.ToString().ToLower()}" +
                 $"&pagenumber={this.PageNumber}" +
-                $"&pagesize={this.PageSize}";
+                $"&pagesize={this.PageSize}" +
+                $"&imagewidth={this.ImageWidth}" +
+                $"&imageheight={this.ImageHeight}";
 
             // Remove the trailing '&' if it exists.
             return queryString.TrimEnd('&');

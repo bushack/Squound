@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
+﻿
 
 namespace Shared.DataTransfer
 {
@@ -14,11 +13,12 @@ namespace Shared.DataTransfer
 
         public decimal Price { get; set; } = 0.0m;
 
-        public IReadOnlyList<string> ThumbnailImageUrls { get; set; } = [];
+        public IReadOnlyList<string> ImageUrls { get; set; } = [];
 
         /// <summary>
-        /// Returns the URL of the item's primary image or a default image if none are available.
+        /// Returns the URL of the item's primary image.
+        /// If image not found, use the built-in default image for items.
         /// </summary>
-        public string PrimaryThumbnailUrl => ThumbnailImageUrls?.FirstOrDefault() ?? "default_product.png";
+        public string PrimaryImageUrl => ImageUrls?.FirstOrDefault() ?? "default_item.png";
     }
 }

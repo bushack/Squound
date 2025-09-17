@@ -37,8 +37,8 @@ namespace SquoundApp.ViewModels
 		[ObservableProperty] private string? minPrice = null;
 		[ObservableProperty] private string? maxPrice = null;
 		
-		[ObservableProperty] private int pageNumber = SearchQueryDto.DefaultPageNumber;
-		[ObservableProperty] private int pageSize = SearchQueryDto.DefaultPageSize;
+		[ObservableProperty] private int pageNumber = Shared.DataTransfer.Defaults.PageNumber;
+		[ObservableProperty] private int pageSize = Shared.DataTransfer.Defaults.PageSize;
 		
 		[ObservableProperty] private ItemSortOption sortBy = ItemSortOption.PriceAsc;
 

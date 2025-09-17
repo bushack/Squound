@@ -2,11 +2,13 @@
 using Microsoft.IdentityModel.Tokens;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using SquoundApp.Exceptions;
 using SquoundApp.Interfaces;
 
 using Shared.DataTransfer;
+using SquoundApp.Resources.Strings;
 
 
 // TODO : Detect and render an empty ItemDetailDto differently when exception caught.
@@ -15,10 +17,9 @@ using Shared.DataTransfer;
 
 namespace SquoundApp.ViewModels
 {
-    [QueryProperty(nameof(ItemId), nameof(ItemId))]
-    public partial class ItemViewModel : BaseViewModel
+    public partial class ItemDetailViewModel : BaseViewModel
     {
-        private readonly ILogger<ItemViewModel> _Logger;
+        private readonly ILogger<ItemDetailViewModel> _Logger;
         private readonly IItemDetailRepository _Repository;
         private readonly ISearchContext _Search;
 
@@ -33,7 +34,7 @@ namespace SquoundApp.ViewModels
         /// <param name="logger">Reference to a logger instance.</param>
         /// <param name="repository">Reference to an item repository instance.</param>
         /// <exception cref="ArgumentNullException">Thrown if any parameter is null.</exception>
-        public ItemViewModel(ILogger<ItemViewModel> logger, IItemDetailRepository repository, ISearchContext search)
+        public ItemDetailViewModel(ILogger<ItemDetailViewModel> logger, IItemDetailRepository repository, ISearchContext search)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _Repository = repository ?? throw new ArgumentNullException(nameof(repository));
@@ -41,39 +42,50 @@ namespace SquoundApp.ViewModels
         }
 
 
-        // For receiving the ItemId as a QueryProperty.
-        //private long itemId;
-        public long ItemId
-        {
-            get => _Search.ItemId ?? Defaults.MinimumItemId;
-            set
-            {
-                // 'itemId' is passed as a reference parameter from RefinedSearchViewModel.
-                //if (SetProperty(ref _Search.ItemId, value))
-                {
-                    // Fire and forget, but safe because exceptions handled inside LoadItemAsync.
-                    _ = GetItemAsync();
-                }
-            }
-        }
+        // Material.
+        public bool HasMaterial =>
+            Item.Material.IsNullOrEmpty() is false;
+
+        public string Material =>
+            $"Primary material: {Item.Material}";
 
 
-        // Material information.
-        public bool HasMaterial => Item.Material.IsNullOrEmpty() is false;
-        public string Material => $"Primary material: {Item.Material}";
+        // Dimensions.
+        public bool HasDimensions =>
+            Item.Width > 0 &&
+            Item.Height > 0 &&
+            Item.Depth > 0;
+
+        public string Dimensions =>
+            $"Dimensions:" +
+            $"(w) {Item.Width}mm," +
+            $"(d) {Item.Depth}mm," +
+            $"(h) {Item.Height}mm";
 
 
-        // Dimensions information.
-        public bool HasDimensions => Item.Width > 0 && Item.Height > 0 && Item.Depth > 0;
-        public string Dimensions => $"Dimensions: (w) {Item.Width}mm, (d) {Item.Depth}mm, (h) {Item.Height}mm";
+        // Email Us.
+        public string EmailUrl =>
+            $"mailto:{AppResources.UrlEmail}" + 
+            $"?subject={AppResources.UserInterestedMessage}{Item.Name}" +   // Email subject.
+            $"&body=";                                                      // Email body.
+
+
+        // WhatsApp Us.
+        public string WhatsAppUrl =>
+            $"{AppResources.UrlWhatsApp}" +
+            $"?text={AppResources.UserInterestedMessage}{Item.Name}%20";	// WhatsApp message.
 
 
         /// <summary>
         /// Retrieves item detail from the repository asynchronously and handles exceptions.
         /// </summary>
+        [RelayCommand]
         private async Task GetItemAsync()
         {
-            if (IsBusy) return;
+            if (IsBusy)
+            {
+                return;
+            }
 
             try
             {
@@ -122,11 +134,17 @@ namespace SquoundApp.ViewModels
         /// <param name="value"></param>
         partial void OnItemChanged(ItemDetailDto value)
         {
+            // Set the page title to the name of the item.
+            Title = value.Name;
+
             OnPropertyChanged(nameof(Dimensions));
             OnPropertyChanged(nameof(HasDimensions));
 
             OnPropertyChanged(nameof(Material));
             OnPropertyChanged(nameof(HasMaterial));
+
+            OnPropertyChanged(nameof(EmailUrl));
+            OnPropertyChanged(nameof(WhatsAppUrl));
         }
     }
 }

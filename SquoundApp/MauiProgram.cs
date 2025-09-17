@@ -72,7 +72,8 @@ namespace SquoundApp
             builder.Services.AddSingleton<IEventService, EventService>();
             builder.Services.AddSingleton<ICategoryService, CategoryService>();
             builder.Services.AddSingleton<ISearchContext, SearchContext>();
-            builder.Services.AddSingleton<IItemService, ItemService>();
+            builder.Services.AddSingleton<IItemDetailService, ItemDetailService>();
+            builder.Services.AddSingleton<IItemSummaryService, ItemSummaryService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
             builder.Services.AddSingleton<AboutService>();
             builder.Services.AddSingleton<SellService>();
@@ -88,7 +89,8 @@ namespace SquoundApp
             builder.Services.AddTransient<AboutViewModel>();
             builder.Services.AddTransient<CoarseSearchViewModel>();
             builder.Services.AddTransient<FooterViewModel>();
-            builder.Services.AddTransient<ItemViewModel>();
+            builder.Services.AddTransient<ItemDetailViewModel>();
+            //builder.Services.AddTransient<ItemViewModel>();               // Depreciated.
             builder.Services.AddTransient<RefinedSearchViewModel>();
             builder.Services.AddTransient<QuickSearchViewModel>();
             builder.Services.AddTransient<SellViewModel>();
@@ -106,7 +108,8 @@ namespace SquoundApp
             // Pages.
             builder.Services.AddTransient<AboutPage>();
             builder.Services.AddTransient<HomePage>();
-            builder.Services.AddTransient<ItemPage>();
+            builder.Services.AddTransient<ItemDetailPage>();
+            //builder.Services.AddTransient<ItemPage>();                    // Depreciated.
             builder.Services.AddTransient<CoarseSearchPage>();
             builder.Services.AddTransient<RefinedSearchPage>();
             builder.Services.AddTransient<SellPage>();

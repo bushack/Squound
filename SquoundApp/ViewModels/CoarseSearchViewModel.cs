@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -70,13 +71,25 @@ namespace SquoundApp.ViewModels
         /// <param name="value"></param>
         partial void OnCategoryListChanged(List<CategoryDto> value)
         {
-            // When the CategoryList changes, we also want to update the DynamicList
-            // to reflect the current categories available for selection.
-            // This ensures that the UI is always in sync with the data.
-            DynamicList.Clear();
+            // When the CategoryList changes, we want to assign the categories to the observable collection (updates UI).
+            // This presents the list of categories to the user, allowing them to select one of their choice.
+            // Note that ObservableCollection constructor accepts IEnumerable<ItemSummaryDto> type.
+            DynamicList = [.. value];
+        }
 
-            foreach (var category in value)
-                DynamicList.Add(category);
+
+        /// <summary>
+		/// Logic to be executed when the content of the DynamicList changes.
+		/// </summary>
+		/// <param name="value"></param>
+        partial void OnDynamicListChanged(ObservableCollection<object> value)
+        {
+            // Update page title.
+            // Note that Keyword overrides Subcategory, which overrides Category.
+            Title = _Search.Keyword ??
+                    _Search.Subcategory?.Name ??
+                    _Search.Category?.Name ??
+                    "Search";
         }
 
 
@@ -88,26 +101,17 @@ namespace SquoundApp.ViewModels
         {
             switch (value)
             {
-                // If the selected item is a category, we want to load its subcategories into the DynamicList.
                 case CategoryDto category:
                 {
-                    // Check if the selected category is null or if it has no subcategories.
-                    if (category.Subcategories is null || category.Subcategories.Count is 0)
+                    if (category.Subcategories.IsNullOrEmpty())
                         return;
 
-                    // If the selected category has subcategories, load them into the DynamicList.
-                    DynamicList.Clear();
+                        // Assign the selected category to the current search.
+                        _Search.Category = category;
 
-                    foreach (var subcategory in category.Subcategories)
-                    {
-                        DynamicList.Add(subcategory);
-                    }
-
-                    // Write the selected category to the current search.
-                    _Search.Category = category;
-
-                    // Update user interface.
-                    Title = category.Name ?? "Search";
+                        // Assign the category's subcategories to the observable collection (updates UI).
+                        // Note that ObservableCollection constructor accepts IEnumerable<ItemSummaryDto> type.
+                        DynamicList = [.. category.Subcategories];
 
                     break;
                 }

@@ -30,8 +30,14 @@
     <Grid RowDefinitions="Auto, *">
 
         <!-- Row 0 : Displays the page title, category search bar and the sort and filter buttons -->
-        <views:AdvancedHeaderView Grid.Row="0"/>
-
+        <Label Grid.Row="0"
+               Text="{Binding Title}"
+               Style="{StaticResource SmallText}"
+               BackgroundColor="Transparent"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               Margin="15"/>
+        
         <!-- Row 1 : Displays the vertically scrollable list of item categories -->
         <CollectionView Grid.Row="1"
                         BackgroundColor="Transparent"

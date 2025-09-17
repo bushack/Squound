@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Shared.DataTransfer;
-using SquoundApp.Exceptions;
+﻿using Shared.DataTransfer;
 
 
 namespace SquoundApp.Interfaces

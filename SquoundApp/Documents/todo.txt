@@ -1,48 +1,68 @@
 ﻿
-remember
-	- viewModels are page logic, they request data from repositories or services and they administer views, they contain no state
-	- repositories cache state, and allow viewModels to read that state
-	- services are the workhorses, they retrieve data and pass it to the source of the request, usually a repo
+Remember
+	- ViewModels are page logic, they request data from repositories or services and they administer views, they contain no state
+	- Repositories cache state, and allow viewModels to read that state
+	- Services are the workhorses, they retrieve data and pass it to the source of the request, usually a repo
 
-pagination
-	- check functionality of Previous Page and Next Page when more items added to database
+Pagination
+	- Check functionality of Previous Page and Next Page when more items added to database
 
-logging
-	- ask!
+Logging
+	- Set logging levels in API Program.cs
 
-navigation
-	- ask!
+Navigation
+	- Ask!
 
-contexts
-	- package complimentary services etc into appropriate contexts which can then be injected into ctors
-	- beware circular dependancies
+General
+	- Change name of SearchQueryDto to reflect the fact that it is requesting ItemSummaryDtos ? - so ItemSummaryQueryDto ?
+	- Same applies to response classes ?
 
-events
-	- remember, events can be subscribed to, should a class need to know when something happens
-	- use weak events to avoid memory leaks?
+	- Resolve x:Datatype compilation warning for SortAndFilterView.xaml - ASK GPT
+	- SortAndFilterView.xaml(113,30): XamlC warning XC0022: Binding could be compiled to improve runtime performance if x:DataType is specified.
+	- See https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/compiled-bindings for more information.
 
-images
-	- must have at least one default image if none are returned by API to avoid crash
-	- JPEG for photos of furniture — compress to ~70–80% quality for balance
-	- Strip metadata (EXIF) to save space
-	- ThumbnailUrl → 200×200px - 240x240px JPEG/WebP (~20 KB)
-	- MediumUrl → 800–1200 px for detail page (~100–300 KB)
-	- LargeUrl → full resolution for zoom (~500 KB–2 MB, loaded on demand only when zooming)
+Contexts
+	- Package complimentary services etc into appropriate contexts which can then be injected into ctors
+	- Beware circular dependancies
 
-search
-	- fetch thumbnail image(s) only
-	- user typing keyword only finds exact matchess, needs partial match
-	- incorporate keyword search? or remove in favour of below
-	- add functionality to CoarseSearchPage user search entry
-	- sort and filter menu
+Events
+	- Remember, events can be subscribed to, should a class need to know when something happens
+	- Remember, classes that subscribe to events will remain in memory until they unsubscribe, even if they are transient
+	- Use weak events to avoid memory leaks?
+
+Images
+	- Must have at least one default image if none are returned by API to avoid crash
+	- JPEG, Aspect ratio of 4:5, compress to ~80-90% quality for balance
+	- Strip metadata (EXIF) to save space & bandwidth (exiftool for Windows command line)
+	- Support dynamic query parameters (eg. sideboard.jpg?w=800&h=1000) to request best image resolution
+	- Small		→ 400x500	→ .jpg @ ~50-80KB
+	- Medium	→ 800x1000	→ .jpg @ ~100-160KB
+	- Large		→ 1200x1500	→ .jpg @ ~350-500KB
+	- XLarge	→ 1600x2000	→ .jpg @ ~500-999KB
+	- XXLarge	→ 2000x2500	→ .jpg @ ~1-2MB?
+
+Search
+	- At what point does a previous search end and a new search begin ? ASK
+	- When user goes BACK from RefinedSearchPage to begin CoarseSearchPage ? ASK
+	- What happens when user goes from Coarse/RefinedSearchPage to Home, then back to search ? ASK
+	- Display correct title during navigation through the various search pages
+	- Incorporate timeStamp in SearchContext for RequestState to ensure stale data is reloaded
+	- How to load new data when search criteria changes without renavigating to page ? ASK
+	- Move SortAndFilter to it's own page, rather than as a menu on RefinedSearchPage ?
+	- User typing keyword only finds exact matches, needs partial match
+	- Incorporate keyword search? or remove in favour of below
+	- Add functionality to CoarseSearchPage user search entry
+	- Sort and filter menu
 		- sort by recommended
 		- filter by dimensions
 		- filter by material
 
-item page
-	- must have at least one default image if none are returned by API to avoid crash
-	- fetch images of assorted sizes
-	- allow user to tap to zoom and scroll all images
+Item Page
+	- Must have at least one default image if none are returned by API to avoid crash
+	- Determine how best to measure image size in ItemDetailPage
+	- How to determine required image sizes before page appears?
+	- When to execute automatic query ? on page appearing ?
+	- Allow user to tap to zoom and scroll all images
 
 TODO
 	- ctrl+f find any TODOs throughout the solution

@@ -11,12 +11,12 @@ namespace SquoundApp.Repositories
     public class ItemSummaryRepository : IItemSummaryRepository
     {
         private readonly ILogger<ItemSummaryRepository> _Logger;
-        private readonly IItemService _Service;
+        private readonly IItemSummaryService _Service;
 
         private SearchResponseDto<ItemSummaryDto> _Cache = new();
 
 
-        public ItemSummaryRepository(ILogger<ItemSummaryRepository> logger, IItemService service)
+        public ItemSummaryRepository(ILogger<ItemSummaryRepository> logger, IItemSummaryService service)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _Service = service ?? throw new ArgumentNullException(nameof(service));

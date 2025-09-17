@@ -5,15 +5,15 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
-             x:Class="SquoundApp.Pages.ItemPage"
-             x:DataType="viewmodels:ItemViewModel">
+             x:Class="SquoundApp.Pages.ItemDetailPage"
+             x:DataType="viewmodels:ItemDetailViewModel">
 
     <Grid>
-        
+
         <!-- Page content -->
         <ScrollView IsEnabled="{Binding IsNotBusy}"
                     IsVisible="{Binding IsNotBusy}">
-            
+
             <VerticalStackLayout>
                 <views:BasicHeaderView/>
 
@@ -23,14 +23,14 @@
                               HeightRequest="500"
                               Margin="0, 0, 0, 10"
                               PeekAreaInsets="0">
-                    
+
                     <CarouselView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal"
                                             ItemSpacing="0"
                                             SnapPointsType="MandatorySingle"
                                             SnapPointsAlignment="Start"/>
                     </CarouselView.ItemsLayout>
-                    
+
                     <CarouselView.ItemTemplate>
                         <DataTemplate x:DataType="x:String">
                             <Image Source="{Binding .}"
@@ -40,7 +40,7 @@
                         </DataTemplate>
                     </CarouselView.ItemTemplate>
                 </CarouselView>
-                
+
                 <IndicatorView x:Name="Indicator"
                                IndicatorColor="{StaticResource Gray200}"
                                SelectedIndicatorColor="{StaticResource SquoundTangerine}"
@@ -109,14 +109,14 @@
                     </custom:HyperlinkImageButton>
 
                     <!-- Email -->
-                    <custom:HyperlinkImageButton x:Name="EmailButton" Source="email.png" Padding="10" CornerRadius="20">
+                    <custom:HyperlinkImageButton x:Name="EmailButton" Source="email.png" Padding="10" CornerRadius="20" Url="{Binding EmailUrl}">
                         <custom:HyperlinkImageButton.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                         </custom:HyperlinkImageButton.Behaviors>
                     </custom:HyperlinkImageButton>
 
                     <!-- WhatsApp -->
-                    <custom:HyperlinkImageButton x:Name="WhatsAppButton" Source="whatsapp.png" Padding="10" CornerRadius="20">
+                    <custom:HyperlinkImageButton x:Name="WhatsAppButton" Source="whatsapp.png" Padding="10" CornerRadius="20" Url="{Binding WhatsAppUrl}">
                         <custom:HyperlinkImageButton.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
                         </custom:HyperlinkImageButton.Behaviors>
@@ -131,6 +131,6 @@
 
         <!-- Loading indicator -->
         <views:LoadingOverlayView x:DataType="{Binding .}"/>
-        
+
     </Grid>
 </ContentPage>
