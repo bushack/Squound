@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using SquoundApp.Defaults;
 using SquoundApp.Exceptions;
 using SquoundApp.Interfaces;
 
@@ -15,7 +16,6 @@ namespace SquoundApp.Repositories
 
         // Internal cache of the most recently retrieved items.
         private readonly List<ItemDetailDto> _Cache = [];
-        private readonly int _CacheCapacity = 5;
 
 
         /// <summary>
@@ -32,9 +32,28 @@ namespace SquoundApp.Repositories
 
 
         /// <summary>
+        /// Asynchronously checks the availability of data for a specific item.
+        /// </summary>
+        /// <param name="searchContext">Reference to a search context defining the query parameters.</param>
+        /// <returns>True if the data is available.</returns>
+        /// <exception cref="ItemRepositoryException">Thrown when item data is not available.</exception>
+        public async Task<bool> IsItemAvailable(ISearchContext searchContext)
+        {
+            var item = await GetItemAsync(searchContext);
+
+            if (item is not null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
         /// Asynchronously retrieves detailed information for a specific item by its unique identifier.
         /// </summary>
-        /// <param name="query">Query parameter object defining the objectives of the GET request.</param>
+        /// <param name="searchContext">Reference to a search context defining the query parameters.</param>
         /// <returns></returns>
         /// <exception cref="ItemRepositoryException">Thrown when unable to successfully retrieve item detail.</exception>
         public async Task<ItemDetailDto> GetItemAsync(ISearchContext searchContext)
@@ -42,7 +61,7 @@ namespace SquoundApp.Repositories
             if (searchContext.ItemId is null)
                 throw new ItemRepositoryException("Item Id is null.");
 
-            var itemId = searchContext.ItemId ?? Defaults.MinimumItemId;
+            var itemId = searchContext.ItemId ?? Shared.DataTransfer.Defaults.MinimumItemId;
 
             // Check if item is cached.
             var cachedItem = GetItemFromCache(itemId);
@@ -86,7 +105,7 @@ namespace SquoundApp.Repositories
             }
 
             // Enforce limit on cache capacity.
-            if (_Cache.Count >= _CacheCapacity)
+            if (_Cache.Count >= AppDefaults.CacheCapacity)
             {
                 _Cache.RemoveAt(0);
                 _Logger.LogInformation("Discarded Item Id: {itemId} from cache.", _Cache.ElementAt(0));

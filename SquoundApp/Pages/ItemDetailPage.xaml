@@ -20,7 +20,7 @@
                 <!-- Carousel of images -->
                 <CarouselView ItemsSource="{Binding Item.ImageUrls}"
                               IndicatorView="Indicator"
-                              HeightRequest="500"
+                              HorizontalOptions="Fill"
                               Margin="0, 0, 0, 10"
                               PeekAreaInsets="0">
 

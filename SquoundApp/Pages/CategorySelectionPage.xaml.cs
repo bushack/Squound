@@ -4,12 +4,12 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.Pages;
 
-public partial class CoarseSearchPage : ContentPage
+public partial class CategorySelectionPage : ContentPage
 {
     private readonly INavigationService _Navigation;
 
 
-    public CoarseSearchPage(CoarseSearchViewModel viewModel, INavigationService navigation)
+    public CategorySelectionPage(CategorySelectionViewModel viewModel, INavigationService navigation)
 	{
 		InitializeComponent();
 
@@ -17,13 +17,13 @@ public partial class CoarseSearchPage : ContentPage
         _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
     }
 
-    protected override async void OnAppearing()
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
 
-        if (BindingContext is CoarseSearchViewModel viewModel)
+        if (BindingContext is CategorySelectionViewModel viewModel)
         {
-            await viewModel.GetDataAsync();
+            await viewModel.OnNavigatedTo();
         }
     }
 

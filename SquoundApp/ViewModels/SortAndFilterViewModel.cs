@@ -63,7 +63,8 @@ namespace SquoundApp.ViewModels
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="events"></param>
-        /// <param name="categories"></param>
+        /// <param name="repository"></param>
+		/// <param name="navigation"></param>
         /// <param name="search"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public SortAndFilterViewModel(ILogger<SortAndFilterViewModel> logger, IEventService events,
@@ -316,7 +317,7 @@ namespace SquoundApp.ViewModels
 		{
 			HideMenus();
 
-			await _Navigation.GoToAsync(nameof(RefinedSearchPage));
+			await _Navigation.GoToAsync(nameof(ItemSummaryPage));
 		}
 
 
@@ -344,7 +345,7 @@ namespace SquoundApp.ViewModels
 			// This will also assign a default subcategory.
 			// We want to avoid a situation where no category is selected as that would
 			// result in all items being returned from the API.
-			_Search.ResetChanges(CategoryList.FirstOrDefault());
+			_Search.HardReset(CategoryList.FirstOrDefault());
 		}
 
 

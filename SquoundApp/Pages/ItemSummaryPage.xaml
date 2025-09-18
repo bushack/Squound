@@ -4,8 +4,8 @@
              xmlns:dtos="clr-namespace:Shared.DataTransfer;assembly=Shared"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
-             x:Class="SquoundApp.Pages.RefinedSearchPage"
-             x:DataType="viewmodels:RefinedSearchViewModel">
+             x:Class="SquoundApp.Pages.ItemSummaryPage"
+             x:DataType="viewmodels:ItemSummaryViewModel">
 
     <Grid RowDefinitions="Auto, Auto, *">
 
@@ -59,7 +59,7 @@
                                 <!-- Item, until it finds a RefinedSearchViewModel, inside which is the command (GetItem) -->
                                 <!-- that it should execute -->
                                 <TapGestureRecognizer CommandParameter="{Binding .}"
-                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RefinedSearchViewModel}}, x:DataType=viewmodels:RefinedSearchViewModel, Path=GoToItemPageCommand}"/>
+                                                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ItemSummaryViewModel}}, x:DataType=viewmodels:ItemSummaryViewModel, Path=GoToItemDetailPageCommand}"/>
                             </Border.GestureRecognizers>
 
                             <!-- Main image with rounded corners -->

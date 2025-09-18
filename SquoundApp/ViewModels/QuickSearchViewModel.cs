@@ -36,7 +36,8 @@ namespace SquoundApp.ViewModels
         /// 
         /// </summary>
         /// <param name="logger"></param>
-        /// <param name="categories"></param>
+        /// <param name="repository"></param>
+        /// <param name="navigation"></param>
         /// <param name="search"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public QuickSearchViewModel(ILogger<QuickSearchViewModel> logger, ICategoryRepository repository,
@@ -130,18 +131,18 @@ namespace SquoundApp.ViewModels
                 // Write the selected category to the search service.
                 _Search.Category = value;
 
-                // Navigate to the RefinedSearchPage.
-                GoToRefinedSearchPageAsync().FireAndForget();
+                // Navigate to the ItemSummaryPage.
+                GoToItemSummaryPageAsync().FireAndForget();
             }
         }
 
 
         /// <summary>
-        /// Asynchronously initiates a navigation to the RefinedSearchPage.
+        /// Asynchronously instigates navigation to the ItemSummaryPage.
         /// </summary>
-        private async Task GoToRefinedSearchPageAsync()
+        private async Task GoToItemSummaryPageAsync()
         {
-            await _Navigation.GoToAsync(nameof(RefinedSearchPage));
+            await _Navigation.GoToAsync(nameof(ItemSummaryPage));
         }
     }
 }

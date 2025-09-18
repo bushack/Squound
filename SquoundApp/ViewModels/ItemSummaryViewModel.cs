@@ -14,10 +14,11 @@ using Shared.DataTransfer;
 
 namespace SquoundApp.ViewModels
 {
-	public partial class RefinedSearchViewModel : BaseViewModel
+	public partial class ItemSummaryViewModel : BaseViewModel
 	{
-		private readonly ILogger<RefinedSearchViewModel> _Logger;
-		private readonly IItemSummaryRepository _Repository;
+		private readonly ILogger<ItemSummaryViewModel> _Logger;
+		private readonly IItemDetailRepository _DetailRepository;
+		private readonly IItemSummaryRepository _SummaryRepository;
 		private readonly INavigationService _Navigation;
 		private readonly ISearchContext _Search;
 
@@ -32,13 +33,13 @@ namespace SquoundApp.ViewModels
 		public string PageNumber => $"Page {CurrentPage} of {TotalPages}";
 
 		//For UI on/off toggling of PageNumber label.
-		public bool HasAnyItems => _Repository.IsNotEmpty;
+		public bool HasAnyItems => _SummaryRepository.IsNotEmpty;
 		
 		// For UI on/off toggling of Next Page button.
-		public bool HasNextPage => _Repository.HasNextPage;
+		public bool HasNextPage => _SummaryRepository.HasNextPage;
 
 		// For UI on/off toggling of Previous Page button.
-		public bool HasPrevPage => _Repository.HasPrevPage;
+		public bool HasPrevPage => _SummaryRepository.HasPrevPage;
 
 		// Total number of items returned by the item service.
 		[ObservableProperty]
@@ -53,11 +54,12 @@ namespace SquoundApp.ViewModels
 		private int currentPage = 0;
 
 
-		public RefinedSearchViewModel(ILogger<RefinedSearchViewModel> logger, IItemSummaryRepository repository,
-			INavigationService navigation, ISearchContext search)
+		public ItemSummaryViewModel(ILogger<ItemSummaryViewModel> logger, IItemDetailRepository detailRepos,
+			IItemSummaryRepository summaryRepos, INavigationService navigation, ISearchContext search)
 		{
 			_Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _Repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			_DetailRepository = detailRepos ?? throw new ArgumentNullException(nameof(detailRepos));
+            _SummaryRepository = summaryRepos ?? throw new ArgumentNullException(nameof(summaryRepos));
 			_Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			_Search = search ?? throw new ArgumentNullException(nameof(search));
 		}
@@ -116,6 +118,18 @@ namespace SquoundApp.ViewModels
 		}
 
 
+		public async Task OnNavigatedTo()
+		{
+			// Request fresh data every time the page is navigated to.
+			await ApplyQueryAsync();
+		}
+
+
+		public void OnNavigatedFrom()
+		{
+		}
+
+
 		[RelayCommand]
 		private async Task NextPageAsync()
 		{
@@ -145,7 +159,6 @@ namespace SquoundApp.ViewModels
 		/// and this command will automatically execute a fetch of the latest items.
 		/// </summary>
 		/// <returns></returns>
-		[RelayCommand]
 		private async Task ApplyQueryAsync()
 		{
 			// Check if the view model is already busy fetching data.
@@ -173,12 +186,12 @@ namespace SquoundApp.ViewModels
 
 				// Assign the items supplied by the repository to the observable collection (updates UI).
 				// Note that ObservableCollection constructor accepts IEnumerable<ItemSummaryDto> type.
-				ItemList = [.. await _Repository.GetItemsAsync(_Search)];
+				ItemList = [.. await _SummaryRepository.GetItemsAsync(_Search)];
 
                 // Prepare new pagination metadata for user interface.
-                TotalItems	= _Repository.TotalItems;
-				TotalPages	= _Repository.TotalPages;
-				CurrentPage = _Repository.CurrentPage;
+                TotalItems	= _SummaryRepository.TotalItems;
+				TotalPages	= _SummaryRepository.TotalPages;
+				CurrentPage = _SummaryRepository.CurrentPage;
 			}
 
 			catch (ItemRepositoryException ex)
@@ -211,12 +224,12 @@ namespace SquoundApp.ViewModels
 
 
 		/// <summary>
-		/// Asynchronously initiates a navigation to the ItemPage of parameter 'item'.
+		/// Asynchronously initiates a navigation to the ItemDetailPage.
 		/// </summary>
-		/// <param name="item">Data transfer object of the item to be displayed.</param>
+		/// <param name="item">Item to display in greater detail.</param>
 		/// <returns></returns>
 		[RelayCommand]
-		async Task GoToItemPageAsync(ItemSummaryDto item)
+		async Task GoToItemDetailPageAsync(ItemSummaryDto item)
 		{
 			if (item is null)
 				return;
@@ -224,18 +237,32 @@ namespace SquoundApp.ViewModels
 			// Record the selected item's identifier in the search context.
 			_Search.ItemId = item.ItemId;
 
-			// TODO: Pre-fetch the item detail before instigating navigation?
+			try
+			{
+				IsBusy = true;
 
-			// Navigate to show the selected item in detail.
-			await _Navigation.GoToAsync(nameof(ItemDetailPage));
+				// Navigate only if item detail is available.
+				if (await _DetailRepository.IsItemAvailable(_Search))
+				{
+					await _Navigation.GoToAsync(nameof(ItemDetailPage));
+				}
+			}
 
+			catch (ItemRepositoryException ex)
+            {
+                _Logger.LogWarning(ex, "Undefined error while attempting to retrieve item.");
 
-			// Depreciated.
-			//await _Navigation.GoToAsync(nameof(ItemPage), true,
-			//	new Dictionary<string, object>
-			//	{
-			//		{"ItemId", item.ItemId }
-			//	});
+                // Display an alert to the user indicating that an error occurred while fetching data.
+                await Shell.Current.DisplayAlert(
+                    "Error",
+                    "Error fetching item. Please try again.",
+                    "OK");
+            }
+
+			finally
+			{
+				IsBusy = false;
+			}
 		}
 
 

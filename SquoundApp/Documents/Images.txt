@@ -1,0 +1,12 @@
+﻿
+Images
+======
+
+- JPEG, Aspect ratio of 4:5, compress to ~80-90% quality for balance
+- Strip metadata (EXIF) to save space & bandwidth (exiftool for Windows command line)
+
+- Small		→ 400x500	→ .jpg @ ~50-80KB
+- Medium	→ 800x1000	→ .jpg @ ~100-160KB
+- Large		→ 1200x1500	→ .jpg @ ~350-500KB
+- XLarge	→ 1600x2000	→ .jpg @ ~500-999KB
+- XXLarge	→ 2000x2500	→ .jpg @ ~1-2MB?

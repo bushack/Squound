@@ -38,9 +38,17 @@ namespace SquoundApp.Interfaces
 
 
         /// <summary>
-        /// Discards all changes to the internal state, reverting the service back to it's default state.
+        /// Performs a total reset of the internal state, including the sorting method.
+        /// All changes will be discarded and the context will revert to it's default state.
         /// </summary>
-        public void ResetChanges(CategoryDto? defaultCategory = null);
+        public void HardReset(CategoryDto? defaultCategory = null);
+
+
+        /// <summary>
+        /// Performs a limited reset of the internal state, excluding the sorting method.
+        /// To perform a total reset, use method 'HardReset'.
+        /// </summary>
+        public void SoftReset(CategoryDto? defaultCategory = null);
 
 
         public void IncrementPageNumber();

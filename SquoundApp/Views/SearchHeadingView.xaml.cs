@@ -10,7 +10,7 @@ public partial class SearchHeadingView : ContentView
 	{
 		InitializeComponent();
 
-        BindingContext = ServiceLocator.GetService<RefinedSearchViewModel>()
+        BindingContext = ServiceLocator.GetService<ItemSummaryViewModel>()
 			?? throw new ArgumentNullException(nameof(BindingContext));
     }
 }

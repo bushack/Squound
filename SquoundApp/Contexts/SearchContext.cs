@@ -177,12 +177,31 @@ namespace SquoundApp.Contexts
 
 
         /// <summary>
-        /// Discards all changes to the internal state, reverting the service back to it's default state.
+        /// Performs a total reset of the internal state, including the sorting method.
+        /// All changes will be discarded and the context will revert to it's default state.
         /// </summary>
-        public void ResetChanges(CategoryDto? defaultCategory = null)
+        public void HardReset(CategoryDto? defaultCategory = null)
 		{
             // Overwrite the current state with a default state.
             _CurrentState = new SearchState { TimeStamp = DateTime.UtcNow };
+
+            Category = defaultCategory;
+            _Logger.LogDebug("Reset changes. Reset: {changes}", string.Join(", ", GetChangedFields()));
+            _Events.Publish(new SearchContextChangedEvent(this));
+        }
+
+
+        /// <summary>
+        /// Performs a limited reset of the internal state, excluding the sorting method.
+        /// To perform a total reset, use method 'HardReset'.
+        /// </summary>
+        public void SoftReset(CategoryDto? defaultCategory = null)
+        {
+            _CurrentState = new SearchState
+            {
+                SortBy = this.SortBy,
+                TimeStamp = DateTime.UtcNow
+            };
 
             Category = defaultCategory;
             _Logger.LogDebug("Reset changes. Reset: {changes}", string.Join(", ", GetChangedFields()));
@@ -196,7 +215,7 @@ namespace SquoundApp.Contexts
             set
             {
                 _CurrentRequest.ItemId = value;
-                _Logger.LogDebug("Set ItemId to {id}.", value);
+                _Logger.LogDebug("Set ItemId to {id}.", _CurrentRequest.ItemId);
                 _Events.Publish(new SearchContextChangedEvent(this));
             }
         }
@@ -209,8 +228,8 @@ namespace SquoundApp.Contexts
             {
                 _CurrentState.Category = value;
                 _CurrentState.Subcategory = null;
-                _Logger.LogDebug("Set Category to {category}.", value?.Name);
-                _Logger.LogDebug("Set Subcategory to null.");
+                _Logger.LogDebug("Set Category to {category}.", _CurrentState.Category);
+                _Logger.LogDebug("Set Subcategory to {subcategory}.", _CurrentState.Subcategory);
                 _Events.Publish(new SearchContextChangedEvent(this));
             }
         }
@@ -224,7 +243,7 @@ namespace SquoundApp.Contexts
                 // TODO : Ensure the subcategory belongs to the currently selected category or is null.
 
                 _CurrentState.Subcategory = value;
-                _Logger.LogDebug("Set Subcategory to {subcategory}.", value?.Name);
+                _Logger.LogDebug("Set Subcategory to {subcategory}.", _CurrentState.Subcategory);
                 _Events.Publish(new SearchContextChangedEvent(this));
             }
         }
@@ -236,7 +255,7 @@ namespace SquoundApp.Contexts
 			set
 			{
 				_CurrentState.Manufacturer = value;
-				_Logger.LogDebug("Set Manufacturer to {manufacturer}.", value);
+				_Logger.LogDebug("Set Manufacturer to {manufacturer}.", _CurrentState.Manufacturer);
 				_Events.Publish(new SearchContextChangedEvent(this));
             }
 		}
@@ -248,7 +267,7 @@ namespace SquoundApp.Contexts
             set
 			{
 				_CurrentState.Material = value;
-				_Logger.LogDebug("Set Material to {material}.", value);
+				_Logger.LogDebug("Set Material to {material}.", _CurrentState.Material);
 				_Events.Publish(new SearchContextChangedEvent(this));
             }
 		}
@@ -260,7 +279,7 @@ namespace SquoundApp.Contexts
             set
             {
 				_CurrentState.Keyword = value;
-				_Logger.LogDebug("Set Keyword to {keyword}.", value);
+				_Logger.LogDebug("Set Keyword to {keyword}.", _CurrentState.Keyword);
 				_Events.Publish(new SearchContextChangedEvent(this));
             }
 		}

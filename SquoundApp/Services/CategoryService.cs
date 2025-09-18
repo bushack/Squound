@@ -16,27 +16,6 @@ namespace SquoundApp.Services
         private readonly IEventService _Events;
         private readonly IHttpService _Http;
 
-        // Internal cache.
-        //private List<CategoryDto> _CategoryList = [];
-
-        // For user interface binding.
-        //[ObservableProperty]
-        //private ObservableCollection<CategoryDto> categories = [];
-
-        //// For user interface binding.
-        //[ObservableProperty]
-        //private ObservableCollection<SubcategoryDto> subcategories = [];
-
-        /// <summary>
-        /// Exposes the internal cache as a read-only list.
-        /// </summary>
-        //public IReadOnlyList<CategoryDto> CategoryList => _CategoryList;
-
-        /// <summary>
-        /// Queries whether the internal cache has been populated.
-        /// </summary>
-        //public bool IsLoaded => _CategoryList.Count > 0;
-
 
         public CategoryService(ILogger<CategoryService> logger, IEventService events, IHttpService http)
         {

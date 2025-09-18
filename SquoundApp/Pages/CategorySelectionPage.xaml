@@ -5,8 +5,8 @@
              xmlns:selectors="clr-namespace:SquoundApp.Selectors"
              xmlns:views="clr-namespace:SquoundApp.Views"
              xmlns:viewmodels="clr-namespace:SquoundApp.ViewModels"
-             x:Class="SquoundApp.Pages.CoarseSearchPage"
-             x:DataType="viewmodels:CoarseSearchViewModel">
+             x:Class="SquoundApp.Pages.CategorySelectionPage"
+             x:DataType="viewmodels:CategorySelectionViewModel">
 
     <ContentPage.Resources>
         <DataTemplate x:Key="CategoryTemplate" x:DataType="dtos:CategoryDto">

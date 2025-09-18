@@ -4,7 +4,7 @@ using SquoundApp.ViewModels;
 
 namespace SquoundApp.Pages;
 
-public partial class RefinedSearchPage : ContentPage
+public partial class ItemSummaryPage : ContentPage
 {
     private readonly INavigationService _Navigation;
 
@@ -13,7 +13,7 @@ public partial class RefinedSearchPage : ContentPage
     private bool _RequiredImageDimensionsSet = false;
 
 
-    public RefinedSearchPage(RefinedSearchViewModel viewModel, INavigationService navigation)
+    public ItemSummaryPage(ItemSummaryViewModel viewModel, INavigationService navigation)
 	{
 		InitializeComponent();
 
@@ -26,10 +26,32 @@ public partial class RefinedSearchPage : ContentPage
     {
         base.OnAppearing();
 
-        if (BindingContext is RefinedSearchViewModel viewModel)
+        if (BindingContext is ItemSummaryViewModel viewModel)
         {
             // Every time the page appears we fetch the items matching the current criteria from the REST API.
-            viewModel.ApplyQueryCommand.Execute(null);
+            //viewModel.ApplyQueryCommand.Execute(null);
+        }
+    }
+
+
+    protected async override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+
+        if (BindingContext is ItemSummaryViewModel viewModel)
+        {
+            await viewModel.OnNavigatedTo();
+        }
+    }
+
+
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    {
+        base.OnNavigatedFrom(args);
+
+        if (BindingContext is ItemSummaryViewModel viewModel)
+        {
+            viewModel.OnNavigatedFrom();
         }
     }
 
@@ -62,7 +84,7 @@ public partial class RefinedSearchPage : ContentPage
         if (sender is not Border imageBorder)
             return;
 
-        if (BindingContext is not RefinedSearchViewModel viewModel)
+        if (BindingContext is not ItemSummaryViewModel viewModel)
             return;
 
         // Calculate the required image width in device pixels.

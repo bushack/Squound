@@ -87,11 +87,10 @@ namespace SquoundApp
 
             // View Models.
             builder.Services.AddTransient<AboutViewModel>();
-            builder.Services.AddTransient<CoarseSearchViewModel>();
+            builder.Services.AddTransient<CategorySelectionViewModel>();
             builder.Services.AddTransient<FooterViewModel>();
             builder.Services.AddTransient<ItemDetailViewModel>();
-            //builder.Services.AddTransient<ItemViewModel>();               // Depreciated.
-            builder.Services.AddTransient<RefinedSearchViewModel>();
+            builder.Services.AddTransient<ItemSummaryViewModel>();
             builder.Services.AddTransient<QuickSearchViewModel>();
             builder.Services.AddTransient<SellViewModel>();
             builder.Services.AddTransient<SortAndFilterViewModel>();
@@ -107,11 +106,10 @@ namespace SquoundApp
 
             // Pages.
             builder.Services.AddTransient<AboutPage>();
+            builder.Services.AddTransient<CategorySelectionPage>();
             builder.Services.AddTransient<HomePage>();
             builder.Services.AddTransient<ItemDetailPage>();
-            //builder.Services.AddTransient<ItemPage>();                    // Depreciated.
-            builder.Services.AddTransient<CoarseSearchPage>();
-            builder.Services.AddTransient<RefinedSearchPage>();
+            builder.Services.AddTransient<ItemSummaryPage>();
             builder.Services.AddTransient<SellPage>();
 
             return builder.Build();

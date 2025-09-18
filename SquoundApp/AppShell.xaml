@@ -30,8 +30,8 @@
         <Tab Title="Search"
              Icon="search.png">
             <ShellContent Title="Search"
-                          ContentTemplate="{DataTemplate pages:CoarseSearchPage}"
-                          Route="CoarseSearchPage" />
+                          ContentTemplate="{DataTemplate pages:CategorySelectionPage}"
+                          Route="CategorySelectionPage" />
         </Tab>
         <Tab Title="Account"
              Icon="account.png">

@@ -1,17 +1,9 @@
 ﻿
-Remember
-	- ViewModels are page logic, they request data from repositories or services and they administer views, they contain no state
-	- Repositories cache state, and allow viewModels to read that state
-	- Services are the workhorses, they retrieve data and pass it to the source of the request, usually a repo
-
 Pagination
 	- Check functionality of Previous Page and Next Page when more items added to database
 
 Logging
 	- Set logging levels in API Program.cs
-
-Navigation
-	- Ask!
 
 General
 	- Change name of SearchQueryDto to reflect the fact that it is requesting ItemSummaryDtos ? - so ItemSummaryQueryDto ?
@@ -30,22 +22,7 @@ Events
 	- Remember, classes that subscribe to events will remain in memory until they unsubscribe, even if they are transient
 	- Use weak events to avoid memory leaks?
 
-Images
-	- Must have at least one default image if none are returned by API to avoid crash
-	- JPEG, Aspect ratio of 4:5, compress to ~80-90% quality for balance
-	- Strip metadata (EXIF) to save space & bandwidth (exiftool for Windows command line)
-	- Support dynamic query parameters (eg. sideboard.jpg?w=800&h=1000) to request best image resolution
-	- Small		→ 400x500	→ .jpg @ ~50-80KB
-	- Medium	→ 800x1000	→ .jpg @ ~100-160KB
-	- Large		→ 1200x1500	→ .jpg @ ~350-500KB
-	- XLarge	→ 1600x2000	→ .jpg @ ~500-999KB
-	- XXLarge	→ 2000x2500	→ .jpg @ ~1-2MB?
-
 Search
-	- At what point does a previous search end and a new search begin ? ASK
-	- When user goes BACK from RefinedSearchPage to begin CoarseSearchPage ? ASK
-	- What happens when user goes from Coarse/RefinedSearchPage to Home, then back to search ? ASK
-	- Display correct title during navigation through the various search pages
 	- Incorporate timeStamp in SearchContext for RequestState to ensure stale data is reloaded
 	- How to load new data when search criteria changes without renavigating to page ? ASK
 	- Move SortAndFilter to it's own page, rather than as a menu on RefinedSearchPage ?
@@ -57,11 +34,10 @@ Search
 		- filter by dimensions
 		- filter by material
 
-Item Page
+ItemDetailPage
 	- Must have at least one default image if none are returned by API to avoid crash
 	- Determine how best to measure image size in ItemDetailPage
-	- How to determine required image sizes before page appears?
-	- When to execute automatic query ? on page appearing ?
+	- Item is prefetched before navigation - how to determine required image sizes before page appears ?
 	- Allow user to tap to zoom and scroll all images
 
 TODO

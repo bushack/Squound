@@ -15,9 +15,9 @@ using Shared.DataTransfer;
 
 namespace SquoundApp.ViewModels
 {
-    public partial class CoarseSearchViewModel : BaseViewModel
+    public partial class CategorySelectionViewModel : BaseViewModel
     {
-        private readonly ILogger<CoarseSearchViewModel> _Logger;
+        private readonly ILogger<CategorySelectionViewModel> _Logger;
         private readonly ICategoryRepository _Repository;
         private readonly INavigationService _Navigation;
         private readonly ISearchContext _Search;
@@ -50,16 +50,29 @@ namespace SquoundApp.ViewModels
         /// 
         /// </summary>
         /// <param name="logger"></param>
-        /// <param name="categories"></param>
+        /// <param name="repository"></param>
+        /// <param name="navigation"></param>
         /// <param name="search"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CoarseSearchViewModel(ILogger<CoarseSearchViewModel> logger, ICategoryRepository repository,
+        public CategorySelectionViewModel(ILogger<CategorySelectionViewModel> logger, ICategoryRepository repository,
             INavigationService navigation, ISearchContext search)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _Repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _Navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
             _Search = search ?? throw new ArgumentNullException(nameof(search));
+        }
+
+
+        /// <summary>
+        /// Actions to be performed immediately prior to the page being navigated to.
+        /// </summary>
+        public async Task OnNavigatedTo()
+        {
+            // Reset search but preserve sort method.
+            _Search.SoftReset();
+
+            await GetDataAsync();
         }
 
 
@@ -116,15 +129,13 @@ namespace SquoundApp.ViewModels
                     break;
                 }
 
-                // If the selected item is a subcategory, we want to navigate to the RefinedSearchPage.
                 case SubcategoryDto subcategory:
                 {
                     // Write the selected subcategory to the search service.
                     _Search.Subcategory = subcategory;
 
-                    // The selected item is a subcategory, therefore navigate to the RefinedSearchPage.
-                    // This is where the user can perform a more detailed search based on the selected subcategory.
-                    GoToRefinedSearchPageAsync().FireAndForget();
+                    // The selected item is a subcategory, therefore navigate to the ItemSummaryPage.
+                    GoToItemSummaryPageAsync().FireAndForget();
                     break;
                 }
 
@@ -198,13 +209,11 @@ namespace SquoundApp.ViewModels
 
 
         /// <summary>
-        /// Asynchronously initiates a navigation to the RefinedSearchPage.
+        /// Asynchronously instigates navigation to the ItemSummaryPage.
         /// </summary>
-        /// <returns></returns>
-        private async Task GoToRefinedSearchPageAsync()
+        private async Task GoToItemSummaryPageAsync()
         {
-            // Navigate to the RefinedSearchPage and pass the selected category as a parameter.
-            await _Navigation.GoToAsync(nameof(RefinedSearchPage));
+            await _Navigation.GoToAsync(nameof(ItemSummaryPage));
         }
     }
 }
