@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Shared.Defaults;
+
 
 namespace Shared.DataTransfer
 {
@@ -8,22 +10,22 @@ namespace Shared.DataTransfer
         /// <summary>
         /// Gets or sets the unique identifier for the item.
         /// </summary>
-        [Range(Defaults.MinimumItemId, Defaults.MaximumItemId, ErrorMessage = nameof(ItemId) + Defaults.RangeErrorMessage)]
+        [Range(DtoDefaults.MinimumItemId, DtoDefaults.MaximumItemId, ErrorMessage = nameof(ItemId) + DtoDefaults.RangeErrorMessage)]
         public required long ItemId { get; set; }
 
 
         /// <summary>
         /// Gets or sets the required image width in pixels.
         /// </summary>
-        [Range(Defaults.MinimumImageWidth, Defaults.MaximumImageWidth, ErrorMessage = nameof(ImageWidth) + Defaults.RangeErrorMessage)]
-        public required int ImageWidth { get; set; } = Defaults.ImageWidth;
+        [Range(DtoDefaults.MinimumImageWidth, DtoDefaults.MaximumImageWidth, ErrorMessage = nameof(ImageWidth) + DtoDefaults.RangeErrorMessage)]
+        public required int ImageWidth { get; set; } = DtoDefaults.ImageWidth;
 
 
         /// <summary>
         /// Gets or sets the required image height in pixels.
         /// </summary>
-        [Range(Defaults.MinimumImageHeight, Defaults.MaximumImageHeight, ErrorMessage = nameof(ImageHeight) + Defaults.RangeErrorMessage)]
-        public required int ImageHeight { get; set; } = Defaults.ImageHeight;
+        [Range(DtoDefaults.MinimumImageHeight, DtoDefaults.MaximumImageHeight, ErrorMessage = nameof(ImageHeight) + DtoDefaults.RangeErrorMessage)]
+        public required int ImageHeight { get; set; } = DtoDefaults.ImageHeight;
 
 
         /// <summary>

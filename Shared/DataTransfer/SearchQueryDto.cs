@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Shared.Defaults;
+
 
 namespace Shared.DataTransfer
 {
@@ -23,73 +25,73 @@ namespace Shared.DataTransfer
         /// <summary>
         /// Gets or sets the name of the item category.
         /// </summary>
-        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Category) + Defaults.StringLengthErrorMessage)]
-        [RegularExpression(Defaults.AlphabeticRegex, ErrorMessage = Defaults.AlphabeticRegexErrorMessage)]
+        [StringLength(DtoDefaults.MaximumStringLength, MinimumLength = DtoDefaults.MinimumStringLength, ErrorMessage = nameof(Category) + DtoDefaults.StringLengthErrorMessage)]
+        [RegularExpression(DtoDefaults.AlphabeticRegex, ErrorMessage = DtoDefaults.AlphabeticRegexErrorMessage)]
         public string? Category { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the name of the item subcategory.
         /// </summary>
-        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Subcategory) + Defaults.StringLengthErrorMessage)]
-        [RegularExpression(Defaults.AlphabeticRegex, ErrorMessage = Defaults.AlphabeticRegexErrorMessage)]
+        [StringLength(DtoDefaults.MaximumStringLength, MinimumLength = DtoDefaults.MinimumStringLength, ErrorMessage = nameof(Subcategory) + DtoDefaults.StringLengthErrorMessage)]
+        [RegularExpression(DtoDefaults.AlphabeticRegex, ErrorMessage = DtoDefaults.AlphabeticRegexErrorMessage)]
         public string? Subcategory { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the name of the item manufacturer.
         /// </summary>
-        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Manufacturer) + Defaults.StringLengthErrorMessage)]
-        [RegularExpression(Defaults.AlphanumericRegex, ErrorMessage = Defaults.AlphanumericRegexErrorMessage)]
+        [StringLength(DtoDefaults.MaximumStringLength, MinimumLength = DtoDefaults.MinimumStringLength, ErrorMessage = nameof(Manufacturer) + DtoDefaults.StringLengthErrorMessage)]
+        [RegularExpression(DtoDefaults.AlphanumericRegex, ErrorMessage = DtoDefaults.AlphanumericRegexErrorMessage)]
         public string? Manufacturer { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the name of the item material.
         /// </summary>
-        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Material) + Defaults.StringLengthErrorMessage)]
-        [RegularExpression(Defaults.AlphabeticRegex, ErrorMessage = Defaults.AlphanumericRegexErrorMessage)]
+        [StringLength(DtoDefaults.MaximumStringLength, MinimumLength = DtoDefaults.MinimumStringLength, ErrorMessage = nameof(Material) + DtoDefaults.StringLengthErrorMessage)]
+        [RegularExpression(DtoDefaults.AlphabeticRegex, ErrorMessage = DtoDefaults.AlphanumericRegexErrorMessage)]
         public string? Material { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the keyword used for filtering or searching operations.
         /// </summary>
-        [StringLength(Defaults.MaximumStringLength, MinimumLength = Defaults.MinimumStringLength, ErrorMessage = nameof(Keyword) + Defaults.StringLengthErrorMessage)]
-        [RegularExpression(Defaults.KeywordRegex, ErrorMessage = Defaults.KeywordRegexErrorMessage)]
+        [StringLength(DtoDefaults.MaximumStringLength, MinimumLength = DtoDefaults.MinimumStringLength, ErrorMessage = nameof(Keyword) + DtoDefaults.StringLengthErrorMessage)]
+        [RegularExpression(DtoDefaults.KeywordRegex, ErrorMessage = DtoDefaults.KeywordRegexErrorMessage)]
         public string? Keyword { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the minimum value for queries restricted by price range.
         /// </summary>
-        [Range(Defaults.PracticalMinimumPrice, Defaults.PracticalMaximumPrice, ErrorMessage = nameof(MinPrice) + Defaults.RangeErrorMessage)]
+        [Range(DtoDefaults.PracticalMinimumPrice, DtoDefaults.PracticalMaximumPrice, ErrorMessage = nameof(MinPrice) + DtoDefaults.RangeErrorMessage)]
         public decimal? MinPrice { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the maximum value for queries restricted by price range.
         /// </summary>
-        [Range(Defaults.PracticalMinimumPrice, Defaults.PracticalMaximumPrice, ErrorMessage = nameof(MaxPrice) + Defaults.RangeErrorMessage)]
+        [Range(DtoDefaults.PracticalMinimumPrice, DtoDefaults.PracticalMaximumPrice, ErrorMessage = nameof(MaxPrice) + DtoDefaults.RangeErrorMessage)]
         public decimal? MaxPrice { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the current page number for pagination.
         /// </summary>
-        [Range(1, int.MaxValue, ErrorMessage = nameof(PageNumber) + Defaults.RangeErrorMessage)]
-        public int PageNumber { get; set; } = Defaults.PageNumber;
+        [Range(1, int.MaxValue, ErrorMessage = nameof(PageNumber) + DtoDefaults.RangeErrorMessage)]
+        public int PageNumber { get; set; } = DtoDefaults.PageNumber;
 
         /// <summary>
         /// Gets or sets the maximum number of items to return per page.
         /// </summary>
-        [Range(Defaults.MinimumPageSize, Defaults.MaximumPageSize, ErrorMessage = nameof(PageSize) + Defaults.RangeErrorMessage)]
-        public int PageSize { get; set; } = Defaults.PageSize;
+        [Range(DtoDefaults.MinimumPageSize, DtoDefaults.MaximumPageSize, ErrorMessage = nameof(PageSize) + DtoDefaults.RangeErrorMessage)]
+        public int PageSize { get; set; } = DtoDefaults.PageSize;
 
         /// <summary>
         /// Gets or sets the required image width in pixels.
         /// </summary>
-        [Range(Defaults.MinimumImageWidth, Defaults.MaximumImageWidth, ErrorMessage = nameof(ImageWidth) + Defaults.RangeErrorMessage)]
-        public int ImageWidth { get; set; } = Defaults.ImageWidth;
+        [Range(DtoDefaults.MinimumImageWidth, DtoDefaults.MaximumImageWidth, ErrorMessage = nameof(ImageWidth) + DtoDefaults.RangeErrorMessage)]
+        public int ImageWidth { get; set; } = DtoDefaults.ImageWidth;
 
         /// <summary>
         /// Gets or sets the required image height in pixels.
         /// </summary>
-        [Range(Defaults.MinimumImageHeight, Defaults.MaximumImageHeight, ErrorMessage = nameof(ImageHeight) + Defaults.RangeErrorMessage)]
-        public int ImageHeight { get; set; } = Defaults.ImageHeight;
+        [Range(DtoDefaults.MinimumImageHeight, DtoDefaults.MaximumImageHeight, ErrorMessage = nameof(ImageHeight) + DtoDefaults.RangeErrorMessage)]
+        public int ImageHeight { get; set; } = DtoDefaults.ImageHeight;
 
 
         /// <summary>
@@ -116,10 +118,10 @@ namespace Shared.DataTransfer
                 queryString += $"keyword={Uri.EscapeDataString(this.Keyword.ToLower())}&";
 
             // Append the MinPrice and/or MaxPrice if they are within the valid range.
-            if (this.MinPrice is not null && this.MinPrice > 0 && this.MinPrice <= (decimal)Defaults.PracticalMaximumPrice)
+            if (this.MinPrice is not null && this.MinPrice > 0 && this.MinPrice <= (decimal)DtoDefaults.PracticalMaximumPrice)
                 queryString += $"minprice={this.MinPrice}&";
 
-            if (this.MaxPrice is not null && this.MaxPrice > 0 && this.MaxPrice <= (decimal)Defaults.PracticalMaximumPrice)
+            if (this.MaxPrice is not null && this.MaxPrice > 0 && this.MaxPrice <= (decimal)DtoDefaults.PracticalMaximumPrice)
                 queryString += $"maxprice={this.MaxPrice}&";
 
             // Append the sorting and pagination parameters.

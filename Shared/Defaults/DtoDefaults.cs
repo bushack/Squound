@@ -1,8 +1,8 @@
 ﻿
 
-namespace Shared.DataTransfer
+namespace Shared.Defaults
 {
-    public static class Defaults
+    public static class DtoDefaults
     {
         // Limits for item id.
         public const long MinimumItemId = 0;                // Note: Zero is valid because DTO requires a value. API will return 404.
